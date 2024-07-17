@@ -1,7 +1,7 @@
 import GetCostForm from "@/components/GetCostForm";
 export default function Page() {
   return (
-    <section className="mt-3">
+    <section className="animate-fade mt-3">
       <h1 className="text-center text-3xl font-semibold underline">
         Obtención de Información de Gastos
       </h1>

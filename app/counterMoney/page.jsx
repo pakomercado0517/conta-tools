@@ -2,7 +2,7 @@ import CounterMoneyTable from "@/components/CounterMoneyTable";
 
 export default function page() {
   return (
-    <section>
+    <section className="animate-fade">
       <h1 className="mt-5 text-center text-2xl font-semibold underline">
         Contador de Dinero
       </h1>

@@ -36,7 +36,7 @@ export default function CounterMoneyTable() {
   };
 
   return (
-    <section className="animate-fade mx-auto mt-10 max-w-4xl">
+    <section className="mx-auto mt-10 max-w-4xl">
       <Table>
         <Table.Head>
           <Table.HeadCell>Billete &#40;Denominación&#41;</Table.HeadCell>

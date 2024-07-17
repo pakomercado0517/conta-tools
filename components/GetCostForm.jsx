@@ -74,7 +74,7 @@ export default function GetCostForm() {
   };
 
   return (
-    <div className="animate-fade mx-auto mt-8">
+    <div className="mx-auto mt-8">
       <form className="mx-auto max-w-xl">
         <div>
           <Label>Ingresa el RFC:</Label>

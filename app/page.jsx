@@ -6,7 +6,7 @@ export default function Home() {
     <section>
       <article className="animate-fade-right max-w-7xl">
         <h1 className="mt-5 text-start text-6xl lg:text-8xl">
-          Herramientas para que ayudan a solucionar el día a día en la
+          Herramientas que ayudan a solucionar el día a día en la
           contabilidad...
         </h1>
         <h3 className="mt-8 text-xl lg:text-3xl">

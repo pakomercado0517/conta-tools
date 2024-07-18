@@ -148,7 +148,7 @@ export default function PaybackForm() {
               decimalsLimit={2}
               defaultValue={data.total}
               onValueChange={handleCurrencyInput}
-              className="peer mt-3 block w-full appearance-none rounded-lg border-0 border-b-2 border-gray-300 bg-gray-700 px-0 py-2.5 text-sm text-gray-900 focus:outline-none focus:ring-0 dark:border-gray-600 dark:text-white dark:focus:border-blue-500"
+              className="peer mt-3 block w-full appearance-none rounded-lg border-0 border-b-2 border-gray-300 px-0 py-2.5 text-sm text-gray-900 focus:outline-none focus:ring-0 dark:border-gray-600 dark:text-white dark:focus:border-blue-500"
               intlConfig={{ locale: "es-MX", currency: "MXN" }}
             />
             <div className="mt-2 border-b-2 border-gray-600"></div>

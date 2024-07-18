@@ -11,7 +11,7 @@ export default function CreatePDF({ costo }) {
   useEffect(() => {
     const getResults = async () => {
       const arr = [];
-      await costo.map((el) => arr.push(parseInt(el.total)));
+      await costo.map((el) => arr.push(parseInt(el.monto)));
       let result = arr.reduce((a, b) => a + b, 0);
       result = result.toString().split(".");
       result[0] = result[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -40,7 +40,7 @@ export default function CreatePDF({ costo }) {
     autoTable(doc, {
       head: [["RFC", "Subtotal", "Total"]],
       body: costo.map((el) => {
-        return [el.rfc, formatSubtotal(el.total / 1.16), formatTotal(el.total)];
+        return [el.rfc, formatSubtotal(el.monto / 1.16), formatTotal(el.monto)];
       }),
     });
     const tableHeight = doc.previousAutoTable.finalY;

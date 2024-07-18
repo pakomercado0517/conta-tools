@@ -154,7 +154,7 @@ export default function QuotationPDFButtons({
     doc.text(datos.firma, 12, finalY + 30);
     doc.setFontSize(10);
     doc.text(datos.cargo, 12, finalY + 35);
-
+    //previsualizar el PDF
     if (btnFunc === "preview") {
       const prev = doc.output("datauristring");
       console.log("prev", prev);

@@ -9,7 +9,13 @@ export default function NavbarApp() {
   return (
     <Navbar className="bg-transparent dark:text-white" rounded fluid>
       <Navbar.Brand as={Link} href="/">
-        <Image src={logo} alt="image from company" width={80} height={80} />
+        <Image
+          src={logo}
+          alt="image from company"
+          width={80}
+          height={80}
+          priority={true}
+        />
         <span className="self-center whitespace-nowrap font-semibold">
           ContaTools
         </span>

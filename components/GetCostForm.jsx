@@ -3,7 +3,7 @@
 import { useState } from "react";
 import CreatePDF from "./CreatePDF";
 import { Label, Button, TextInput, Table, FileInput } from "flowbite-react";
-import { extractDataFromPDF } from "@/utils/pdfUtils";
+import extractDataFromPDF from "@/utils/pdfUtils";
 import useFormatNumber from "@/hooks/useFormatNumber";
 
 export default function GetCostForm() {

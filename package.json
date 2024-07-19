@@ -16,7 +16,7 @@
     "jspdf-autotable": "^3.8.2",
     "next": "14.2.5",
     "pdf-lib": "^1.17.1",
-    "pdfjs-dist": "^4.4.168",
+    "pdfjs-dist": "3.11.174",
     "prettier-plugin-tailwindcss": "^0.6.5",
     "react": "^18",
     "react-currency-input-field": "^3.8.0",

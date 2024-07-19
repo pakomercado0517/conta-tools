@@ -1,39 +1,35 @@
 import * as pdfjsLib from "pdfjs-dist/build/pdf";
-import * as pdfWorker from "pdfjs-dist/build/pdf.worker";
 
-pdfjsLib.GlobalWorkerOptions.WorkerSrc = pdfWorker;
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  "https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
 
-export const extractDataFromPDF = async (pdfData) => {
-  try {
-    const pdf = await pdfjsLib.getDocument({ data: pdfData }).promise;
-    const numPages = pdf.numPages;
-    const extractedData = [];
+export default async function extractDataFromPDF(pdfData) {
+  const pdf = await pdfjsLib.getDocument({ data: pdfData }).promise;
+  const numPages = pdf.numPages;
+  const extractedData = [];
 
-    for (let i = 1; i <= numPages; i++) {
-      const page = await pdf.getPage(i);
-      const textContent = await page.getTextContent();
-      const pageText = textContent.items.map((item) => item.str).join(" ");
+  for (let i = 1; i <= numPages; i++) {
+    const page = await pdf.getPage(i);
+    const textContent = await page.getTextContent();
+    const pageText = textContent.items.map((item) => item.str).join(" ");
 
-      const montos = findMontos(pageText);
-      const rfcs = findRFCs(pageText);
+    const montos = findMontos(pageText);
+    const rfcs = findRFCs(pageText);
 
-      for (let j = 0; j < rfcs.length; j++) {
-        const rfc = rfcs[j];
-        const monto = montos[j] ? parseFloat(montos[j]) : 0;
-        const existingEntry = extractedData.find((data) => data.rfc === rfc);
-        if (existingEntry) {
-          existingEntry.monto += monto;
-        } else {
-          extractedData.push({ monto, rfc });
-        }
+    for (let j = 0; j < rfcs.length; j++) {
+      const rfc = rfcs[j];
+      const monto = montos[j] ? parseFloat(montos[j]) : 0;
+      const existingEntry = extractedData.find((data) => data.rfc === rfc);
+      if (existingEntry) {
+        existingEntry.monto += monto;
+      } else {
+        extractedData.push({ monto, rfc });
       }
     }
-
-    return extractedData;
-  } catch (error) {
-    console.log(error);
   }
-};
+
+  return extractedData;
+}
 
 const findMontos = (text) => {
   // Utilizamos la expresión regular con el modificador g para buscar todas las coincidencias

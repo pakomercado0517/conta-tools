@@ -3,10 +3,12 @@ import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { FaRegFilePdf } from "react-icons/fa6";
 import { Button } from "flowbite-react";
+import useFormatNumber from "@/hooks/useFormatNumber";
 
-export default function CreatePDF({ costo }) {
+export default function CreatePDF({ costo, totalMonto }) {
   const [totalResult, setTotalResult] = useState();
   const doc = new jsPDF();
+  const formatNumber = useFormatNumber();
 
   useEffect(() => {
     const getResults = async () => {
@@ -37,16 +39,27 @@ export default function CreatePDF({ costo }) {
   const createDoc = (e) => {
     e.preventDefault();
     console.log("Creando documento...");
+
+    // Calcular el monto total
+    const totalMonto = costo.reduce((acc, el) => acc + el.monto, 0);
+
+    // Crear el cuerpo de la tabla
+    const body = costo.map((el) => {
+      return [
+        el.rfc,
+        formatNumber.format(el.monto / 1.16),
+        formatNumber.format(el.monto),
+      ];
+    });
+
+    // Agregar la fila de totales
+    body.push(["", "Total:", formatNumber.format(totalMonto)]);
+
     autoTable(doc, {
       head: [["RFC", "Subtotal", "Total"]],
-      body: costo.map((el) => {
-        return [el.rfc, formatSubtotal(el.monto / 1.16), formatTotal(el.monto)];
-      }),
+      body: body,
     });
-    const tableHeight = doc.previousAutoTable.finalY;
-    const totalX = 145;
-    const totalY = Math.ceil(tableHeight) + 8;
-    doc.cell(totalX, totalY, 70, 10, `Total: $ ${totalResult}`);
+
     doc.save("resultado.pdf");
   };
 

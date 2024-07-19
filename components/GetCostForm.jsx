@@ -70,7 +70,7 @@ export default function GetCostForm() {
             </Table>
           </section>
           <div className="flex justify-center">
-            <CreatePDF costo={extractedData} />
+            <CreatePDF costo={extractedData} totalMonto={totalMonto} />
           </div>
         </>
       )}

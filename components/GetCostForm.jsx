@@ -29,7 +29,7 @@ export default function GetCostForm() {
   };
 
   return (
-    <div className="mx-auto mt-8">
+    <div className="mt-8 bg-fixed bg-no-repeat">
       <form className="mx-auto max-w-xl">
         <FileInput accept="application/pdf" onChange={handleChange} />
       </form>

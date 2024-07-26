@@ -1,16 +1,25 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Button, Label, TextInput, Select } from "flowbite-react";
+import { Button, Label, TextInput, Select, Checkbox } from "flowbite-react";
 import CurrencyInput from "react-currency-input-field";
 import useFormatNumber from "@/hooks/useFormatNumber";
 import useCreatePDF from "@/hooks/useCreatePDF";
 import PaybackTable from "./PaybackTable";
+import PaybackDiscounts from "./PaybackDiscounts";
 
 export default function PaybackForm() {
   const [getTotal, setGetTotal] = useState([]);
   const [data, setData] = useState({});
+  const [isChecked, setIsChecked] = useState(false);
   const [beforeTax, setBeforeTax] = useState(false);
   const [cell, setCell] = useState([]);
+  const [discount, setDiscount] = useState([
+    {
+      total: 0,
+      date: "",
+      concept: "",
+    },
+  ]);
   const formatNumber = useFormatNumber();
   const createDocument = useCreatePDF();
 
@@ -21,9 +30,9 @@ export default function PaybackForm() {
         const comision = data.total * `0.0${data.percentage}`;
         setGetTotal({
           empresa: data.name,
-          monto: formatNumber.format(data.total),
-          comision: `-${formatNumber.format(comision)}`,
-          total: formatNumber.format(totalMount),
+          monto: data.total,
+          comision: comision,
+          total: totalMount,
         });
       } else {
         const montoAntesIVA = data.total / 1.16;
@@ -32,9 +41,9 @@ export default function PaybackForm() {
 
         setGetTotal({
           empresa: data.name,
-          monto: formatNumber.format(data.total),
-          comision: `-${formatNumber.format(getComision)}`,
-          total: formatNumber.format(costTotal),
+          monto: data.total,
+          comision: getComision,
+          total: costTotal,
         });
       }
     }
@@ -47,6 +56,10 @@ export default function PaybackForm() {
       ...data,
       [name]: value,
     });
+  };
+
+  const handleCheck = (event) => {
+    setIsChecked(event.target.checked);
   };
 
   const handleSubmit = (e) => {
@@ -132,16 +145,6 @@ export default function PaybackForm() {
             </Label>
           </div>
           <div className="group relative z-0 mb-6 w-full">
-            {/* <TextInput
-              onChange={handleChange}
-              type="text"
-              name="total"
-              id="total"
-              className="peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-0 py-2.5 text-sm text-gray-900 focus:border-blue-600 focus:outline-none focus:ring-0 dark:border-gray-600 dark:text-white dark:focus:border-blue-500"
-              placeholder=" "
-              required=""
-              defaultValue={formatNumber.format(data.total)}
-            /> */}
             <CurrencyInput
               id="total"
               name="total"
@@ -160,6 +163,15 @@ export default function PaybackForm() {
             </Label>
           </div>
         </div>
+        <div>
+          <Checkbox id="discounts" onChange={handleCheck} />
+          <Label className="ml-4">Quieres añadir descuentos al total?</Label>
+        </div>
+        <div>
+          {isChecked && (
+            <PaybackDiscounts discount={discount} setDiscount={setDiscount} />
+          )}
+        </div>
         <div className="flex justify-center gap-4">
           <Button color="dark" onClick={handleSubmit}>
             Crear PDF
@@ -168,7 +180,9 @@ export default function PaybackForm() {
         </div>
       </form>
       <article className="mt-10">
-        {cell.length > 0 && <PaybackTable data={cell} />}
+        {cell.length > 0 && (
+          <PaybackTable data={cell} discount={discount} isChecked={isChecked} />
+        )}
       </article>
     </section>
   );

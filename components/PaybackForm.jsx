@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, cloneElement } from "react";
 import { Button, Label, TextInput, Select, Checkbox } from "flowbite-react";
 import CurrencyInput from "react-currency-input-field";
 import useFormatNumber from "@/hooks/useFormatNumber";
@@ -67,6 +67,8 @@ export default function PaybackForm() {
 
     createDocument(getTotal, false);
   };
+
+  console.log("getTotal", getTotal);
 
   const addCell = (arr) => {
     const $arr = [];

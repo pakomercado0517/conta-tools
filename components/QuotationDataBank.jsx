@@ -1,6 +1,6 @@
 "use client";
 
-import { Label, Select, TextInput } from "flowbite-react";
+import { Label, Select, TextInput, Checkbox } from "flowbite-react";
 
 export default function QuotationDataBank({
   handleDataBankChange,
@@ -9,16 +9,20 @@ export default function QuotationDataBank({
 }) {
   return (
     <section className="my-8 border-t-2 border-gray-500">
-      <div className="mt-5">
-        <Label className="text-white" value="Deseas agregar datos bancarios?" />
+      <div className="mb-7 mt-5">
+        <Checkbox onChange={showDataBank} />
+        <Label
+          className="ml-3 text-white"
+          value="Datos Bancarios (Marca la casilla si quieres agregar datos bancarios)"
+        />
       </div>
-      <Select onChange={showDataBank} className="max-w-sm">
+      {/* <Select onChange={showDataBank} className="max-w-sm">
         <option value="">Seleccionar</option>
         <option value="Si">Si</option>
         <option value="No">No</option>
-      </Select>
+      </Select> */}
       <section>
-        {datos.bank === "Si" && (
+        {datos.bank && (
           <form className="grid grid-cols-1 gap-6 md:grid-cols-3">
             <div>
               <Label className="text-white" value="Nombre del Banco" />

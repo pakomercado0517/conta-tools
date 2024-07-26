@@ -16,7 +16,9 @@ export default function QuotationLayout() {
     fecha: "",
     destinatario: "",
     destinatarioEmpresa: "",
-    bank: "",
+    domicilio: "",
+    bank: false,
+
     despedida:
       "Sin más, quedo a sus órdenes ante cualquier duda, situación o comentario de su parte agradeciendo de antemano las atenciones prestadas.",
     saludo:
@@ -77,7 +79,8 @@ export default function QuotationLayout() {
   const handleDataBankChange = (e) =>
     setDataBank({ ...dataBank, [e.target.name]: e.target.value });
 
-  const showDataBank = (e) => setDatos({ ...datos, bank: e.target.value });
+  //Seteamos si mostramos el form para datos bancarios
+  const showDataBank = (e) => setDatos({ ...datos, bank: e.target.checked });
 
   const handleChange = (e) => {
     const el = e.target;

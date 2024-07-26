@@ -60,6 +60,10 @@ export default function QuotationForm({ handleChange, datos }) {
             onChange={handleChange}
           />
         </div>
+        <div>
+          <Label>Domicilio</Label>
+          <TextInput id="domicilio" name="domicilio" onChange={handleChange} />
+        </div>
       </form>
     </section>
   );

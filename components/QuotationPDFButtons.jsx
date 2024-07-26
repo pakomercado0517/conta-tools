@@ -59,9 +59,10 @@ export default function QuotationPDFButtons({
     doc.setFontSize(16);
     doc.setTextColor(96, 96, 96); // Gris oscuro
     doc.text(datos.empresa, pageWidth / 2, 10, { align: "center" });
-    doc.setFontSize(12);
-    doc.text(datos.rfc.toUpperCase(), pageWidth / 2, 18, { align: "center" });
-    doc.text(contacto, pageWidth / 2, 26, { align: "center" });
+    doc.setFontSize(10);
+    doc.text(datos.rfc.toUpperCase(), pageWidth / 2, 15, { align: "center" });
+    doc.text(datos.domicilio, pageWidth / 2, 20, { align: "center" });
+    doc.text(contacto, pageWidth / 2, 25, { align: "center" });
 
     // Fecha alineada a la derecha
     const fechaFormateada = formatearFecha(datos.fecha);
@@ -112,7 +113,7 @@ export default function QuotationPDFButtons({
     });
 
     //Datos bancarios(si se requiere...)
-    if (datos.bank === "Si") {
+    if (datos.bank) {
       if (finalY > 270) {
         doc.addPage();
         finalY = 20;
@@ -157,10 +158,9 @@ export default function QuotationPDFButtons({
     //previsualizar el PDF
     if (btnFunc === "preview") {
       const prev = doc.output("datauristring");
-      console.log("prev", prev);
       setPdfDataUrl(prev);
     } else {
-      doc.save(`cotización ${datos.destinatarioEmpresa}.pdf`);
+      doc.save(`Cotización ${datos.destinatarioEmpresa}.pdf`);
     }
   };
 

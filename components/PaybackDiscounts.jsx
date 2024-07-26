@@ -1,6 +1,6 @@
 "use client";
-import { useState } from "react";
 import { Label, TextInput, Button } from "flowbite-react";
+import CurrencyInput from "react-currency-input-field";
 
 export default function PaybackDiscounts({ discount, setDiscount }) {
   const handleDiscountChange = (e, index) => {
@@ -57,7 +57,9 @@ export default function PaybackDiscounts({ discount, setDiscount }) {
           </section>
         ))}
       </div>
-      <Button onClick={agregateDiscount}>Agregar Descuento</Button>
+      <Button className="mt-3" onClick={agregateDiscount}>
+        Agregar Descuento
+      </Button>
     </section>
   );
 }

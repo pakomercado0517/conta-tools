@@ -30,6 +30,7 @@ export default function PaybackTable({ data, discount, isChecked }) {
           <Table.HeadCell>Monto</Table.HeadCell>
           <Table.HeadCell>Comisión</Table.HeadCell>
           <Table.HeadCell>Total</Table.HeadCell>
+          {isChecked && <Table.HeadCell>Concepto Descuento</Table.HeadCell>}
         </Table.Head>
         <Table.Body className="divide-y">
           {data.length > 0 &&
@@ -62,12 +63,24 @@ export default function PaybackTable({ data, discount, isChecked }) {
           )}
           {isChecked && (
             <>
+              <Table.Row>
+                <Table.Cell className="bg-gray-50 font-semibold dark:bg-gray-700"></Table.Cell>
+                <Table.Cell className="bg-gray-50 font-semibold dark:bg-gray-700"></Table.Cell>
+                <Table.Cell className="bg-gray-50 font-semibold dark:bg-gray-700">
+                  Fecha
+                </Table.Cell>
+                <Table.Cell className="bg-gray-50 font-semibold dark:bg-gray-700">
+                  Monto
+                </Table.Cell>
+                <Table.Cell className="bg-gray-50 font-semibold dark:bg-gray-700"></Table.Cell>
+              </Table.Row>
               {discount.map((d, index) => (
                 <Table.Row className="border-gray-600" key={index}>
                   <Table.Cell></Table.Cell>
-                  <Table.Cell className="text-red-500">{d.concept}</Table.Cell>
+                  <Table.Cell></Table.Cell>
                   <Table.Cell className="text-red-500">{d.date}</Table.Cell>
                   <Table.Cell className="text-red-500">{`-${formatNumber.format(d.total)}`}</Table.Cell>
+                  <Table.Cell className="text-red-500">{d.concept}</Table.Cell>
                 </Table.Row>
               ))}
               <Table.Row className="border-gray-600">

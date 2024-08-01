@@ -1,10 +1,12 @@
 "use client";
 import { TextInput, Button } from "flowbite-react";
+import { RiDeleteBin6Line } from "react-icons/ri";
 
 export default function QuotationProducts({
   datos,
   handleProductoChange,
   agregarProducto,
+  eliminarProducto,
 }) {
   return (
     <section className="my-8 border-t-2 border-gray-500">
@@ -13,7 +15,7 @@ export default function QuotationProducts({
         {datos.productos.map((producto, index) => (
           <div
             key={index}
-            className="mb-2 grid grid-cols-1 gap-2 md:grid-cols-4"
+            className="mb-2 grid grid-cols-1 gap-2 md:grid-cols-5"
           >
             <TextInput
               placeholder="Cantidad"
@@ -40,6 +42,13 @@ export default function QuotationProducts({
               value={producto.precioUnitario}
               onChange={(e) => handleProductoChange(e, index)}
             />
+            <Button
+              color="failure"
+              className="ml-3 flex h-10 w-10 items-center rounded-lg text-center"
+              onClick={() => eliminarProducto(index)}
+            >
+              <RiDeleteBin6Line className="text-lg" />
+            </Button>
           </div>
         ))}
         <Button onClick={agregarProducto}>Agregar Producto</Button>

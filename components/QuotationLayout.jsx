@@ -55,10 +55,24 @@ export default function QuotationLayout() {
     }));
   };
 
+  const eliminarProducto = (index) => {
+    setDatos((prevDatos) => ({
+      ...prevDatos,
+      productos: prevDatos.productos.filter((_, i) => i !== index),
+    }));
+  };
+
   const agregarClausula = () => {
     setDatos((prevDatos) => ({
       ...prevDatos,
       clausulas: [...prevDatos.clausulas, ""],
+    }));
+  };
+
+  const eliminarClausula = (index) => {
+    setDatos((prevDatos) => ({
+      ...prevDatos,
+      clausulas: prevDatos.clausulas.filter((_, i) => i !== index),
     }));
   };
 
@@ -101,12 +115,14 @@ export default function QuotationLayout() {
         datos={datos}
         handleProductoChange={handleProductoChange}
         agregarProducto={agregarProducto}
+        eliminarProducto={eliminarProducto}
       />
       {/* Cláusulas Info */}
       <QuotationClauses
         datos={datos}
         handleClausulaChange={handleClausulaChange}
         agregarClausula={agregarClausula}
+        eliminarClausula={eliminarClausula}
       />
       {/* Datos Bancarios */}
       <QuotationDataBank

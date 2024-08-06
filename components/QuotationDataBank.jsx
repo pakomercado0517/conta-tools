@@ -8,7 +8,7 @@ export default function QuotationDataBank({
   datos,
 }) {
   return (
-    <section className="my-8 border-t-2 border-gray-500">
+    <section className="my-8 border-t-2 border-gray-500 px-3">
       <div className="mb-7 mt-5">
         <Checkbox onChange={showDataBank} />
         <Label

@@ -166,7 +166,7 @@ export default function QuotationPDFButtons({
 
   return (
     <>
-      <section className="my-8 border-t-2 border-gray-500">
+      <section className="my-8 border-t-2 border-gray-500 px-3">
         <h2 className="my-4 text-center text-xl font-semibold">
           Cargar firma digital
         </h2>
@@ -182,7 +182,7 @@ export default function QuotationPDFButtons({
           />
         </div>
       </section>
-      <section className="grid grid-cols-2 gap-4">
+      <section className="grid grid-cols-2 gap-4 px-3">
         <Button size="xl" onClick={() => generarPDF("preview")}>
           Previsualizar PDF
         </Button>

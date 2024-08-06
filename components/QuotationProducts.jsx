@@ -15,7 +15,7 @@ export default function QuotationProducts({
         {datos.productos.map((producto, index) => (
           <div
             key={index}
-            className="mb-2 grid grid-cols-1 gap-2 md:grid-cols-5"
+            className="my-3 grid grid-cols-1 gap-2 px-3 pb-3 md:grid-cols-2 lg:grid-cols-4 lg:px-0"
           >
             <TextInput
               placeholder="Cantidad"
@@ -35,20 +35,25 @@ export default function QuotationProducts({
               value={producto.descripcion}
               onChange={(e) => handleProductoChange(e, index)}
             />
-            <TextInput
-              placeholder="Precio Unitario"
-              name="precioUnitario"
-              type="number"
-              value={producto.precioUnitario}
-              onChange={(e) => handleProductoChange(e, index)}
-            />
-            <Button
-              color="failure"
-              className="ml-3 flex h-10 w-10 items-center rounded-lg text-center"
-              onClick={() => eliminarProducto(index)}
-            >
-              <RiDeleteBin6Line className="text-lg" />
-            </Button>
+            <div className="flex justify-stretch">
+              <TextInput
+                placeholder="Precio Unitario"
+                className="cols-span-1 w-3/4 lg:w-full"
+                name="precioUnitario"
+                type="number"
+                value={producto.precioUnitario}
+                onChange={(e) => handleProductoChange(e, index)}
+              />
+              <div>
+                <Button
+                  color="failure"
+                  className="ml-3 flex h-10 w-10 items-center rounded-lg text-center"
+                  onClick={() => eliminarProducto(index)}
+                >
+                  <RiDeleteBin6Line className="text-lg" />
+                </Button>
+              </div>
+            </div>
           </div>
         ))}
         <Button onClick={agregarProducto}>Agregar Producto</Button>

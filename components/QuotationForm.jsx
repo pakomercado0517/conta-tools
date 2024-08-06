@@ -1,17 +1,17 @@
 "use client";
 
-import { Label, TextInput } from "flowbite-react";
+import { Label, TextInput, Textarea } from "flowbite-react";
 
 export default function QuotationForm({ handleChange, datos }) {
   return (
-    <section>
+    <section className="px-3 lg:px-0">
       <h1 className="my-6 text-center text-2xl font-bold underline">
         Generador de cotizaciones.{" "}
       </h1>
       <h2 className="my-4 text-center text-xl font-semibold">
         Información del Remitente
       </h2>
-      <form className="mb-5 grid grid-cols-1 gap-5 md:grid-cols-3">
+      <form className="mb-5 grid grid-cols-2 gap-5 md:grid-cols-3">
         <div>
           <Label className="text-white">Nombre de la Empresa</Label>
           <TextInput id="empresa" name="empresa" onChange={handleChange} />
@@ -62,7 +62,7 @@ export default function QuotationForm({ handleChange, datos }) {
         </div>
         <div>
           <Label>Domicilio</Label>
-          <TextInput id="domicilio" name="domicilio" onChange={handleChange} />
+          <Textarea id="domicilio" name="domicilio" onChange={handleChange} />
         </div>
       </form>
     </section>

@@ -5,7 +5,7 @@ export default function Home() {
   return (
     <section>
       <article className="max-w-7xl animate-fade-right">
-        <h1 className="mt-5 text-start text-6xl lg:text-8xl">
+        <h1 className="mt-5 text-start text-6xl leading-snug lg:text-8xl lg:leading-normal">
           Herramientas que ayudan a solucionar el día a día en la
           contabilidad...
         </h1>

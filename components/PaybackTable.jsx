@@ -1,9 +1,16 @@
 "use client";
-import { Table } from "flowbite-react";
+import { Table, Select, Button } from "flowbite-react";
 import { useState, useEffect } from "react";
 import useFormatNumber from "../hooks/useFormatNumber";
+import { RiDeleteBin6Line } from "react-icons/ri";
 
-export default function PaybackTable({ data, discount, isChecked }) {
+export default function PaybackTable({
+  data,
+  discount,
+  isChecked,
+  isEdit,
+  setCell,
+}) {
   const [totalSum, setTotalSum] = useState();
   const formatNumber = useFormatNumber();
 
@@ -22,6 +29,11 @@ export default function PaybackTable({ data, discount, isChecked }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, discount, isChecked]);
 
+  const deleteCell = (index) =>
+    setCell((prevDatos) => prevDatos.filter((_, i) => i !== index));
+
+  console.log("data", data);
+
   return (
     <section className="mb-8 animate-fade-up">
       <Table>
@@ -30,6 +42,9 @@ export default function PaybackTable({ data, discount, isChecked }) {
           <Table.HeadCell>Monto</Table.HeadCell>
           <Table.HeadCell>Comisión</Table.HeadCell>
           <Table.HeadCell>Total</Table.HeadCell>
+          <Table.HeadCell>
+            <span className="sr-only">Editar</span>
+          </Table.HeadCell>
           {isChecked && <Table.HeadCell>Concepto Descuento</Table.HeadCell>}
         </Table.Head>
         <Table.Body className="divide-y">
@@ -43,6 +58,16 @@ export default function PaybackTable({ data, discount, isChecked }) {
                   {`-${formatNumber.format(el?.comision)}`}{" "}
                 </Table.Cell>
                 <Table.Cell>{formatNumber.format(el?.total)}</Table.Cell>
+                <Table.Cell className="flex gap-5">
+                  {" "}
+                  <Button
+                    size="sm"
+                    color="failure"
+                    onClick={() => deleteCell(index)}
+                  >
+                    <RiDeleteBin6Line />
+                  </Button>
+                </Table.Cell>
               </Table.Row>
             ))}
           <Table.Row className="border-gray-600">
@@ -72,7 +97,9 @@ export default function PaybackTable({ data, discount, isChecked }) {
                 <Table.Cell className="bg-gray-50 font-semibold dark:bg-gray-700">
                   Monto
                 </Table.Cell>
-                <Table.Cell className="bg-gray-50 font-semibold dark:bg-gray-700"></Table.Cell>
+                <Table.Cell className="bg-gray-50 font-semibold dark:bg-gray-700">
+                  <span className="sr-only">Concepto</span>
+                </Table.Cell>
               </Table.Row>
               {discount.map((d, index) => (
                 <Table.Row className="border-gray-600" key={index}>

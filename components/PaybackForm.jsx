@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, cloneElement } from "react";
+import { useState, useEffect } from "react";
 import { Button, Label, TextInput, Select, Checkbox } from "flowbite-react";
 import CurrencyInput from "react-currency-input-field";
 import useFormatNumber from "@/hooks/useFormatNumber";
@@ -8,6 +8,7 @@ import PaybackTable from "./PaybackTable";
 import PaybackDiscounts from "./PaybackDiscounts";
 
 export default function PaybackForm() {
+  const [isEdit, setIsEdit] = useState(false);
   const [getTotal, setGetTotal] = useState([]);
   const [data, setData] = useState({});
   const [isChecked, setIsChecked] = useState(false);
@@ -58,6 +59,10 @@ export default function PaybackForm() {
     });
   };
 
+  const editData = (arr) => {
+    setData(arr);
+  };
+
   const handleCheck = (event) => {
     setIsChecked(event.target.checked);
   };
@@ -68,12 +73,15 @@ export default function PaybackForm() {
     createDocument(getTotal, false);
   };
 
-  console.log("getTotal", getTotal);
-
   const addCell = (arr) => {
     const $arr = [];
     $arr.push(...cell, arr);
     setCell($arr);
+    setData({
+      name: "",
+      percentage: "",
+      total: "",
+    });
   };
 
   const handleCurrencyInput = (value) => {
@@ -86,6 +94,8 @@ export default function PaybackForm() {
   const handleTax = (e) => {
     e.target.value === "si" ? setBeforeTax(true) : setBeforeTax(false);
   };
+
+  console.log("cell", cell);
 
   return (
     <section>
@@ -100,6 +110,7 @@ export default function PaybackForm() {
               className="peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-0 py-2.5 text-sm text-gray-900 focus:border-blue-600 focus:outline-none focus:ring-0 dark:border-gray-600 dark:text-white dark:focus:border-blue-500"
               placeholder=" "
               required=""
+              value={data?.name}
             />
             <Label
               htmlFor="name"
@@ -117,7 +128,7 @@ export default function PaybackForm() {
               className="peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-0 py-2.5 text-sm text-gray-900 focus:border-blue-600 focus:outline-none focus:ring-0 dark:border-gray-600 dark:text-white dark:focus:border-blue-500"
               placeholder=" "
               required=""
-              defaultValue={data?.percentage}
+              value={data?.percentage}
             />
             <Label
               htmlFor="percentage"
@@ -151,7 +162,7 @@ export default function PaybackForm() {
               id="total"
               name="total"
               decimalsLimit={2}
-              defaultValue={data.total}
+              value={data?.total}
               onValueChange={handleCurrencyInput}
               className="peer mt-3 block w-full appearance-none rounded-lg border-0 border-b-2 border-gray-300 px-0 py-2.5 text-sm text-gray-900 focus:outline-none focus:ring-0 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-blue-500"
               intlConfig={{ locale: "es-MX", currency: "MXN" }}
@@ -175,15 +186,20 @@ export default function PaybackForm() {
           )}
         </div>
         <div className="flex justify-center gap-4">
-          <Button color="dark" onClick={handleSubmit}>
+          {/* <Button color="dark" onClick={handleSubmit}>
             Crear PDF
-          </Button>
+          </Button> */}
           <Button onClick={() => addCell(getTotal)}>Agregar registro</Button>
         </div>
       </form>
       <article className="mt-10">
         {cell.length > 0 && (
-          <PaybackTable data={cell} discount={discount} isChecked={isChecked} />
+          <PaybackTable
+            data={cell}
+            discount={discount}
+            isChecked={isChecked}
+            setCell={setCell}
+          />
         )}
       </article>
     </section>

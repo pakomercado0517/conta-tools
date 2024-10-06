@@ -32,8 +32,6 @@ export default function PaybackTable({
   const deleteCell = (index) =>
     setCell((prevDatos) => prevDatos.filter((_, i) => i !== index));
 
-  console.log("data", data);
-
   return (
     <section className="mb-8 animate-fade-up">
       <Table>
@@ -70,6 +68,27 @@ export default function PaybackTable({
                 </Table.Cell>
               </Table.Row>
             ))}
+          {isChecked && (
+            <>
+              {discount.map((d, index) => (
+                <Table.Row className="border-gray-600" key={index}>
+                  <Table.Cell></Table.Cell>
+                  <Table.Cell></Table.Cell>
+                  <Table.Cell className="text-red-500">{d.date}</Table.Cell>
+                  <Table.Cell className="text-red-500">{`-${formatNumber.format(d.total)}`}</Table.Cell>
+                  <Table.Cell className="text-red-500">{d.concept}</Table.Cell>
+                </Table.Row>
+              ))}
+              <Table.Row className="border-gray-600">
+                <Table.Cell></Table.Cell>
+                <Table.Cell></Table.Cell>
+                <Table.Cell className="font-bold underline">
+                  Suma Total
+                </Table.Cell>
+                <Table.Cell>{formatNumber.format(totalSum)}</Table.Cell>
+              </Table.Row>
+            </>
+          )}
           <Table.Row className="border-gray-600">
             <Table.Cell></Table.Cell>
             <Table.Cell></Table.Cell>
@@ -86,7 +105,7 @@ export default function PaybackTable({
               <Table.Cell>{formatNumber.format(totalSum)}</Table.Cell>
             </Table.Row>
           )}
-          {isChecked && (
+          {/* {isChecked && (
             <>
               <Table.Row>
                 <Table.Cell className="bg-gray-50 font-semibold dark:bg-gray-700"></Table.Cell>
@@ -119,7 +138,7 @@ export default function PaybackTable({
                 <Table.Cell>{formatNumber.format(totalSum)}</Table.Cell>
               </Table.Row>
             </>
-          )}
+          )} */}
         </Table.Body>
       </Table>
     </section>

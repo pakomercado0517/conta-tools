@@ -11,6 +11,9 @@ export default function QuotationForm({ handleChange, datos }) {
       <h2 className="my-4 text-center text-xl font-semibold">
         Información del Remitente
       </h2>
+      <h3 className="text-md mb-8 text-center font-semibold leading-3">
+        &#40;Información del encabezado&#41;
+      </h3>
       <form className="mb-5 grid grid-cols-2 gap-5 md:grid-cols-3">
         <div>
           <Label className="text-white">Nombre de la Empresa</Label>

@@ -95,8 +95,6 @@ export default function PaybackForm() {
     e.target.value === "si" ? setBeforeTax(true) : setBeforeTax(false);
   };
 
-  console.log("cell", cell);
-
   return (
     <section>
       <form className="mt-5">

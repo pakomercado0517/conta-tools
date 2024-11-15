@@ -41,7 +41,7 @@ export default function NavbarApp() {
           className="text-white dark:text-white"
           href="/counterMoney"
         >
-          Cont. Dinero
+          Con. Dinero
         </Navbar.Link>
       </Navbar.Collapse>
     </Navbar>

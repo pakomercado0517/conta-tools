@@ -18,7 +18,7 @@ export default function QuotationLayout() {
     destinatarioEmpresa: "",
     domicilio: "",
     bank: false,
-
+    logoEmpresa: "",
     despedida:
       "Sin más, quedo a sus órdenes ante cualquier duda, situación o comentario de su parte agradeciendo de antemano las atenciones prestadas.",
     saludo:
@@ -60,6 +60,15 @@ export default function QuotationLayout() {
       ...prevDatos,
       productos: prevDatos.productos.filter((_, i) => i !== index),
     }));
+  };
+
+  const agregarLogoEmpresa = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+
+    reader.onloadend = () => setDatos({ ...datos, logoEmpresa: reader.result });
+
+    if (file) reader.readAsDataURL(file);
   };
 
   const agregarClausula = () => {
@@ -104,10 +113,16 @@ export default function QuotationLayout() {
     });
   };
 
+  console.log("datos", datos);
+
   return (
     <section className="mx-auto my-5 max-w-6xl animate-fade">
       {/* Quotation form */}
-      <QuotationForm handleChange={handleChange} datos={datos} />
+      <QuotationForm
+        handleChange={handleChange}
+        datos={datos}
+        agregarLogoEmpresa={agregarLogoEmpresa}
+      />
       {/* Destinatario Info */}
       <QuotationRecipients handleChange={handleChange} />
       {/* Productos Info */}

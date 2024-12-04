@@ -54,6 +54,13 @@ export default function QuotationPDFButtons({
     const pageWidth = doc.internal.pageSize.getWidth();
 
     const contacto = `Tel: ${datos.telefono} | Email: ${datos.email}`;
+    const logoWidth = 30;
+    const logoHeight = 30;
+
+    //Logo del encabezado
+    if (datos.logoEmpresa) {
+      doc.addImage(datos.logoEmpresa, "PNG", 10, 2, logoWidth, logoHeight);
+    }
 
     // Encabezado centrado
     doc.setFontSize(16);

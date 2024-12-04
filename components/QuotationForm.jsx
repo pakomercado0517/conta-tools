@@ -1,8 +1,12 @@
 "use client";
 
-import { Label, TextInput, Textarea } from "flowbite-react";
+import { Label, TextInput, Textarea, FileInput } from "flowbite-react";
 
-export default function QuotationForm({ handleChange, datos }) {
+export default function QuotationForm({
+  handleChange,
+  datos,
+  agregarLogoEmpresa,
+}) {
   return (
     <section className="px-3 lg:px-0">
       <h1 className="my-6 text-center text-2xl font-bold underline">
@@ -66,6 +70,15 @@ export default function QuotationForm({ handleChange, datos }) {
         <div>
           <Label>Domicilio</Label>
           <Textarea id="domicilio" name="domicilio" onChange={handleChange} />
+        </div>
+        <div>
+          <Label>Logotipo de la Empresa</Label>
+          <FileInput
+            id="logoCompany"
+            name="logoCompany"
+            onChange={agregarLogoEmpresa}
+            helperText="Si tienes el logo de tu empresa cargalo aquí para que aparezca en el encabezado"
+          />
         </div>
       </form>
     </section>

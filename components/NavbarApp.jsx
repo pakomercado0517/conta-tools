@@ -34,6 +34,12 @@ export default function NavbarApp() {
         >
           Reg. Devolución
         </Navbar.Link>
+        <Navbar.Link
+          className="text-white dark:text-white"
+          href="/sdiCalculator"
+        >
+          Cal. SDI
+        </Navbar.Link>
         <Navbar.Link className="text-white dark:text-white" href="/getCosts">
           Reg. Gastos
         </Navbar.Link>

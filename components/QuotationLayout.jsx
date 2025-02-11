@@ -113,10 +113,8 @@ export default function QuotationLayout() {
     });
   };
 
-  console.log("datos", datos);
-
   return (
-    <section className="mx-auto my-5 max-w-6xl animate-fade">
+    <section className="mx-auto my-5 max-w-6xl">
       {/* Quotation form */}
       <QuotationForm
         handleChange={handleChange}

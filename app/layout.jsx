@@ -14,7 +14,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={oswald.className}>
         <NavbarApp />
-        {children}
+        <div className="animate-fade">{children}</div>
       </body>
     </html>
   );

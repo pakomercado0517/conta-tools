@@ -1,6 +1,7 @@
 import { Oswald } from "next/font/google";
 import NavbarApp from "@/components/NavbarApp";
 import "./globals.css";
+import FooterComponent from "@/components/FooterComponent";
 
 const oswald = Oswald({ subsets: ["latin"], weight: "400" });
 
@@ -15,6 +16,7 @@ export default function RootLayout({ children }) {
       <body className={oswald.className}>
         <NavbarApp />
         <div className="animate-fade">{children}</div>
+        <FooterComponent />
       </body>
     </html>
   );

@@ -90,14 +90,47 @@ export default function QuotationPDFButtons({
     doc.autoTable({
       startY: 90,
       head: [["Cantidad", "Unidad", "Descripción", "Precio Unitario", "Total"]],
-      body: datos.productos.map((producto) => [
-        producto.cantidad,
-        producto.unidad,
-        producto.descripcion,
-        formatNumber.format(producto.precioUnitario),
-        formatNumber.format(producto.precioUnitario * producto.cantidad),
-      ]),
+      body: [
+        ...datos.productos.map((producto) => [
+          producto.cantidad,
+          producto.unidad,
+          producto.descripcion,
+          formatNumber.format(producto.precioUnitario),
+          formatNumber.format(producto.precioUnitario * producto.cantidad),
+        ]),
+        // Espacio de dos filas vacías
+        [
+          {
+            content: "",
+            colSpan: 5,
+            styles: { minCellHeight: 10, halign: "center" },
+          },
+        ],
+        [
+          {
+            content: "",
+            colSpan: 5,
+            styles: { minCellHeight: 10, halign: "center" },
+          },
+        ],
+        //Fila del Total
+        [
+          {
+            content: "Total:",
+            colSpan: 4,
+            styles: { fontStyle: "bold", halign: "right" },
+          },
+          formatNumber.format(
+            datos.productos.reduce(
+              (total, producto) =>
+                total + producto.precioUnitario * producto.cantidad,
+              0,
+            ),
+          ),
+        ],
+      ],
       headStyles: { fillColor: [54, 69, 79] },
+      styles: { fontSize: 10 },
     });
 
     let finalY = doc.previousAutoTable.finalY + 10; // Obtener la posición final de la tabla

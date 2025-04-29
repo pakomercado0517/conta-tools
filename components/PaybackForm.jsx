@@ -6,6 +6,7 @@ import useFormatNumber from "@/hooks/useFormatNumber";
 import useCreatePDF from "@/hooks/useCreatePDF";
 import PaybackTable from "./PaybackTable";
 import PaybackDiscounts from "./PaybackDiscounts";
+import PdfTableButton from "./PdfTableButton";
 
 export default function PaybackForm() {
   const [isEdit, setIsEdit] = useState(false);
@@ -183,11 +184,21 @@ export default function PaybackForm() {
             <PaybackDiscounts discount={discount} setDiscount={setDiscount} />
           )}
         </div>
-        <div className="flex justify-center gap-4">
+        <div className="align-center flex justify-center gap-4">
           {/* <Button color="dark" onClick={handleSubmit}>
             Crear PDF
           </Button> */}
-          <Button onClick={() => addCell(getTotal)}>Agregar registro</Button>
+          <div>
+            <PdfTableButton
+              data={cell}
+              discount={discount}
+              isChecked={isChecked}
+              setCell={setCell}
+            />
+          </div>
+          <div className="mt-4">
+            <Button onClick={() => addCell(getTotal)}>Agregar registro</Button>
+          </div>
         </div>
       </form>
       <article className="mt-10">

@@ -40,12 +40,14 @@ export default function PaybackTable({
           <Table.HeadCell>Monto</Table.HeadCell>
           <Table.HeadCell>Comisión</Table.HeadCell>
           <Table.HeadCell>Total</Table.HeadCell>
+          {isChecked && <Table.HeadCell>Fecha</Table.HeadCell>}
           {isChecked && <Table.HeadCell>Concepto Descuento</Table.HeadCell>}
           <Table.HeadCell>
             <span className="sr-only">Editar</span>
           </Table.HeadCell>
         </Table.Head>
-        <Table.Body className="divide-y">
+
+        <Table.Body className="divide-y divide-gray-600">
           {data.length > 0 &&
             data.map((el, index) => (
               <Table.Row key={index} className="border-gray-600">
@@ -54,6 +56,7 @@ export default function PaybackTable({
                 <Table.Cell>{`-${formatNumber.format(el?.comision)}`}</Table.Cell>
                 <Table.Cell>{formatNumber.format(el?.total)}</Table.Cell>
                 {/* El botón se mueve al final de la fila */}
+                {isChecked && <Table.Cell className="sr-only"></Table.Cell>}
                 <Table.Cell className="text-right">
                   <Button
                     size="sm"
@@ -72,8 +75,9 @@ export default function PaybackTable({
                 <Table.Row className="border-gray-600" key={index}>
                   <Table.Cell></Table.Cell>
                   <Table.Cell></Table.Cell>
-                  <Table.Cell className="text-red-500">{d.date}</Table.Cell>
+                  <Table.Cell></Table.Cell>
                   <Table.Cell className="text-red-500">{`-${formatNumber.format(d.total)}`}</Table.Cell>
+                  <Table.Cell className="text-red-500">{d.date}</Table.Cell>
                   <Table.Cell className="text-red-500">{d.concept}</Table.Cell>
                 </Table.Row>
               ))}

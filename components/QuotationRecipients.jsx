@@ -1,5 +1,7 @@
 "use client";
 import { Label, TextInput } from "flowbite-react";
+import { FaUser } from "react-icons/fa6";
+import { LuFactory } from "react-icons/lu";
 
 export default function QuotationRecipients({ handleChange }) {
   return (
@@ -11,6 +13,7 @@ export default function QuotationRecipients({ handleChange }) {
           <TextInput
             id="destinatario"
             name="destinatario"
+            icon={LuFactory}
             onChange={handleChange}
             placeholder="A quién va dirigido"
           />
@@ -22,6 +25,7 @@ export default function QuotationRecipients({ handleChange }) {
           <TextInput
             id="destinatarioEmpresa"
             name="destinatarioEmpresa"
+            icon={FaUser}
             onChange={handleChange}
             placeholder="Empresa a quién va dirigido"
           />

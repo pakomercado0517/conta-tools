@@ -2,14 +2,14 @@
 import { useState, useEffect } from "react";
 import { Button, Label, TextInput, Select, Checkbox } from "flowbite-react";
 import CurrencyInput from "react-currency-input-field";
-import useFormatNumber from "@/hooks/useFormatNumber";
 import useCreatePDF from "@/hooks/useCreatePDF";
 import PaybackTable from "./PaybackTable";
 import PaybackDiscounts from "./PaybackDiscounts";
 import PdfTableButton from "./PdfTableButton";
+import { LuFactory } from "react-icons/lu";
+import { TbSquareRoundedPercentage, TbReceiptTax } from "react-icons/tb";
 
 export default function PaybackForm() {
-  const [isEdit, setIsEdit] = useState(false);
   const [getTotal, setGetTotal] = useState([]);
   const [data, setData] = useState({});
   const [isChecked, setIsChecked] = useState(false);
@@ -22,7 +22,6 @@ export default function PaybackForm() {
       concept: "",
     },
   ]);
-  const formatNumber = useFormatNumber();
   const createDocument = useCreatePDF();
 
   useEffect(() => {
@@ -109,6 +108,7 @@ export default function PaybackForm() {
               className="peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-0 py-2.5 text-sm text-gray-900 focus:border-blue-600 focus:outline-none focus:ring-0 dark:border-gray-600 dark:text-white dark:focus:border-blue-500"
               placeholder=" "
               required=""
+              icon={LuFactory}
               value={data?.name}
             />
             <Label
@@ -125,6 +125,7 @@ export default function PaybackForm() {
               name="percentage"
               id="percentage"
               className="peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-0 py-2.5 text-sm text-gray-900 focus:border-blue-600 focus:outline-none focus:ring-0 dark:border-gray-600 dark:text-white dark:focus:border-blue-500"
+              icon={TbSquareRoundedPercentage}
               placeholder=" "
               required=""
               value={data?.percentage}
@@ -144,6 +145,7 @@ export default function PaybackForm() {
               className="peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-0 py-2.5 text-sm text-gray-900 focus:border-blue-600 focus:outline-none focus:ring-0 dark:border-gray-600 dark:text-white dark:focus:border-blue-500"
               placeholder=" "
               required=""
+              icon={TbReceiptTax}
             >
               <option>Selecciona una opción</option>
               <option value="si">Si</option>
@@ -160,6 +162,7 @@ export default function PaybackForm() {
             <CurrencyInput
               id="total"
               name="total"
+              placeholder=" $0.00"
               decimalsLimit={2}
               value={data?.total}
               onValueChange={handleCurrencyInput}

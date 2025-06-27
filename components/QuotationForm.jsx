@@ -1,6 +1,14 @@
 "use client";
 
 import { Label, TextInput, Textarea, FileInput } from "flowbite-react";
+import { LuFactory } from "react-icons/lu";
+import {
+  FaAddressCard,
+  FaMedal,
+  FaPhoneSquareAlt,
+  FaUser,
+} from "react-icons/fa";
+import { MdEmail } from "react-icons/md";
 
 export default function QuotationForm({
   handleChange,
@@ -9,7 +17,7 @@ export default function QuotationForm({
 }) {
   return (
     <section className="px-3 lg:px-0">
-      <h1 className="my-6 text-center text-2xl font-bold underline">
+      <h1 className="my-6 text-center text-2xl font-bold italic">
         Generador de cotizaciones.{" "}
       </h1>
       <h2 className="my-4 text-center text-xl font-semibold">
@@ -21,13 +29,19 @@ export default function QuotationForm({
       <form className="mb-5 grid grid-cols-2 gap-5 md:grid-cols-3">
         <div>
           <Label className="text-white">Nombre de la Empresa</Label>
-          <TextInput id="empresa" name="empresa" onChange={handleChange} />
+          <TextInput
+            id="empresa"
+            icon={LuFactory}
+            name="empresa"
+            onChange={handleChange}
+          />
         </div>
         <div>
           <Label className="text-white">RFC</Label>
           <TextInput
             id="rfc"
             name="rfc"
+            icon={FaAddressCard}
             onChange={handleChange}
             value={datos.rfc.toUpperCase()}
           />
@@ -37,26 +51,38 @@ export default function QuotationForm({
           <TextInput
             id="telefono"
             name="telefono"
+            icon={FaPhoneSquareAlt}
             type="number"
             onChange={handleChange}
           />
         </div>
         <div>
           <Label className="text-white">Email</Label>
-          <TextInput id="email" name="email" onChange={handleChange} />
+          <TextInput
+            id="email"
+            icon={MdEmail}
+            name="email"
+            onChange={handleChange}
+          />
         </div>
         <div>
           <Label className="text-white">Nombre del Representante</Label>
           <TextInput
             id="firma"
             name="firma"
+            icon={FaUser}
             placeholder="Persona que firma"
             onChange={handleChange}
           />
         </div>
         <div>
           <Label className="text-white">Puesto</Label>
-          <TextInput id="cargo" name="cargo" onChange={handleChange} />
+          <TextInput
+            id="cargo"
+            icon={FaMedal}
+            name="cargo"
+            onChange={handleChange}
+          />
         </div>
         <div>
           <Label className="text-white">Fecha</Label>

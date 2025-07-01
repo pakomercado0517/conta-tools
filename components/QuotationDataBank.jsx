@@ -8,46 +8,53 @@ export default function QuotationDataBank({
   datos,
 }) {
   return (
-    <section className="my-8 border-t-2 border-gray-500 px-3">
+    <section className="my-8 rounded-xl bg-gray-900/60 p-6 shadow-md">
       <div className="mb-7 mt-5">
         <Checkbox onChange={showDataBank} />
         <Label
-          className="ml-3 text-white"
+          className="ml-3 text-sm font-medium text-gray-300"
           value="Datos Bancarios (Marca la casilla si quieres agregar datos bancarios)"
         />
       </div>
-      {/* <Select onChange={showDataBank} className="max-w-sm">
-        <option value="">Seleccionar</option>
-        <option value="Si">Si</option>
-        <option value="No">No</option>
-      </Select> */}
       <section>
         {datos.bank && (
           <form className="grid grid-cols-1 gap-6 md:grid-cols-3">
             <div>
-              <Label className="text-white" value="Nombre del Banco" />
+              <Label
+                className="mb-1 text-sm font-medium text-gray-300"
+                value="Nombre del Banco"
+              />
               <TextInput
                 id="Nombre del Banco"
                 name="Nombre del Banco"
                 onChange={handleDataBankChange}
+                className="text-white focus:ring-cyan-500"
               />
             </div>
             <div>
-              <Label className="text-white" value="Número de cuenta" />
+              <Label
+                className="mb-1 text-sm font-medium text-gray-300"
+                value="Número de cuenta"
+              />
               <TextInput
                 id="Número de Cuenta"
                 name="Número de Cuenta"
                 type="number"
                 onChange={handleDataBankChange}
+                className="text-white focus:ring-cyan-500"
               />
             </div>
             <div>
-              <Label className="text-white" value="Clabe Interbancaria" />
+              <Label
+                className="mb-1 text-sm font-medium text-gray-300"
+                value="Clabe Interbancaria"
+              />
               <TextInput
                 id="Clabe Interbancaria"
                 name="Clabe Interbancaria"
                 typo="number"
                 onChange={handleDataBankChange}
+                className="text-white focus:ring-cyan-500"
               />
             </div>
           </form>

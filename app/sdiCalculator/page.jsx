@@ -50,8 +50,10 @@ export default function Page() {
 
   return (
     <section className="mt-10">
-      <h1 className="text-center text-5xl font-black">Calculador SDI</h1>
-      <p className="mt-2 text-center text-2xl font-semibold">
+      <h1 className="text-center text-5xl font-black text-gray-500 dark:text-gray-300">
+        Calculador SDI
+      </h1>
+      <p className="mt-2 text-center text-2xl font-semibold text-gray-500 dark:text-gray-300">
         &#40;Salario Diario Integrado&#41;
       </p>
 
@@ -60,7 +62,7 @@ export default function Page() {
         <div>
           <CurrencyInput
             onChange={(e) => setSalario(e.target.value)}
-            className="mt-2 w-full rounded-lg bg-gray-700"
+            className="mt-2 w-full rounded-lg border border-gray-300 bg-gray-100 dark:border-gray-600 dark:bg-gray-700"
             intlConfig={{ locale: "es-MX", currency: "MXN" }}
           />
         </div>
@@ -88,7 +90,7 @@ export default function Page() {
       </div>
 
       <div className="m-22">
-        <h1 className="mt-12 text-center text-3xl font-bold">
+        <h1 className="mt-12 text-center text-3xl font-bold text-gray-500 dark:text-gray-300">
           Tabla de referencia
         </h1>
         <div className="mx-auto max-w-5xl p-16">

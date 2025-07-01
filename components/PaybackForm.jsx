@@ -13,8 +13,9 @@ export default function PaybackForm() {
   const [getTotal, setGetTotal] = useState([]);
   const [data, setData] = useState({});
   const [isChecked, setIsChecked] = useState(false);
-  const [beforeTax, setBeforeTax] = useState(false);
   const [cell, setCell] = useState([]);
+  const [editingRow, setEditingRow] = useState(null);
+  const [editingIndex, setEditingIndex] = useState(null);
   const [discount, setDiscount] = useState([
     {
       total: 0,
@@ -26,30 +27,36 @@ export default function PaybackForm() {
 
   useEffect(() => {
     if (data.length !== 0) {
-      if (!beforeTax) {
-        const totalMount = data.total * (1 - data.percentage / 100);
-        const comision = data.total * `0.0${data.percentage}`;
+      // Convert percentage and total to numbers for calculations
+      const percentage = parseFloat(data.percentage) || 0;
+      const total = parseFloat(data.total) || 0;
+      if (!data.beforeTax) {
+        const totalMount = total * (1 - percentage / 100);
+        const comision = total * (percentage / 100);
         setGetTotal({
+          percentage: data.percentage,
+          beforeTax: data.beforeTax,
           empresa: data.name,
-          monto: data.total,
+          monto: total,
           comision: comision,
           total: totalMount,
         });
       } else {
-        const montoAntesIVA = data.total / 1.16;
-        const getComision = (montoAntesIVA * data.percentage) / 100;
-        const costTotal = data.total - getComision;
-
+        const montoAntesIVA = total / 1.16;
+        const getComision = (montoAntesIVA * percentage) / 100;
+        const costTotal = total - getComision;
         setGetTotal({
+          beforeTax: data.beforeTax,
+          percentage: data.percentage,
           empresa: data.name,
-          monto: data.total,
+          monto: total,
           comision: getComision,
           total: costTotal,
         });
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, beforeTax, cell]);
+  }, [data, cell]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -73,14 +80,32 @@ export default function PaybackForm() {
     createDocument(getTotal, false);
   };
 
-  const addCell = (arr) => {
-    const $arr = [];
-    $arr.push(...cell, arr);
-    setCell($arr);
+  const addCell = (e, arr) => {
+    e.preventDefault();
+    if (editingIndex !== null) {
+      const updated = [...cell];
+      updated[editingIndex] = arr;
+      setCell(updated);
+    } else {
+      setCell([...cell, arr]);
+    }
     setData({
       name: "",
       percentage: "",
       total: "",
+      beforeTax: "",
+    });
+    setEditingRow(null);
+    setEditingIndex(null);
+  };
+  const handleEditRow = (row, index) => {
+    setEditingRow(row);
+    setEditingIndex(index);
+    setData({
+      name: row.empresa || "",
+      percentage: row.percentage || "",
+      total: row.monto || "",
+      beforeTax: row.beforeTax || false,
     });
   };
 
@@ -92,118 +117,138 @@ export default function PaybackForm() {
   };
 
   const handleTax = (e) => {
-    e.target.value === "si" ? setBeforeTax(true) : setBeforeTax(false);
+    setData({
+      ...data,
+      beforeTax: e.target.value === "si" ? true : false,
+    });
   };
 
   return (
     <section>
-      <form className="mt-5">
-        <div className="grid md:grid-cols-2 md:gap-6">
-          <div className="group relative z-0 mb-6 w-full">
-            <TextInput
-              onChange={handleChange}
-              type="text"
-              name="name"
-              id="name"
-              className="peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-0 py-2.5 text-sm text-gray-900 focus:border-blue-600 focus:outline-none focus:ring-0 dark:border-gray-600 dark:text-white dark:focus:border-blue-500"
-              placeholder=" "
-              required=""
-              icon={LuFactory}
-              value={data?.name}
-            />
-            <Label
-              htmlFor="name"
-              className="absolute top-3 -z-10 origin-[0] -translate-y-6 scale-75 transform text-sm text-gray-500 duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:left-0 peer-focus:-translate-y-6 peer-focus:scale-75 peer-focus:font-medium peer-focus:text-blue-600 dark:text-gray-400 peer-focus:dark:text-blue-500"
-            >
-              Nombre de la empresa
-            </Label>
+      <div className="rounded-xl bg-gray-900/60 p-6 shadow-md">
+        <form className="mt-5">
+          <div className="grid md:grid-cols-2 md:gap-6">
+            <div className="group relative z-0 mb-6 w-full">
+              <TextInput
+                onChange={handleChange}
+                type="text"
+                name="name"
+                id="name"
+                className="bg-gray-800 text-white focus:ring-cyan-500"
+                placeholder=" "
+                required=""
+                icon={LuFactory}
+                value={data?.name || ""}
+              />
+              <Label
+                htmlFor="name"
+                className="mb-1 text-sm font-medium text-gray-300"
+              >
+                Nombre de la empresa
+              </Label>
+            </div>
+            <div className="group relative z-0 mb-6 w-full">
+              <TextInput
+                onChange={handleChange}
+                type="number"
+                name="percentage"
+                id="percentage"
+                className="bg-gray-800 text-white focus:ring-cyan-500"
+                icon={TbSquareRoundedPercentage}
+                placeholder=" "
+                required=""
+                value={data?.percentage || ""}
+              />
+              <Label
+                htmlFor="percentage"
+                className="mb-1 text-sm font-medium text-gray-300"
+              >
+                Porcentaje
+              </Label>
+            </div>
+            <div className="group relative z-0 mb-6 w-full">
+              <Select
+                onChange={handleTax}
+                name="beforeTax"
+                id="beforeTax"
+                className="bg-gray-800 text-white focus:ring-cyan-500"
+                placeholder=" "
+                required=""
+                value={
+                  data?.beforeTax !== undefined
+                    ? !data.beforeTax
+                      ? "no"
+                      : "si"
+                    : ""
+                }
+                icon={TbReceiptTax}
+              >
+                <option>Selecciona una opción</option>
+                <option value="si">Si</option>
+                <option value="no">No</option>
+              </Select>
+              <Label
+                htmlFor="beforeTax"
+                className="mb-1 text-sm font-medium text-gray-300"
+              >
+                Antes IVA?
+              </Label>
+            </div>
+            <div className="group relative z-0 mb-6 w-full">
+              <CurrencyInput
+                id="total"
+                name="total"
+                placeholder=" $0.00"
+                decimalsLimit={2}
+                value={data?.total || ""}
+                onValueChange={handleCurrencyInput}
+                className="w-full rounded-lg bg-gray-800 px-3 py-2.5 text-sm text-white focus:ring-cyan-500"
+                intlConfig={{ locale: "es-MX", currency: "MXN" }}
+              />
+              <Label
+                htmlFor="total"
+                className="mb-1 text-sm font-medium text-gray-300"
+              >
+                Monto
+              </Label>
+            </div>
           </div>
-          <div className="group relative z-0 mb-6 w-full">
-            <TextInput
-              onChange={handleChange}
-              type="number"
-              name="percentage"
-              id="percentage"
-              className="peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-0 py-2.5 text-sm text-gray-900 focus:border-blue-600 focus:outline-none focus:ring-0 dark:border-gray-600 dark:text-white dark:focus:border-blue-500"
-              icon={TbSquareRoundedPercentage}
-              placeholder=" "
-              required=""
-              value={data?.percentage}
-            />
-            <Label
-              htmlFor="percentage"
-              className="absolute top-3 -z-10 origin-[0] -translate-y-6 scale-75 transform text-sm text-gray-500 duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:left-0 peer-focus:-translate-y-6 peer-focus:scale-75 peer-focus:font-medium peer-focus:text-blue-600 dark:text-gray-400 peer-focus:dark:text-blue-500"
-            >
-              Porcentaje
-            </Label>
-          </div>
-          <div className="group relative z-0 mb-6 w-full">
-            <Select
-              onChange={handleTax}
-              name="beforeTax"
-              id="beforeTax"
-              className="peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-0 py-2.5 text-sm text-gray-900 focus:border-blue-600 focus:outline-none focus:ring-0 dark:border-gray-600 dark:text-white dark:focus:border-blue-500"
-              placeholder=" "
-              required=""
-              icon={TbReceiptTax}
-            >
-              <option>Selecciona una opción</option>
-              <option value="si">Si</option>
-              <option value="no">No</option>
-            </Select>
-            <Label
-              htmlFor="beforeTax"
-              className="absolute top-3 -z-10 origin-[0] -translate-y-6 scale-75 transform text-sm text-gray-500 duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:left-0 peer-focus:-translate-y-6 peer-focus:scale-75 peer-focus:font-medium peer-focus:text-blue-600 dark:text-gray-400 peer-focus:dark:text-blue-500"
-            >
-              Antes IVA?
-            </Label>
-          </div>
-          <div className="group relative z-0 mb-6 w-full">
-            <CurrencyInput
-              id="total"
-              name="total"
-              placeholder=" $0.00"
-              decimalsLimit={2}
-              value={data?.total}
-              onValueChange={handleCurrencyInput}
-              className="peer mt-3 block w-full appearance-none rounded-lg border-0 border-b-2 border-gray-300 px-0 py-2.5 text-sm text-gray-900 focus:outline-none focus:ring-0 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-blue-500"
-              intlConfig={{ locale: "es-MX", currency: "MXN" }}
-            />
-            <div className="mt-2 border-b-2 border-gray-300 dark:border-gray-600"></div>
-            <Label
-              htmlFor="total"
-              className="absolute top-3 -z-10 origin-[0] -translate-y-6 scale-75 transform text-sm text-gray-500 duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:left-0 peer-focus:-translate-y-6 peer-focus:scale-75 peer-focus:font-medium dark:text-gray-400"
-            >
-              Monto
-            </Label>
-          </div>
-        </div>
-        <div>
-          <Checkbox id="discounts" onChange={handleCheck} />
-          <Label className="ml-4">Quieres añadir descuentos al total?</Label>
-        </div>
-        <div>
-          {isChecked && (
-            <PaybackDiscounts discount={discount} setDiscount={setDiscount} />
-          )}
-        </div>
-        <div className="align-center flex justify-center gap-4">
-          {/* <Button color="dark" onClick={handleSubmit}>
-            Crear PDF
-          </Button> */}
           <div>
-            <PdfTableButton
-              data={cell}
-              discount={discount}
-              isChecked={isChecked}
-              setCell={setCell}
-            />
+            <Checkbox id="discounts" onChange={handleCheck} />
+            <Label className="mb-1 ml-4 text-sm font-medium text-gray-300">
+              Quieres añadir descuentos al total?
+            </Label>
           </div>
-          <div className="mt-4">
-            <Button onClick={() => addCell(getTotal)}>Agregar registro</Button>
+          <div>
+            {isChecked && (
+              <PaybackDiscounts discount={discount} setDiscount={setDiscount} />
+            )}
           </div>
-        </div>
-      </form>
+          <div className="align-center flex justify-center gap-4">
+            {/* <Button color="dark" onClick={handleSubmit}>
+              Crear PDF
+            </Button> */}
+            <div>
+              <PdfTableButton
+                data={cell}
+                discount={discount}
+                isChecked={isChecked}
+                setCell={setCell}
+              />
+            </div>
+            <div className="mt-4">
+              <Button
+                className="bg-cyan-600 font-semibold text-white hover:bg-cyan-700"
+                onClick={(e) => addCell(e, getTotal)}
+              >
+                {editingIndex !== null
+                  ? "Actualizar registro"
+                  : "Agregar registro"}
+              </Button>
+            </div>
+          </div>
+        </form>
+      </div>
       <article className="mt-10">
         {cell.length > 0 && (
           <PaybackTable
@@ -211,6 +256,7 @@ export default function PaybackForm() {
             discount={discount}
             isChecked={isChecked}
             setCell={setCell}
+            onEdit={handleEditRow}
           />
         )}
       </article>

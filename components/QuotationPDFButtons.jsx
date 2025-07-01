@@ -206,12 +206,14 @@ export default function QuotationPDFButtons({
 
   return (
     <>
-      <section className="my-8 border-t-2 border-gray-500 px-3">
-        <h2 className="my-4 text-center text-xl font-semibold">
+      <section className="my-8 rounded-xl bg-gray-900/60 p-6 shadow-md">
+        <h2 className="my-4 text-center text-xl font-semibold text-gray-300">
           Cargar firma digital
         </h2>
         <div>
-          <Label className="text-white">Firma</Label>
+          <Label className="mb-1 text-sm font-medium text-gray-300">
+            Firma
+          </Label>
           <FileInput
             id="firmaImg"
             name="firmaImg"
@@ -219,16 +221,22 @@ export default function QuotationPDFButtons({
             accept="image/*"
             color="dark"
             helperText="Si tienes la firma en imagen PNG, aqui la puedes cargar."
+            className="text-white focus:ring-cyan-500"
           />
         </div>
       </section>
-      <section className="grid grid-cols-2 gap-4 px-3">
-        <Button size="xl" onClick={() => generarPDF("preview")}>
-          Previsualizar PDF
+      <section className="mt-4 grid grid-cols-2 gap-4 px-3">
+        <Button color="cyan" size="xl" onClick={generarPDF}>
+          Generar PDF
         </Button>
 
-        <Button color="dark" size="xl" onClick={generarPDF}>
-          Generar PDF
+        <Button
+          color="gray"
+          size="xl"
+          outline
+          onClick={() => generarPDF("preview")}
+        >
+          Previsualizar PDF
         </Button>
       </section>
     </>

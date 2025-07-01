@@ -27,7 +27,9 @@ export default function PaybackDiscounts({ discount, setDiscount }) {
 
   return (
     <section className="my-5">
-      <h2 className="mb-4 text-center text-xl font-semibold">Descuentos</h2>
+      <h2 className="mb-4 text-center text-xl font-semibold text-gray-300">
+        Descuentos
+      </h2>
       <div className="">
         {discount.map((el, index) => (
           <section className="grid gap-5 md:grid-cols-4" key={index}>

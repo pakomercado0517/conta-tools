@@ -8,8 +8,10 @@ export default function QuotationClauses({
   eliminarClausula,
 }) {
   return (
-    <section className="my-8 border-t-2 border-gray-500 px-3 lg:px-0">
-      <h2 className="mt-5 text-lg font-semibold">Cláusulas</h2>
+    <section className="my-8 rounded-xl bg-gray-900/60 p-6 shadow-md">
+      <h2 className="mb-4 mt-5 text-lg font-semibold text-gray-300">
+        Cláusulas
+      </h2>
       {datos.clausulas.map((clausula, index) => (
         <div key={index} className="grid grid-cols-6">
           <div className="col-span-5">
@@ -17,7 +19,7 @@ export default function QuotationClauses({
               placeholder={`Cláusula ${index + 1}`}
               value={clausula}
               onChange={(e) => handleClausulaChange(e, index)}
-              className="mb-2"
+              className="mb-2 text-white focus:ring-cyan-500"
             />
           </div>
           <div className="col-span-1">
@@ -31,7 +33,9 @@ export default function QuotationClauses({
           </div>
         </div>
       ))}
-      <Button onClick={agregarClausula}>Agregar Cláusula</Button>
+      <Button onClick={agregarClausula} className="mt-4">
+        Agregar Cláusula
+      </Button>
     </section>
   );
 }

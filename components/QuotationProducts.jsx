@@ -9,8 +9,10 @@ export default function QuotationProducts({
   eliminarProducto,
 }) {
   return (
-    <section className="my-8 border-t-2 border-gray-500">
-      <h2 className="mt-5 text-lg font-semibold">Productos</h2>
+    <section className="my-8 rounded-xl bg-gray-900/60 p-6 shadow-md">
+      <h2 className="mb-4 mt-5 text-lg font-semibold text-gray-300">
+        Productos
+      </h2>
       <form className="">
         {datos.productos.map((producto, index) => (
           <div
@@ -22,23 +24,26 @@ export default function QuotationProducts({
               name="cantidad"
               value={producto.cantidad}
               onChange={(e) => handleProductoChange(e, index)}
+              className="text-white focus:ring-cyan-500"
             />
             <TextInput
               placeholder="Unidad"
               name="unidad"
               value={producto.unidad}
               onChange={(e) => handleProductoChange(e, index)}
+              className="text-white focus:ring-cyan-500"
             />
             <TextInput
               placeholder="Descripción"
               name="descripcion"
               value={producto.descripcion}
               onChange={(e) => handleProductoChange(e, index)}
+              className="text-white focus:ring-cyan-500"
             />
             <div className="flex justify-stretch">
               <TextInput
                 placeholder="Precio Unitario"
-                className="cols-span-1 w-3/4 lg:w-full"
+                className="cols-span-1 w-3/4 text-white focus:ring-cyan-500 lg:w-full"
                 name="precioUnitario"
                 type="number"
                 value={producto.precioUnitario}
@@ -56,7 +61,9 @@ export default function QuotationProducts({
             </div>
           </div>
         ))}
-        <Button onClick={agregarProducto}>Agregar Producto</Button>
+        <Button onClick={agregarProducto} className="mt-4">
+          Agregar Producto
+        </Button>
       </form>
     </section>
   );

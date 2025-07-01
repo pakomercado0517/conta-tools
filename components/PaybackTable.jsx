@@ -2,17 +2,23 @@
 import { Table, Select, Button } from "flowbite-react";
 import { useState, useEffect } from "react";
 import useFormatNumber from "../hooks/useFormatNumber";
-import { RiDeleteBin6Line } from "react-icons/ri";
+import { RiDeleteBin6Line, RiEdit2Line } from "react-icons/ri";
 
 export default function PaybackTable({
   data,
   discount,
   isChecked,
-  isEdit,
   setCell,
+  onEdit,
 }) {
   const [totalSum, setTotalSum] = useState();
   const formatNumber = useFormatNumber();
+
+  const handleEdit = (row, index) => {
+    if (onEdit) {
+      onEdit(row, index);
+    }
+  };
 
   useEffect(() => {
     const totales = data.reduce((sum, item) => sum + item.total, 0);
@@ -33,37 +39,61 @@ export default function PaybackTable({
     setCell((prevDatos) => prevDatos.filter((_, i) => i !== index));
 
   return (
-    <section className="mb-8 animate-fade-up">
-      <Table>
+    <section className="mb-8 animate-fade-up rounded-xl bg-gray-900/60 p-6 shadow-md">
+      <Table className="w-full text-sm text-white">
         <Table.Head>
-          <Table.HeadCell>Empresa</Table.HeadCell>
-          <Table.HeadCell>Monto</Table.HeadCell>
-          <Table.HeadCell>Comisión</Table.HeadCell>
-          <Table.HeadCell>Total</Table.HeadCell>
-          {isChecked && <Table.HeadCell>Fecha</Table.HeadCell>}
-          {isChecked && <Table.HeadCell>Concepto Descuento</Table.HeadCell>}
-          <Table.HeadCell>
-            <span className="sr-only">Editar</span>
+          <Table.HeadCell className="bg-gray-800 text-gray-100">
+            Empresa
+          </Table.HeadCell>
+          <Table.HeadCell className="bg-gray-800 text-gray-100">
+            Monto
+          </Table.HeadCell>
+          <Table.HeadCell className="bg-gray-800 text-gray-100">
+            Comisión
+          </Table.HeadCell>
+          <Table.HeadCell className="bg-gray-800 text-gray-100">
+            Total
+          </Table.HeadCell>
+          <Table.HeadCell className="bg-gray-800 text-gray-100">
+            {isChecked ? "Fecha" : ""}
+          </Table.HeadCell>
+          <Table.HeadCell className="bg-gray-800 text-gray-100">
+            {isChecked ? "Concepto de descueto" : ""}
           </Table.HeadCell>
         </Table.Head>
 
-        <Table.Body className="divide-y divide-gray-600">
+        <Table.Body>
           {data.length > 0 &&
             data.map((el, index) => (
-              <Table.Row key={index} className="border-gray-600">
-                <Table.Cell>{el?.empresa}</Table.Cell>
-                <Table.Cell>{formatNumber.format(el?.monto)}</Table.Cell>
-                <Table.Cell>{`-${formatNumber.format(el?.comision)}`}</Table.Cell>
-                <Table.Cell>{formatNumber.format(el?.total)}</Table.Cell>
-                {/* El botón se mueve al final de la fila */}
-                {isChecked && <Table.Cell className="sr-only"></Table.Cell>}
-                <Table.Cell className="text-right">
+              <Table.Row key={index} className="bg-gray-800 text-gray-100">
+                <Table.Cell className="bg-gray-800 text-gray-100">
+                  {el?.empresa}
+                </Table.Cell>
+                <Table.Cell className="bg-gray-800 text-gray-100">
+                  {formatNumber.format(el?.monto)}
+                </Table.Cell>
+                <Table.Cell className="bg-gray-800 text-gray-100">{`-${formatNumber.format(el?.comision)}`}</Table.Cell>
+                <Table.Cell className="bg-gray-800 text-gray-100">
+                  {formatNumber.format(el?.total)}
+                </Table.Cell>
+                {/* Botón de editar agregado */}
+                <Table.Cell className="bg-gray-800 text-right text-gray-100">
+                  <Button
+                    size="sm"
+                    color="info"
+                    onClick={() => handleEdit(el, index)}
+                  >
+                    <RiEdit2Line className="mr-2 flex self-center" /> Editar
+                  </Button>
+                </Table.Cell>
+                <Table.Cell className="bg-gray-800 text-right text-gray-100">
                   <Button
                     size="sm"
                     color="failure"
                     onClick={() => deleteCell(index)}
                   >
-                    <RiDeleteBin6Line />
+                    <RiDeleteBin6Line className="mr-2 flex self-center" />{" "}
+                    Eliminar
                   </Button>
                 </Table.Cell>
               </Table.Row>
@@ -72,45 +102,57 @@ export default function PaybackTable({
           {isChecked && (
             <>
               {discount.map((d, index) => (
-                <Table.Row className="border-gray-600" key={index}>
-                  <Table.Cell></Table.Cell>
-                  <Table.Cell></Table.Cell>
-                  <Table.Cell></Table.Cell>
-                  <Table.Cell className="text-red-500">{`-${formatNumber.format(d.total)}`}</Table.Cell>
-                  <Table.Cell className="text-red-500">{d.date}</Table.Cell>
-                  <Table.Cell className="text-red-500">{d.concept}</Table.Cell>
+                <Table.Row className="bg-gray-800" key={index}>
+                  <Table.Cell className="bg-gray-800 text-gray-100"></Table.Cell>
+                  <Table.Cell className="bg-gray-800 text-gray-100"></Table.Cell>
+                  <Table.Cell className="bg-gray-800 text-gray-100"></Table.Cell>
+                  <Table.Cell className="bg-gray-800 text-red-500">{`-${formatNumber.format(d.total)}`}</Table.Cell>
+                  <Table.Cell className="bg-gray-800 text-red-500">
+                    {d.date}
+                  </Table.Cell>
+                  <Table.Cell className="bg-gray-800 text-red-500">
+                    {d.concept}
+                  </Table.Cell>
                 </Table.Row>
               ))}
               {/* La fila de "Suma Total" ahora es la penúltima */}
-              <Table.Row className="border-gray-600">
-                <Table.Cell></Table.Cell>
-                <Table.Cell></Table.Cell>
-                <Table.Cell className="font-bold underline">
+              <Table.Row className="bg-gray-800 font-bold">
+                <Table.Cell className="bg-gray-800"></Table.Cell>
+                <Table.Cell className="bg-gray-800"></Table.Cell>
+                <Table.Cell className="bg-gray-800 underline">
                   Suma Total
                 </Table.Cell>
-                <Table.Cell>{formatNumber.format(totalSum)}</Table.Cell>
-                <Table.Cell></Table.Cell>
+                <Table.Cell className="bg-gray-800">
+                  {formatNumber.format(totalSum)}
+                </Table.Cell>
+                <Table.Cell className="bg-gray-800"></Table.Cell>
+                <Table.Cell className="bg-gray-800"></Table.Cell>
               </Table.Row>
             </>
           )}
 
           {/* Fila vacía movida a la última posición */}
-          <Table.Row className="border-gray-600">
-            <Table.Cell></Table.Cell>
-            <Table.Cell></Table.Cell>
-            <Table.Cell></Table.Cell>
-            <Table.Cell></Table.Cell>
-            <Table.Cell></Table.Cell>
+          <Table.Row className="bg-gray-800 text-gray-100">
+            <Table.Cell className="bg-gray-800 text-gray-100"></Table.Cell>
+            <Table.Cell className="bg-gray-800 text-gray-100"></Table.Cell>
+            <Table.Cell className="bg-gray-800 text-gray-100"></Table.Cell>
+            <Table.Cell className="bg-gray-800 text-gray-100"></Table.Cell>
+            <Table.Cell className="bg-gray-800 text-gray-100"></Table.Cell>
+            <Table.Cell className="bg-gray-800 text-gray-100"></Table.Cell>
           </Table.Row>
 
           {!isChecked && (
-            <Table.Row className="border-gray-600">
-              <Table.Cell></Table.Cell>
-              <Table.Cell></Table.Cell>
-              <Table.Cell className="font-bold underline">
+            <Table.Row className="bg-gray-800 font-bold">
+              <Table.Cell className="bg-gray-800"></Table.Cell>
+              <Table.Cell className="bg-gray-800"></Table.Cell>
+              <Table.Cell className="bg-gray-800 underline">
                 Suma Total
               </Table.Cell>
-              <Table.Cell>{formatNumber.format(totalSum)}</Table.Cell>
+              <Table.Cell className="bg-gray-800">
+                {formatNumber.format(totalSum)}
+              </Table.Cell>
+              <Table.Cell className="read-only bg-gray-800"></Table.Cell>
+              <Table.Cell className="read-only bg-gray-800"></Table.Cell>
             </Table.Row>
           )}
         </Table.Body>

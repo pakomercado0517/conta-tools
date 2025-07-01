@@ -12,7 +12,10 @@ export default function FooterComponent() {
   }, []);
 
   return (
-    <Footer container>
+    <Footer
+      container
+      className="dark:to-zinc-00 dark:bg-gradient-to-r dark:from-zinc-900"
+    >
       <Footer.Copyright
         href="https://pako-mercado.vercel.app"
         by="Pako Mercado"

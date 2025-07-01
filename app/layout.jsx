@@ -13,7 +13,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={oswald.className}>
+      <body
+        className={`${oswald.className} dark:blackdrop-blur-md bg-white/80 shadow-md backdrop-blur-md dark:bg-gray-900/80`}
+      >
         <div className="grid min-h-[100dvh] grid-rows-[auto,1fr,auto]">
           <NavbarApp />
           <div className="animate-fade">{children}</div>

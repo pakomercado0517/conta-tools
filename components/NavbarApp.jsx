@@ -7,7 +7,11 @@ import logo from "@/public/logo_white.svg";
 
 export default function NavbarApp() {
   return (
-    <Navbar className="bg-cyan-700 text-white dark:bg-cyan-700" rounded fluid>
+    <Navbar
+      className="bg-gradient-to-r from-cyan-700 to-teal-600 text-white"
+      rounded
+      fluid
+    >
       <Navbar.Brand as={Link} href="/">
         <Image
           src={logo}
@@ -16,7 +20,7 @@ export default function NavbarApp() {
           height={80}
           priority={true}
         />
-        <span className="self-center whitespace-nowrap font-semibold">
+        <span className="self-center whitespace-nowrap text-xl font-semibold">
           ContaTools
         </span>
       </Navbar.Brand>

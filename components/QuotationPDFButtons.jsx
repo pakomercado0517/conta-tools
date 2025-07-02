@@ -35,7 +35,7 @@ export default function QuotationPDFButtons({
     const dia = date.getUTCDate();
     const mes = meses[date.getUTCMonth()];
     const año = date.getUTCFullYear();
-    return `Tuxpan de Rodríguez Cano, Veracruz. A ${dia} de ${mes} del ${año}.`;
+    return `${datos.lugar}. A ${dia} de ${mes} del ${año}.`;
   };
 
   const handleFirmaChange = (e) => {

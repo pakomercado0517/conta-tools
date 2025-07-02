@@ -19,6 +19,7 @@ export default function QuotationLayout() {
     domicilio: "",
     bank: false,
     logoEmpresa: "",
+    lugar: "",
     despedida:
       "Sin más, quedo a sus órdenes ante cualquier duda, situación o comentario de su parte agradeciendo de antemano las atenciones prestadas.",
     saludo:

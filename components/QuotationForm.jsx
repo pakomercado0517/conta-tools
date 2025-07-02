@@ -20,16 +20,16 @@ export default function QuotationForm({
       <h1 className="mb-4 text-center text-4xl font-extrabold tracking-tight text-gray-700 dark:text-white">
         Generador de Cotizaciones
       </h1>
-
       <h2 className="mb-1 text-center text-xl font-semibold text-gray-700 dark:text-gray-300">
         Información del Remitente
       </h2>
-
       <p className="mb-6 text-center text-sm italic text-gray-500 dark:text-gray-400">
         (Esta información aparecerá en el encabezado del documento)
       </p>
+
       <div className="rounded-xl bg-gray-900/60 p-6 shadow-md">
-        <form className="mb-5 grid grid-cols-2 gap-5 md:grid-cols-3">
+        <form className="mb-5 grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3">
+          {/* Nombre de la Empresa */}
           <div>
             <Label className="mb-1 text-sm font-medium text-gray-300">
               Nombre de la Empresa
@@ -42,6 +42,8 @@ export default function QuotationForm({
               className="text-white focus:ring-cyan-500"
             />
           </div>
+
+          {/* RFC */}
           <div>
             <Label className="mb-1 text-sm font-medium text-gray-300">
               RFC
@@ -55,6 +57,8 @@ export default function QuotationForm({
               className="text-white focus:ring-cyan-500"
             />
           </div>
+
+          {/* Teléfono */}
           <div>
             <Label className="mb-1 text-sm font-medium text-gray-300">
               Teléfono
@@ -63,11 +67,13 @@ export default function QuotationForm({
               id="telefono"
               name="telefono"
               icon={FaPhoneSquareAlt}
-              type="number"
+              type="tel"
               onChange={handleChange}
               className="text-white focus:ring-cyan-500"
             />
           </div>
+
+          {/* Email */}
           <div>
             <Label className="mb-1 text-sm font-medium text-gray-300">
               Email
@@ -80,6 +86,8 @@ export default function QuotationForm({
               className="text-white focus:ring-cyan-500"
             />
           </div>
+
+          {/* Nombre del Representante */}
           <div>
             <Label className="mb-1 text-sm font-medium text-gray-300">
               Nombre del Representante
@@ -93,6 +101,8 @@ export default function QuotationForm({
               className="text-white focus:ring-cyan-500"
             />
           </div>
+
+          {/* Puesto */}
           <div>
             <Label className="mb-1 text-sm font-medium text-gray-300">
               Puesto
@@ -105,6 +115,8 @@ export default function QuotationForm({
               className="text-white focus:ring-cyan-500"
             />
           </div>
+
+          {/* Fecha */}
           <div>
             <Label className="mb-1 text-sm font-medium text-gray-300">
               Fecha
@@ -117,6 +129,22 @@ export default function QuotationForm({
               className="text-white focus:ring-cyan-500"
             />
           </div>
+
+          {/* Lugar de Remisión */}
+          <div>
+            <Label className="mb-1 text-sm font-medium text-gray-300">
+              Lugar de Remisión
+            </Label>
+            <TextInput
+              id="lugar"
+              name="lugar"
+              placeholder="Ciudad, Estado"
+              onChange={handleChange}
+              className="text-white focus:ring-cyan-500"
+            />
+          </div>
+
+          {/* Domicilio */}
           <div>
             <Label className="mb-1 text-sm font-medium text-gray-300">
               Domicilio
@@ -128,7 +156,9 @@ export default function QuotationForm({
               className="text-white focus:ring-cyan-500"
             />
           </div>
-          <div>
+
+          {/* Logotipo (ocupa 2 columnas en md+) */}
+          <div className="md:col-span-2">
             <Label className="mb-1 text-sm font-medium text-gray-300">
               Logotipo de la Empresa
             </Label>
@@ -137,7 +167,7 @@ export default function QuotationForm({
               name="logoCompany"
               color="dark"
               onChange={agregarLogoEmpresa}
-              helperText="Si tienes el logo de tu empresa cargalo aquí para que aparezca en el encabezado"
+              helperText="Si tienes el logo de tu empresa cárgalo aquí para que aparezca en el encabezado"
               className="text-white focus:ring-cyan-500"
             />
           </div>

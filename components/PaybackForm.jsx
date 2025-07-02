@@ -134,7 +134,7 @@ export default function PaybackForm() {
                 type="text"
                 name="name"
                 id="name"
-                className="bg-gray-800 text-white focus:ring-cyan-500"
+                className="text-white focus:ring-cyan-500 dark:bg-gray-800"
                 placeholder=" "
                 required=""
                 icon={LuFactory}
@@ -153,7 +153,7 @@ export default function PaybackForm() {
                 type="number"
                 name="percentage"
                 id="percentage"
-                className="bg-gray-800 text-white focus:ring-cyan-500"
+                className="text-white focus:ring-cyan-500 dark:bg-gray-800"
                 icon={TbSquareRoundedPercentage}
                 placeholder=" "
                 required=""
@@ -171,7 +171,7 @@ export default function PaybackForm() {
                 onChange={handleTax}
                 name="beforeTax"
                 id="beforeTax"
-                className="bg-gray-800 text-white focus:ring-cyan-500"
+                className="text-white focus:ring-cyan-500 dark:bg-gray-800"
                 placeholder=" "
                 required=""
                 value={
@@ -202,7 +202,7 @@ export default function PaybackForm() {
                 decimalsLimit={2}
                 value={data?.total || ""}
                 onValueChange={handleCurrencyInput}
-                className="w-full rounded-lg bg-gray-800 px-3 py-2.5 text-sm text-white focus:ring-cyan-500"
+                className="w-full rounded-lg bg-gray-100 px-3 py-2.5 text-sm text-white focus:ring-cyan-500 dark:border dark:border-gray-600 dark:bg-gray-700"
                 intlConfig={{ locale: "es-MX", currency: "MXN" }}
               />
               <Label

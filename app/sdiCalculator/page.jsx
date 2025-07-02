@@ -50,10 +50,10 @@ export default function Page() {
 
   return (
     <section className="mt-10">
-      <h1 className="text-center text-5xl font-black text-gray-500 dark:text-gray-300">
+      <h1 className="text-center text-5xl font-black text-gray-700 dark:text-gray-300">
         Calculador SDI
       </h1>
-      <p className="mt-2 text-center text-2xl font-semibold text-gray-500 dark:text-gray-300">
+      <p className="mt-2 text-center text-2xl font-semibold text-gray-700 dark:text-gray-300">
         &#40;Salario Diario Integrado&#41;
       </p>
 

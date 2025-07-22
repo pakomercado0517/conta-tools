@@ -14,7 +14,7 @@ export default function Home() {
         <p className="mb-6 text-lg text-gray-500 dark:text-gray-300">
           Navega por las diferentes herramientas.
         </p>
-        <Link href="/quotation">
+        <Link href="/generador_conceptos">
           <Button className="bg-gradient-to-r from-teal-400 via-teal-500 to-teal-600 text-white hover:bg-gradient-to-br focus:ring-teal-300 dark:text-gray-200 dark:focus:ring-teal-800">
             Empezar ahora
           </Button>

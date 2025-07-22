@@ -1,14 +1,19 @@
+// components/BotonGeneradorConceptos.jsx
+"use client";
+
 import Link from "next/link";
 import { HiOutlineDocumentSearch } from "react-icons/hi";
 
 export default function BotonGeneradorConceptos() {
   return (
     <Link
-      href="/generador_conceptos" // ✅ Ruta hacia tu feature
-      className="fixed bottom-20 right-6 z-50 flex items-center gap-2 rounded-full bg-cyan-600 px-4 py-2 text-white shadow-lg transition-all hover:bg-cyan-700"
+      href="/generador_conceptos"
+      className="group fixed bottom-20 right-5 z-50 flex items-center gap-2 rounded-full bg-cyan-600 px-4 py-3 text-white shadow-xl transition-all hover:bg-cyan-700"
     >
-      <HiOutlineDocumentSearch className="text-xl" />
-      <span className="hidden sm:inline">Encuentrar clave SAT</span>
+      <HiOutlineDocumentSearch className="text-2xl" />
+      <span className="max-w-0 overflow-hidden whitespace-nowrap text-sm opacity-0 transition-all duration-300 group-hover:max-w-xs group-hover:opacity-100">
+        Buscar claves SAT
+      </span>
     </Link>
   );
 }

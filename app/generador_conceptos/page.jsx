@@ -51,20 +51,21 @@ export default function GeneradorConceptosSATPage() {
   return (
     <section className="mx-auto max-w-3xl px-4 py-10">
       <h1 className="mb-4 text-center text-4xl font-extrabold tracking-tight text-gray-200">
-        Generador de Claves SAT
+        Buscador de Claves SAT
       </h1>
       <p className="mb-6 text-center text-gray-400">
-        Describe en lenguaje natural lo que deseas facturar.
+        Ingresa el producto o servicio que deseas buscar para obtener las claves
+        SAT.
       </p>
 
       <TextInput
-        className="mb-4 border-gray-700 bg-gray-800 text-white"
+        color="gray"
         placeholder="Ej: Transporte de carga"
         value={descripcion}
         onChange={(e) => setDescripcion(e.target.value)}
       />
 
-      <div className="flex justify-center">
+      <div className="mt-3 flex justify-center">
         <Button
           onClick={generarConcepto}
           disabled={loading || !descripcion.trim()}

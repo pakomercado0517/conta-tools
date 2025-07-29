@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Textarea, Button, Card, TextInput } from "flowbite-react";
 
 export default function GeneradorConceptosSATPage() {
@@ -9,6 +9,11 @@ export default function GeneradorConceptosSATPage() {
   const [error, setError] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
+
+  useEffect(() => {
+    document.title = "Buscador de Claves SAT";
+    document.descripcion = "Buscador de claves SAT para productos y servicios";
+  }, []);
 
   const generarConcepto = async () => {
     if (!descripcion.trim()) return;

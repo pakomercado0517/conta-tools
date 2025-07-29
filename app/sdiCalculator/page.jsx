@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { TextInput, Button, Label } from "flowbite-react";
 import CurrencyInput from "react-currency-input-field";
 import TablaReferenciaIDS from "@/components/TablaReferenciaIDS";
@@ -10,6 +10,10 @@ export default function Page() {
   const [sdi, setSdi] = useState(0);
   const [vacaciones, setVacaciones] = useState(0);
   const [aguinaldo, setAguinaldo] = useState(0);
+
+  useEffect(() => {
+    document.title = "Calculador SDI";
+  }, []);
 
   const calculateSdi = (event) => {
     event.preventDefault(); // 🔥 Evita recargar la página

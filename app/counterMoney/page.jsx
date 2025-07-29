@@ -1,5 +1,9 @@
 import CounterMoneyTable from "@/components/CounterMoneyTable";
 
+export const metadata = {
+  title: "Contador de Dinero",
+  description: "Contador de dinero para facilitar el conteo de efectivo",
+};
 export default function page() {
   return (
     <section className="">

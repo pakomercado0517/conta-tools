@@ -1,5 +1,9 @@
 import PaybackForm from "@/components/PaybackForm";
 
+export const metadata = {
+  title: "Registro de devolución",
+};
+
 export default function Page() {
   return (
     <section className="mt-8">

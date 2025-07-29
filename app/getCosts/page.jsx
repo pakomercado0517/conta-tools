@@ -1,4 +1,10 @@
 import GetCostForm from "@/components/GetCostForm";
+
+export const metadata = {
+  title: "Obtenedor de gastos",
+  description: "Carga y procesa tus gastos desde un PDF del SAT",
+};
+
 export default function Page() {
   return (
     <section className="mt-3">

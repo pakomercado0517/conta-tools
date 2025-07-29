@@ -2,7 +2,7 @@
 
 export default function LicesingComponent() {
   return (
-    <div className="mx-auto max-w-5xl rounded-md p-4 shadow-md">
+    <div className="mx-auto max-w-5xl rounded-md p-4 shadow-md dark:text-gray-200">
       <h1 className="mb-4 text-xl font-semibold">
         Licencia de Código Abierto - ContaTools React Component
       </h1>

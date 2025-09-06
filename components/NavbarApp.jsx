@@ -83,6 +83,11 @@ export default function NavbarApp() {
               Con. Dinero
             </Navbar.Link>
           </DropdownItem>
+          <DropdownItem>
+            <Navbar.Link className="text-white" href="/generador_contratos">
+              Gen. Contratos
+            </Navbar.Link>
+          </DropdownItem>
         </div>
       </Dropdown>
     </Navbar>

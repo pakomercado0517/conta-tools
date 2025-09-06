@@ -38,6 +38,29 @@ export default function QuotationPDFButtons({
     return `${datos.lugar}. A ${dia} de ${mes} del ${año}.`;
   };
 
+  const formatearFechaParaArchivo = (fecha) => {
+    const date = new Date(fecha);
+    const dia = date.getUTCDate().toString().padStart(2, "0");
+    const mes = (date.getUTCMonth() + 1).toString().padStart(2, "0");
+    const año = date.getUTCFullYear();
+    return `${dia}-${mes}-${año}`;
+  };
+
+  const obtenerPrimerasTresPalabrasConcepto = () => {
+    if (
+      datos.productos &&
+      datos.productos.length > 0 &&
+      datos.productos[0].descripcion
+    ) {
+      return datos.productos[0].descripcion
+        .trim()
+        .split(/\s+/)
+        .slice(0, 3)
+        .join(" ");
+    }
+    return "Cotización";
+  };
+
   const handleFirmaChange = (e) => {
     const file = e.target.files[0];
     const reader = new FileReader();
@@ -200,7 +223,11 @@ export default function QuotationPDFButtons({
       const prev = doc.output("datauristring");
       setPdfDataUrl(prev);
     } else {
-      doc.save(`Cotización ${datos.destinatarioEmpresa}.pdf`);
+      const fechaFormateada = formatearFechaParaArchivo(datos.fecha);
+      const primerasTresPalabras = obtenerPrimerasTresPalabrasConcepto();
+      const nombreArchivo = `${datos.destinatarioEmpresa} ${fechaFormateada} ${primerasTresPalabras}.pdf`;
+
+      doc.save(nombreArchivo);
     }
   };
 

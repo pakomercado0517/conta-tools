@@ -59,6 +59,11 @@ export default function NavbarApp() {
             </Navbar.Link>
           </DropdownItem>
           <DropdownItem>
+            <Navbar.Link className="text-white" href="/generador_contratos">
+              Gen. Contratos
+            </Navbar.Link>
+          </DropdownItem>
+          <DropdownItem>
             <Navbar.Link className="text-white" href="/quotation">
               Gen. Cotizaciones
             </Navbar.Link>
@@ -81,11 +86,6 @@ export default function NavbarApp() {
           <DropdownItem>
             <Navbar.Link className="text-white" href="/counterMoney">
               Con. Dinero
-            </Navbar.Link>
-          </DropdownItem>
-          <DropdownItem>
-            <Navbar.Link className="text-white" href="/generador_contratos">
-              Gen. Contratos
             </Navbar.Link>
           </DropdownItem>
         </div>

@@ -1,6 +1,18 @@
 "use client";
 
 import { jsPDF } from "jspdf";
+import {
+  generateContractContent,
+  createLocalDate,
+  fechaEnLetras,
+  leyendaFechaLugar,
+  formatearMonedaMexicana,
+  numeroALetras,
+} from "./ContractContent";
+
+/* =========================
+   Generador de PDF
+   ========================= */
 
 /**
  * Genera un PDF del contrato de prestación de servicios
@@ -16,175 +28,507 @@ export function generateContractPDF(contractData, invoicesData) {
   const lineHeight = 6;
   let yPosition = margin;
 
-  // Función para agregar texto con manejo de página
-  const addText = (text, fontSize = 10, isBold = false, align = 'left') => {
-    if (yPosition > pageHeight - margin) {
-      doc.addPage();
-      yPosition = margin;
-    }
-    
+  // Generar contenido del contrato usando las utilidades reutilizables
+  const content = generateContractContent(contractData);
+
+  // ===== Helper: addText con soporte **negritas** dentro del mismo párrafo =====
+  const addText = (text, fontSize = 10, isBold = false, align = "left") => {
+    const defaultStyle = isBold ? "bold" : "normal";
+    const usableWidth = pageWidth - 2 * margin;
+
+    const ensurePageSpace = () => {
+      if (yPosition > pageHeight - margin) {
+        doc.addPage();
+        yPosition = margin;
+      }
+    };
+
+    const measure = (txt, style) => {
+      doc.setFont("helvetica", style);
+      return doc.getTextWidth(txt);
+    };
+
+    const tokenizeParagraph = (paragraph) => {
+      const parts = paragraph.split(/(\*\*.*?\*\*)/g).filter(Boolean);
+      const tokens = [];
+
+      parts.forEach((part, idx) => {
+        const isMarkdownBold = part.startsWith("**") && part.endsWith("**");
+        let clean = isMarkdownBold ? part.slice(2, -2) : part;
+
+        // 👇 Para palabras en negrita, asegurar espacios correctos
+        if (isMarkdownBold) {
+          // Añadir espacio al principio si hay contenido previo y no termina en espacio
+          const prevPart = idx > 0 ? parts[idx - 1] : null;
+          if (prevPart && !prevPart.endsWith(" ") && !clean.startsWith(" ")) {
+            clean = " " + clean;
+          }
+
+          // Añadir espacio al final si hay contenido siguiente y no empieza en espacio
+          const nextPart = idx < parts.length - 1 ? parts[idx + 1] : null;
+          if (nextPart && !nextPart.startsWith(" ") && !clean.endsWith(" ")) {
+            clean = clean + " ";
+          }
+        }
+
+        // Dividir en palabras y crear tokens
+        const words = clean.split(/(\s+)/);
+        words.forEach((word) => {
+          if (word.length > 0) {
+            tokens.push({
+              text: word,
+              style: isMarkdownBold ? "bold" : defaultStyle,
+            });
+          }
+        });
+      });
+
+      if (tokens.length === 0) tokens.push({ text: "", style: defaultStyle });
+      return tokens;
+    };
+
+    const renderLine = (lineTokens, y, alignMode = "left") => {
+      let lineWidth = 0;
+      lineTokens.forEach((t) => {
+        lineWidth += measure(t.text, t.style);
+      });
+
+      let startX = margin;
+      if (alignMode === "center") {
+        startX = margin + (usableWidth - lineWidth) / 2;
+      }
+
+      let x = startX;
+      lineTokens.forEach((t) => {
+        doc.setFont("helvetica", t.style);
+        doc.text(t.text, x, y);
+        x += measure(t.text, t.style);
+      });
+    };
+
     doc.setFontSize(fontSize);
-    doc.setFont("helvetica", isBold ? "bold" : "normal");
-    
-    if (align === 'center') {
-      doc.text(text, pageWidth / 2, yPosition, { align: 'center' });
-    } else if (align === 'justify') {
-      const splitText = doc.splitTextToSize(text, pageWidth - 2 * margin);
-      doc.text(splitText, margin, yPosition);
-      yPosition += (splitText.length - 1) * lineHeight;
-    } else {
-      const splitText = doc.splitTextToSize(text, pageWidth - 2 * margin);
-      doc.text(splitText, margin, yPosition);
-      yPosition += (splitText.length - 1) * lineHeight;
-    }
-    
-    yPosition += lineHeight;
+    const paragraphs = String(text).split("\n");
+
+    paragraphs.forEach((p, pIdx) => {
+      if (yPosition > pageHeight - margin) {
+        doc.addPage();
+        yPosition = margin;
+      }
+
+      const tokens = tokenizeParagraph(p);
+
+      const lines = [];
+      let currentLine = [];
+      let currentWidth = 0;
+
+      tokens.forEach((tok) => {
+        const w = measure(tok.text, tok.style);
+        if (currentWidth + w > usableWidth && currentLine.length > 0) {
+          lines.push(currentLine);
+          currentLine = [tok];
+          currentWidth = w;
+        } else {
+          currentLine.push(tok);
+          currentWidth += w;
+        }
+      });
+      if (currentLine.length > 0) lines.push(currentLine);
+
+      lines.forEach((line) => {
+        ensurePageSpace();
+        const mode = align === "center" ? "center" : "left"; // "justify" -> "left"
+        renderLine(line, yPosition, mode);
+        yPosition += lineHeight;
+      });
+
+      if (pIdx === paragraphs.length - 1) {
+        yPosition += lineHeight;
+      }
+    });
   };
 
-  // Función para agregar espacio
+  // Espacio vertical
   const addSpace = (space = lineHeight) => {
     yPosition += space;
   };
 
+  // ====== Contenido ======
+
   // Título
-  addText("CONTRATO DE PRESTACIÓN DE SERVICIOS PROFESIONALES", 16, true, 'center');
+  addText(
+    "CONTRATO DE COMPRAVENTA DE MATERIALES Y/O SERVICIOS",
+    16,
+    true,
+    "center",
+  );
   addSpace(10);
 
   // Introducción
-  const introText = `que celebran, por una parte, ${contractData.prestador || '[NOMBRE COMPLETO DEL PRESTADOR DE SERVICIOS]'}, por su propio derecho, en adelante denominado como EL PRESTADOR, y por la otra, ${contractData.cliente || '[NOMBRE COMPLETO DEL CLIENTE]'}, por su propio derecho, en adelante denominado como EL CLIENTE, al tenor de las siguientes:`;
-  addText(introText, 10, false, 'justify');
+  const introText = `QUE CELEBRAN POR UNA PARTE **${content.prestadorNombre}**${content.representanteVendedor}, A QUIEN EN LO SUCESIVO SE LE DENOMINARÁ COMO **"EL VENDEDOR"**, POR LA OTRA PARTE **${content.clienteNombre}**${content.representanteCliente}, A QUIEN EN LO SUCESIVO SE LE DENOMINARÁ COMO **"EL COMPRADOR"**, Y A QUIENES DE MANERA CONJUNTA SE LES DENOMINARÁN COMO **"LAS PARTES"** AL TENOR DE LAS SIGUIENTES DECLARACIONES Y CLÁUSULAS:`;
+  addText(introText, 10, false, "justify");
   addSpace();
 
   // DECLARACIONES
-  addText("DECLARACIONES", 12, true, 'center');
+  addText("DECLARACIONES", 12, true, "center");
   addSpace();
 
-  addText("I. Declara EL PRESTADOR:", 11, true);
-  addText("a) Ser una persona física de nacionalidad mexicana, mayor de edad, con plena capacidad legal para celebrar el presente contrato.", 10, false, 'justify');
-  addText("b) Contar con los conocimientos, experiencia, herramientas y habilidades necesarias para prestar los servicios objeto de este contrato.", 10, false, 'justify');
-  addText(`c) Que su domicilio para los efectos del presente instrumento es ${contractData.domicilioPrestador || '[DOMICILIO COMPLETO DE EL PRESTADOR]'}.`, 10, false, 'justify');
+  // Declaración del VENDEDOR
+  addText(
+    "I. Declara **EL VENDEDOR**, por conducto de sus representantes legales que:",
+    10,
+    false,
+    "justify",
+  );
+  addSpace(3);
+
+  addText(
+    `**A.** Es una ${content.regimenVendedor?.toLowerCase() || "[régimen]"} debidamente constituida de conformidad con las leyes de los Estados Unidos Mexicanos.`,
+    10,
+    false,
+    "justify",
+  );
+  addSpace(3);
+
+  if (content.representantePrestador) {
+    addText(
+      `**B.** Sus representantes legales cuentan con las facultades necesarias para suscribir el presente Contrato.`,
+      10,
+      false,
+      "justify",
+    );
+    addSpace(3);
+  }
+
+  addText(
+    `**${content.representantePrestador ? "C" : "B"}.** Tiene su domicilio en **${content.domicilioPrestador || "[DOMICILIO COMPLETO DEL VENDEDOR]"}**.`,
+    10,
+    false,
+    "justify",
+  );
+  addSpace(3);
+
+  addText(
+    `**${content.representantePrestador ? "D" : "C"}.** Es su deseo vender y transferir, sin reserva y limitación alguna y libre de cualquier gravamen u otra limitación de dominio al **COMPRADOR** los materiales/servicios que se describen en la cláusula primera del presente Contrato.`,
+    10,
+    false,
+    "justify",
+  );
   addSpace();
 
-  addText("II. Declara EL CLIENTE:", 11, true);
-  addText("a) Ser una persona física de nacionalidad mexicana, mayor de edad, con plena capacidad legal y facultades para celebrar el presente contrato.", 10, false, 'justify');
-  addText("b) Que es su voluntad e interés contratar los servicios de EL PRESTADOR para los fines descritos en el presente documento.", 10, false, 'justify');
-  addText(`c) Que su domicilio para los efectos del presente instrumento es ${contractData.domicilioCliente || '[DOMICILIO COMPLETO DE EL CLIENTE]'}.`, 10, false, 'justify');
+  // Declaración del COMPRADOR
+  addText(
+    "II. DECLARA **EL COMPRADOR**, POR CONDUCTO DE SU REPRESENTANTE LEGAL:",
+    10,
+    false,
+    "justify",
+  );
+  addSpace(3);
+
+  addText(
+    `**A.** Es una ${content.regimenComprador?.toLowerCase() || "[régimen]"}${content.textoConstitucion} de conformidad con las leyes de los Estados Unidos Mexicanos.`,
+    10,
+    false,
+    "justify",
+  );
+  addSpace(3);
+
+  if (content.representanteCliente) {
+    addText(
+      `**B.** Su representante legal cuenta con las facultades necesarias para suscribir el presente Contrato.`,
+      10,
+      false,
+      "justify",
+    );
+    addSpace(3);
+  }
+
+  addText(
+    `**${content.representanteCliente ? "C" : "B"}.** Tiene su domicilio en **${content.domicilioCliente || "[DOMICILIO COMPLETO DEL COMPRADOR]"}**.`,
+    10,
+    false,
+    "justify",
+  );
+  addSpace(3);
+
+  addText(
+    `**${content.representanteCliente ? "D" : "C"}.** Es su deseo adquirir la propiedad plena de los materiales/servicios en los términos y condiciones que se establecen en el presente Contrato.`,
+    10,
+    false,
+    "justify",
+  );
+  addSpace(3);
+
+  addText(
+    `**${content.representanteCliente ? "E" : "D"}.** Que cumple con todas sus obligaciones de carácter laboral y de seguridad social, permisos y demás relativos aplicables de la Legislación vigente en los Estados Unidos Mexicanos.`,
+    10,
+    false,
+    "justify",
+  );
   addSpace();
 
-  addText("III. Declaran las partes:", 11, true);
-  addText("Que es su voluntad celebrar el presente contrato de prestación de servicios profesionales, de conformidad con las siguientes:", 10, false, 'justify');
+  addText(
+    "De conformidad con las Declaraciones anteriores, Las Partes convienen en otorgar las siguientes:",
+    10,
+    false,
+    "justify",
+  );
   addSpace();
 
   // CLÁUSULAS
-  addText("CLÁUSULAS", 12, true, 'center');
+  addText("CLÁUSULAS", 12, true, "center");
   addSpace();
 
-  addText("PRIMERA. OBJETO DEL CONTRATO.", 11, true);
-  const objetoText = `EL PRESTADOR se obliga a prestar a EL CLIENTE los siguientes servicios profesionales: ${contractData.servicios || '[DESCRIBIR EL SERVICIO DE MANERA CLARA Y DETALLADA]'}.`;
-  addText(objetoText, 10, false, 'justify');
+  // PRIMERA - Objeto
+  addText("**PRIMERA. OBJETO:**", 11, true);
+  addText(
+    `**EL VENDEDOR** se obliga a transmitir la propiedad sin reserva de dominio, libre de gravamen y limitación alguna de los materiales/servicios consistentes en: **${content.servicios || "[DESCRIPCIÓN DETALLADA DE MATERIALES/SERVICIOS]"}** al **COMPRADOR**, quien sabe y conoce plenamente las condiciones en que se encuentran los materiales/servicios, y quien deberá pagar la contraprestación prevista en la cláusula Segunda.`,
+    10,
+    false,
+    "justify",
+  );
   addSpace();
 
-  addText("SEGUNDA. OBLIGACIONES DE LAS PARTES.", 11, true);
-  addText("2.1. Obligaciones de EL PRESTADOR:", 10, true);
-  addText("a) Prestar los servicios objeto de este contrato de forma diligente y profesional, utilizando su mejor esfuerzo y conocimientos técnicos.", 10, false, 'justify');
-  addText("b) Cumplir con los plazos establecidos en el presente contrato o aquellos que se pacten por escrito.", 10, false, 'justify');
-  addText("c) Informar a EL CLIENTE de manera regular sobre el avance de los servicios.", 10, false, 'justify');
-  addSpace();
+  // SEGUNDA - Precio y Pago
+  addText("**SEGUNDA. PRECIO Y PAGO:**", 11, true);
 
-  addText("2.2. Obligaciones de EL CLIENTE:", 10, true);
-  addText("a) Proveer a EL PRESTADOR de toda la información, acceso, documentos y recursos necesarios para la correcta ejecución de los servicios.", 10, false, 'justify');
-  addText("b) Realizar los pagos correspondientes a los honorarios de EL PRESTADOR en los términos y plazos acordados.", 10, false, 'justify');
-  addSpace();
+  addText(
+    `Las Partes acuerdan que el precio total de los materiales/servicios será de **${content.montoTotalText}${content.montoTextoCompleto}**, del cual se incluye el **16% (dieciséis por ciento)** de **IVA**.`,
+    10,
+    false,
+    "justify",
+  );
+  addSpace(3);
 
-  // TERCERA - Honorarios
-  addText("TERCERA. HONORARIOS Y FORMA DE PAGO.", 11, true);
-  
-  // Calcular monto total si hay facturas
-  let montoTotal = 0;
-  if (invoicesData && invoicesData.length > 0) {
-    montoTotal = invoicesData.reduce((sum, invoice) => sum + (invoice.monto || 0), 0);
+  // Forma de pago
+  const formaPagoText = content.formaPago || "[FORMA DE PAGO]";
+  addText(`**Forma de pago:** ${formaPagoText}`, 10, false, "justify");
+  addSpace(3);
+
+  // Datos bancarios si están disponibles
+  if (
+    content.banco ||
+    content.titularCuenta ||
+    content.numeroCuenta ||
+    content.clabeInterbancaria
+  ) {
+    addText(
+      `Las Partes acuerdan que previo al retiro de los materiales/servicios, **EL COMPRADOR** deberá depositar el pago a la siguiente cuenta:`,
+      10,
+      false,
+      "justify",
+    );
+    addSpace(3);
+
+    if (content.banco) {
+      addText(`- **Banco:**  ${content.banco}`, 10, false);
+    }
+    if (content.titularCuenta) {
+      addText(
+        `- **Titular de la cuenta:**  ${content.titularCuenta}`,
+        10,
+        false,
+      );
+    }
+    if (content.numeroCuenta) {
+      addText(`- **Número de cuenta:**  ${content.numeroCuenta}`, 10, false);
+    }
+    if (content.clabeInterbancaria) {
+      addText(
+        `- **CLABE interbancaria:**  ${content.clabeInterbancaria}`,
+        10,
+        false,
+      );
+    }
   }
-  
-  const montoTotalText = contractData.montoTotal || (montoTotal > 0 ? `$${montoTotal.toLocaleString('es-MX', { minimumFractionDigits: 2 })}` : '[CANTIDAD TOTAL CON NÚMERO]');
-  const formaPago = contractData.formaPago || (invoicesData && invoicesData.length > 0 ? invoicesData[0].formaPago : 'transferencia bancaria');
-  
-  const honorariosText = `Por la prestación de los servicios, EL CLIENTE se obliga a pagar a EL PRESTADOR la cantidad total de ${montoTotalText} M.N., más el Impuesto al Valor Agregado (IVA) correspondiente. El pago se realizará mediante ${formaPago}.`;
-  addText(honorariosText, 10, false, 'justify');
-  
-  // Si hay múltiples facturas, agregar fechas de pago
-  if (invoicesData && invoicesData.length > 1) {
-    addSpace();
-    addText("Fechas de pago correspondientes a las facturas:", 10, true);
-    invoicesData.forEach((invoice, index) => {
-      const fechaPago = invoice.fecha || `Factura ${index + 1}`;
-      const monto = invoice.monto ? `$${invoice.monto.toLocaleString('es-MX', { minimumFractionDigits: 2 })}` : 'Monto no especificado';
-      addText(`- ${fechaPago}: ${monto} (${invoice.fileName || `Factura ${index + 1}`})`, 10, false);
-    });
+
+  // Compromiso de facturación (siempre se incluye)
+  addText(
+    `**RECIBOS Y FACTURACION. EL VENDEDOR**  se compromete a emitir los  **recibos o facturas fiscales**  correspondientes por cada pago recibido, conforme a lo estipulado por las leyes fiscales vigentes.`,
+    10,
+    false,
+    "justify",
+  );
+  addSpace();
+
+  // TERCERA - Vigencia
+  addText("**TERCERA. VIGENCIA:**", 11, true);
+
+  // Fechas en letra (corrigiendo problemas de zona horaria)
+  const fechaInicioBase = contractData.fechaInicio
+    ? createLocalDate(contractData.fechaInicio)
+    : null;
+  const fechaInicioStr = fechaInicioBase
+    ? fechaEnLetras(fechaInicioBase)
+    : "[FECHA DE INICIO]";
+
+  let fechaTerminoStr = "[FECHA DE TÉRMINO]";
+  if (contractData.fechaTermino === "otro") {
+    fechaTerminoStr = contractData.fechaTerminoTexto || "[ESPECIFICAR TÉRMINO]";
+  } else if (contractData.fechaTermino) {
+    const f = createLocalDate(contractData.fechaTermino);
+    fechaTerminoStr = fechaEnLetras(f);
   }
+
+  const vigenciaText = `El presente Contrato tendrá vigencia necesaria y suficiente para soportar la presente compraventa, misma que deberá realizarse en el periodo que va del **${fechaInicioStr}** al **${fechaTerminoStr}**.`;
+  addText(vigenciaText, 10, false, "justify");
   addSpace();
 
-  // CUARTA - Vigencia
-  addText("CUARTA. PLAZO DE VIGENCIA.", 11, true);
-  const fechaInicio = contractData.fechaInicio || '[FECHA DE INICIO]';
-  const fechaTermino = contractData.fechaTermino === 'otro' ? 
-    contractData.fechaTerminoTexto || '[ESPECIFICAR TÉRMINO]' : 
-    (contractData.fechaTermino || '[FECHA DE TÉRMINO]');
-  
-  const vigenciaText = `El presente contrato tendrá vigencia a partir del día ${fechaInicio}${contractData.fechaTermino === 'otro' ? ' ' + fechaTermino : ' y finalizará el día ' + fechaTermino}.`;
-  addText(vigenciaText, 10, false, 'justify');
+  // CUARTA - Responsabilidad Laboral
+  addText("**CUARTA. RESPONSABILIDAD LABORAL:**", 11, true);
+  const obligacionesText =
+    "Las Partes integrantes del presente Contrato son independientes entre sí y por ningún motivo serán consideradas como agentes o representantes, trabajadores o empleados de la otra. Cada una se responsabilizará de sus propias acciones y obligaciones con respecto a sus empleados. Las Partes asumen toda la responsabilidad derivada de la relación de trabajo con sus propios empleados, trabajadores o dependientes.";
+  addText(obligacionesText, 10, false, "justify");
   addSpace();
 
-  // QUINTA - Confidencialidad
-  addText("QUINTA. CONFIDENCIALIDAD.", 11, true);
-  const confidencialidadText = "Las partes se obligan a guardar estricta confidencialidad respecto de toda la información que se compartan mutuamente para la ejecución de este contrato. Dicha información incluye, pero no se limita a, secretos industriales, procesos, estrategias comerciales, datos de clientes o cualquier otro dato sensible. Esta obligación subsistirá aún después de la terminación del presente contrato.";
-  addText(confidencialidadText, 10, false, 'justify');
-  addSpace();
+  // QUINTA - Jurisdicción
+  addText("**QUINTA. JURISDICCIÓN:**", 11, true);
+  const jurisdiccionText = `Para la interpretación y cumplimiento del presente Contrato, las Partes se someten a la jurisdicción de los tribunales competentes en **${contractData.jurisdiccion || "[CIUDAD/ESTADO]"}**, renunciando expresamente a cualquier otro fuero que por razón de sus domicilios presentes o futuros les pudiera corresponder o por cualquier otra causa.`;
+  addText(jurisdiccionText, 10, false, "justify");
+  addSpace(5);
 
-  // SEXTA - Propiedad Intelectual
-  addText("SEXTA. PROPIEDAD INTELECTUAL.", 11, true);
-  const propiedadText = "Los resultados, documentos, diseños, software o cualquier otra obra generada por EL PRESTADOR para la ejecución del servicio objeto de este contrato serán de la exclusiva propiedad de EL CLIENTE, quien podrá utilizarlos y explotarlos sin limitación de tiempo ni de territorio.";
-  addText(propiedadText, 10, false, 'justify');
-  addSpace();
+  // Firma (en letras con ciudad)
+  const fechaFirmaBase = contractData.fechaFirma
+    ? createLocalDate(contractData.fechaFirma)
+    : new Date();
+  const ciudadFirma = contractData.ciudadFirma || "[CIUDAD]";
+  const firmaText = `Leído que fue el presente Contrato y enteradas las Partes de su contenido y alcance legal, lo firman por duplicado en **${leyendaFechaLugar(ciudadFirma, fechaFirmaBase)}**.`;
+  addText(firmaText, 10, false, "justify");
+  addSpace(4);
 
-  // SÉPTIMA - Terminación
-  addText("SÉPTIMA. TERMINACIÓN ANTICIPADA.", 11, true);
-  const terminacionText = "El presente contrato podrá darse por terminado anticipadamente sin responsabilidad para cualquiera de las partes en los siguientes casos: a) Por mutuo acuerdo, por escrito, de ambas partes. b) Por el incumplimiento de las obligaciones establecidas en este contrato por cualquiera de las partes. En este caso, la parte afectada deberá notificar por escrito a la parte incumplidora, otorgándole un plazo de 15 días para remediar el incumplimiento.";
-  addText(terminacionText, 10, false, 'justify');
-  addSpace();
+  // Nombres para las firmas
+  const nombreVendedor = (
+    contractData.prestador || "[NOMBRE DEL VENDEDOR]"
+  ).toUpperCase();
+  const nombreComprador = (
+    contractData.cliente || "[NOMBRE DEL COMPRADOR]"
+  ).toUpperCase();
 
-  // OCTAVA - Jurisdicción
-  addText("OCTAVA. JURISDICCIÓN Y COMPETENCIA.", 11, true);
-  const jurisdiccionText = `Para la interpretación y cumplimiento del presente contrato, las partes se someten expresamente a la jurisdicción y competencia de los tribunales de ${contractData.jurisdiccion || '[CIUDAD/ESTADO]'}, renunciando a cualquier otro fuero que pudiera corresponderles en razón de sus domicilios presentes o futuros.`;
-  addText(jurisdiccionText, 10, false, 'justify');
-  addSpace(15);
-
-  // Firma
-  const fechaActual = new Date().toLocaleDateString('es-MX');
-  const ciudadFirma = contractData.ciudadFirma || '[CIUDAD]';
-  const firmaText = `Leído que fue el presente contrato y enteradas las partes de su contenido y alcance legal, lo firman por duplicado en la ciudad de ${ciudadFirma}, a los ${fechaActual}.`;
-  addText(firmaText, 10, false, 'justify');
-  addSpace(20);
-
-  // Espacios para firmas
-  addText("FIRMAS", 12, true, 'center');
-  addSpace(15);
-
-  const nombreFirmaPrestador = contractData.representantePrestador || contractData.prestador || 'NOMBRE COMPLETO DEL PRESTADOR';
-  const nombreFirmaCliente = contractData.representanteCliente || contractData.cliente || 'NOMBRE COMPLETO DEL CLIENTE';
-
-  addText("EL PRESTADOR", 11, true, 'center');
-  addSpace(15);
-  addText(`[${nombreFirmaPrestador}]`, 10, false, 'center');
-  if (contractData.representantePrestador) {
-    addText(`Representante de: ${contractData.prestador}`, 8, false, 'center');
+  // Verificar si hay espacio suficiente para las firmas (aproximadamente 120px)
+  if (yPosition > pageHeight - 120) {
+    doc.addPage();
+    yPosition = margin + 20;
   }
-  addSpace(20);
 
-  addText("EL CLIENTE", 11, true, 'center');
-  addSpace(15);
-  addText(`[${nombreFirmaCliente}]`, 10, false, 'center');
+  // Sección de firmas siguiendo el formato de la imagen
+  const centerX = pageWidth / 2;
+
+  // EL COMPRADOR (arriba, centrado)
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(11);
+  doc.text("EL COMPRADOR", centerX, yPosition, { align: "center" });
+
+  yPosition += 8;
+
+  // Imagen de firma del comprador si existe
+  if (contractData.imagenFirmaComprador) {
+    try {
+      doc.addImage(
+        contractData.imagenFirmaComprador,
+        "PNG",
+        centerX - 12,
+        yPosition,
+        24,
+        15,
+      );
+      yPosition += 18;
+    } catch (error) {
+      console.log("Error adding comprador signature image:", error);
+      yPosition += 12;
+    }
+  } else {
+    yPosition += 12;
+  }
+
+  // Línea de firma del comprador
+  const lineLength = 40;
+  const startX = centerX - lineLength / 2;
+  const endX = centerX + lineLength / 2;
+  doc.line(startX, yPosition, endX, yPosition);
+
+  yPosition += 6;
+
+  // Nombre del comprador
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(9);
+  doc.text(nombreComprador, centerX, yPosition, { align: "center" });
+
+  // Representante del comprador si existe
   if (contractData.representanteCliente) {
-    addText(`Representante de: ${contractData.cliente}`, 8, false, 'center');
+    yPosition += 5;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(7);
+    doc.text(
+      contractData.representanteCliente.toUpperCase(),
+      centerX,
+      yPosition,
+      { align: "center" },
+    );
+    yPosition += 4;
+    doc.setFont("helvetica", "italic");
+    doc.setFontSize(6);
+    doc.text(`Representante Legal`, centerX, yPosition, { align: "center" });
+  }
+
+  yPosition += 20;
+  
+  // Verificar si hay espacio para EL VENDEDOR, si no, nueva página
+  if (yPosition > pageHeight - 50) {
+    doc.addPage();
+    yPosition = margin + 20;
+  }
+
+  // EL VENDEDOR (abajo, centrado)
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(11);
+  doc.text("EL VENDEDOR", centerX, yPosition, { align: "center" });
+
+  yPosition += 8;
+
+  // Imagen de firma del vendedor si existe
+  if (contractData.imagenFirmaVendedor) {
+    try {
+      doc.addImage(
+        contractData.imagenFirmaVendedor,
+        "PNG",
+        centerX - 12,
+        yPosition,
+        24,
+        15,
+      );
+      yPosition += 18;
+    } catch (error) {
+      console.log("Error adding vendedor signature image:", error);
+      yPosition += 12;
+    }
+  } else {
+    yPosition += 12;
+  }
+
+  // Línea de firma del vendedor
+  doc.line(startX, yPosition, endX, yPosition);
+
+  yPosition += 6;
+
+  // Nombre del vendedor
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(9);
+  doc.text(nombreVendedor, centerX, yPosition, { align: "center" });
+
+  // Representante del vendedor si existe
+  if (contractData.representantePrestador) {
+    yPosition += 5;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(7);
+    doc.text(
+      contractData.representantePrestador.toUpperCase(),
+      centerX,
+      yPosition,
+      { align: "center" },
+    );
+    yPosition += 4;
+    doc.setFont("helvetica", "italic");
+    doc.setFontSize(6);
+    doc.text(`Representante Legal`, centerX, yPosition, { align: "center" });
   }
 
   return doc;
@@ -193,7 +537,11 @@ export function generateContractPDF(contractData, invoicesData) {
 /**
  * Componente para descargar el contrato como PDF
  */
-export default function ContractPDFGenerator({ contractData, invoicesData, fileName = "contrato_prestacion_servicios.pdf" }) {
+export default function ContractPDFGenerator({
+  contractData,
+  invoicesData,
+  fileName = "contrato_compraventa_materiales_servicios.pdf",
+}) {
   const handleDownload = () => {
     try {
       const doc = generateContractPDF(contractData, invoicesData);
@@ -207,7 +555,7 @@ export default function ContractPDFGenerator({ contractData, invoicesData, fileN
   return (
     <button
       onClick={handleDownload}
-      className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-colors"
+      className="focus:shadow-outline rounded bg-green-600 px-4 py-2 font-bold text-white transition-colors hover:bg-green-700 focus:outline-none"
     >
       Descargar Contrato PDF
     </button>

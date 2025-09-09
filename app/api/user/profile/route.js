@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { revalidatePath } from 'next/cache';
-import { authOptions } from '../../auth/[...nextauth]/route';
+import { authOptions } from '../../../../lib/auth-config.js';
 
 // Indicate that this route uses dynamic features
 export const dynamic = 'force-dynamic';

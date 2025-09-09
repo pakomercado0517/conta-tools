@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '../../auth/[...nextauth]/route';
+import { authOptions } from '../../../../lib/auth-config.js';
 
 const { userDb } = require('../../../../lib/userDbPostgres.cjs');
 import { emailService } from '../../../../lib/emailService.js';

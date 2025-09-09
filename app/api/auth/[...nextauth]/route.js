@@ -47,7 +47,8 @@ export const authOptions = {
       }
     })
   ],
-    
+  
+  callbacks: {
     async jwt({ token, user, account }) {
       // Ejecuta cuando se crea el JWT (login)
       if (user) {
@@ -71,6 +72,13 @@ export const authOptions = {
       // Permitir login siempre que las credenciales sean válidas
       // El middleware controlará las restricciones por ruta
       return true;
+    },
+    
+    async redirect({ url, baseUrl }) {
+      // Redirecciones personalizadas para manejar diferentes entornos
+      if (url.startsWith('/')) return `${baseUrl}${url}`;
+      else if (new URL(url).origin === baseUrl) return url;
+      return baseUrl + '/dashboard';
     }
   },
 
@@ -78,15 +86,6 @@ export const authOptions = {
     signIn: '/auth/login',
     error: '/auth/error',
   },
-  
-  // Configuración de redirección
-  callbacks: {
-    async redirect({ url, baseUrl }) {
-      // Redirecciones personalizadas para manejar diferentes entornos
-      if (url.startsWith('/')) return `${baseUrl}${url}`;
-      else if (new URL(url).origin === baseUrl) return url;
-      return baseUrl + '/dashboard';
-    },
 
   secret: process.env.NEXTAUTH_SECRET,
   debug: process.env.NODE_ENV === 'development',

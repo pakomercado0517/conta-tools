@@ -1,8 +1,17 @@
 import NextAuth from 'next-auth';
-import { authOptions } from '../../../../lib/auth-config.js';
 
-// Handler optimizado para App Router
+// Configuración simple y robusta inline
+const authOptions = {
+  secret: process.env.NEXTAUTH_SECRET || 'fallback-secret',
+  session: {
+    strategy: 'jwt',
+    maxAge: 30 * 24 * 60 * 60,
+  },
+  providers: [],
+  trustHost: true,
+  debug: process.env.NODE_ENV === 'development',
+};
+
 const handler = NextAuth(authOptions);
 
-// Exportar todos los métodos HTTP necesarios para NextAuth
 export { handler as GET, handler as POST };

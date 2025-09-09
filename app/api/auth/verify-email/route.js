@@ -4,6 +4,14 @@ const { userDb } = require('../../../../lib/userDbPostgres.cjs');
 // Handle GET requests (from email links)
 export async function GET(request) {
   try {
+    // Verificar que request.url esté disponible
+    if (!request.url) {
+      return NextResponse.json(
+        { message: 'URL de la petición inválida' },
+        { status: 400 }
+      );
+    }
+    
     const { searchParams } = new URL(request.url);
     const token = searchParams.get('token');
 

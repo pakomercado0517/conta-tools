@@ -3,6 +3,7 @@ import NavbarApp from "@/components/NavbarApp";
 import "./globals.css";
 import FooterComponent from "@/components/FooterComponent";
 import BotonGeneradorConceptos from "@/components/BotónGeneradorConceptos";
+import AuthProvider from "@/components/AuthProvider";
 
 const oswald = Oswald({ subsets: ["latin"], weight: "400" });
 
@@ -17,15 +18,17 @@ export default function RootLayout({ children }) {
       <body
         className={`${oswald.className} dark:blackdrop-blur-md relative bg-white/80 shadow-md backdrop-blur-md dark:bg-gray-900/80`}
       >
-        {/* Aquí estará tu botón flotante */}
-        <BotonGeneradorConceptos />
-        <div>
-          <div className="grid min-h-[100dvh] grid-rows-[auto,1fr,auto]">
-            <NavbarApp />
-            <div className="animate-fade">{children}</div>
-            <FooterComponent />
+        <AuthProvider>
+          {/* Aquí estará tu botón flotante */}
+          <BotonGeneradorConceptos />
+          <div>
+            <div className="grid min-h-[100dvh] grid-rows-[auto,1fr,auto]">
+              <NavbarApp />
+              <div className="animate-fade">{children}</div>
+              <FooterComponent />
+            </div>
           </div>
-        </div>
+        </AuthProvider>
       </body>
     </html>
   );

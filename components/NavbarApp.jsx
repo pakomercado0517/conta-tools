@@ -2,11 +2,24 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Navbar, Dropdown, DropdownItem } from "flowbite-react";
+import {
+  Navbar,
+  Dropdown,
+  DropdownItem,
+  DropdownDivider,
+} from "flowbite-react";
+import { useSession, signOut } from "next-auth/react";
 import logo from "@/public/logo_white.svg";
 import { IoIosArrowDown } from "react-icons/io";
+import { FaSignInAlt, FaSignOutAlt, FaUser } from "react-icons/fa";
 
 export default function NavbarApp() {
+  const { data: session, status } = useSession();
+
+  const handleSignOut = async () => {
+    await signOut({ callbackUrl: "/" });
+  };
+
   return (
     <Navbar
       className="bg-gradient-to-r from-cyan-700 to-teal-600 text-white"
@@ -88,6 +101,47 @@ export default function NavbarApp() {
               Con. Dinero
             </Navbar.Link>
           </DropdownItem>
+
+          {/* Divider */}
+          <DropdownDivider />
+
+          {/* Autenticación */}
+          {session ? (
+            <>
+              <DropdownItem>
+                <Navbar.Link href="/dashboard" className="text-white">
+                  Dashboard
+                </Navbar.Link>
+              </DropdownItem>
+              <DropdownItem>
+                <Navbar.Link
+                  href="/profile/edit"
+                  className="flex items-center text-white hover:text-gray-300"
+                >
+                  Mi Perfil
+                </Navbar.Link>
+              </DropdownItem>
+              <DropdownItem>
+                <button
+                  onClick={handleSignOut}
+                  className="flex w-full items-center text-left text-white hover:text-gray-300"
+                >
+                  <FaSignOutAlt className="mr-2" />
+                  Cerrar Sesión
+                </button>
+              </DropdownItem>
+            </>
+          ) : (
+            <DropdownItem>
+              <Link
+                href="/auth/login"
+                className="flex items-center text-white hover:text-gray-300"
+              >
+                <FaSignInAlt className="mr-2" />
+                Iniciar Sesión
+              </Link>
+            </DropdownItem>
+          )}
         </div>
       </Dropdown>
     </Navbar>

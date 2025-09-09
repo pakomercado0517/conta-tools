@@ -4,10 +4,11 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 const { userDb } = require('../../../../lib/userDbPostgres.cjs');
 
 export const authOptions = {
-  // Por ahora usamos JWT, después migraremos a database sessions
+  // Usar JWT para production (más compatible con serverless)
   session: {
     strategy: 'jwt',
     maxAge: 30 * 24 * 60 * 60, // 30 días
+    updateAge: 24 * 60 * 60, // Actualizar cada 24 horas
   },
   
   providers: [
@@ -46,8 +47,7 @@ export const authOptions = {
       }
     })
   ],
-  
-  callbacks: {
+    
     async jwt({ token, user, account }) {
       // Ejecuta cuando se crea el JWT (login)
       if (user) {
@@ -59,16 +59,10 @@ export const authOptions = {
 
     async session({ session, user, token }) {
       // Ejecuta en cada request cuando hay sesión
-      if (session?.user) {
-        // Con strategy: 'database', usar user de la BD
-        if (user) {
-          session.user.id = user.id;
-          session.user.emailVerified = user.emailVerified;
-        } else if (token) {
-          // Fallback al JWT si no hay user
-          session.user.id = token.id;
-          session.user.emailVerified = token.emailVerified;
-        }
+      if (session?.user && token) {
+        // Con strategy: 'jwt', usar token
+        session.user.id = token.id;
+        session.user.emailVerified = token.emailVerified;
       }
       return session;
     },
@@ -84,11 +78,20 @@ export const authOptions = {
     signIn: '/auth/login',
     error: '/auth/error',
   },
+  
+  // Configuración de redirección
+  callbacks: {
+    async redirect({ url, baseUrl }) {
+      // Redirecciones personalizadas para manejar diferentes entornos
+      if (url.startsWith('/')) return `${baseUrl}${url}`;
+      else if (new URL(url).origin === baseUrl) return url;
+      return baseUrl + '/dashboard';
+    },
 
   secret: process.env.NEXTAUTH_SECRET,
   debug: process.env.NODE_ENV === 'development',
   
-  // Configuración de cookies
+  // Configuración de cookies para producción
   cookies: {
     sessionToken: {
       name: process.env.NODE_ENV === 'production' ? '__Secure-next-auth.session-token' : 'next-auth.session-token',
@@ -97,9 +100,31 @@ export const authOptions = {
         sameSite: 'lax',
         path: '/',
         secure: process.env.NODE_ENV === 'production',
+        domain: process.env.NODE_ENV === 'production' ? '.vercel.app' : undefined
+      }
+    },
+    callbackUrl: {
+      name: process.env.NODE_ENV === 'production' ? '__Secure-next-auth.callback-url' : 'next-auth.callback-url',
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: process.env.NODE_ENV === 'production'
+      }
+    },
+    csrfToken: {
+      name: process.env.NODE_ENV === 'production' ? '__Host-next-auth.csrf-token' : 'next-auth.csrf-token',
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: process.env.NODE_ENV === 'production'
       }
     }
-  }
+  },
+  
+  // Configuración específica para Vercel
+  trustHost: true
 };
 
 const handler = NextAuth(authOptions);

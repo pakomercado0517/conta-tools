@@ -601,6 +601,7 @@ export default function ContractContent({ contractData, invoicesData }) {
 
               {content.imagenFirmaComprador && (
                 <div className="mb-2">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={content.imagenFirmaComprador}
                     alt="Firma Comprador"
@@ -627,6 +628,7 @@ export default function ContractContent({ contractData, invoicesData }) {
 
               {content.imagenFirmaVendedor && (
                 <div className="mb-2">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={content.imagenFirmaVendedor}
                     alt="Firma Vendedor"

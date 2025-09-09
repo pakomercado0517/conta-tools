@@ -3,6 +3,9 @@ import { getServerSession } from 'next-auth/next';
 import { revalidatePath } from 'next/cache';
 import { authOptions } from '../../auth/[...nextauth]/route';
 
+// Indicate that this route uses dynamic features
+export const dynamic = 'force-dynamic';
+
 const { userDb } = require('../../../../lib/userDbPostgres.cjs');
 import { emailService } from '../../../../lib/emailService.js';
 

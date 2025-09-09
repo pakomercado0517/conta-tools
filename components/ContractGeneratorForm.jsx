@@ -513,6 +513,7 @@ export default function ContractGeneratorForm() {
               <div className="flex items-center justify-center w-full">
                 <label htmlFor="imagenFirmaVendedor" className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500">
                   {contractData.imagenFirmaVendedor ? (
+                    /* eslint-disable-next-line @next/next/no-img-element */
                     <img 
                       src={contractData.imagenFirmaVendedor} 
                       alt="Firma Vendedor" 
@@ -554,6 +555,7 @@ export default function ContractGeneratorForm() {
               <div className="flex items-center justify-center w-full">
                 <label htmlFor="imagenFirmaComprador" className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500">
                   {contractData.imagenFirmaComprador ? (
+                    /* eslint-disable-next-line @next/next/no-img-element */
                     <img 
                       src={contractData.imagenFirmaComprador} 
                       alt="Firma Comprador" 

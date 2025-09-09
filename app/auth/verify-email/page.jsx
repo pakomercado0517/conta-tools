@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Card, Button, Spinner } from 'flowbite-react';
 import { FaCheck, FaTimes, FaArrowLeft, FaSignInAlt } from 'react-icons/fa';
 
-export default function VerifyEmailPage() {
+function VerifyEmailContent() {
   const [loading, setLoading] = useState(true);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
@@ -161,4 +161,26 @@ export default function VerifyEmailPage() {
   }
 
   return null;
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-[calc(100vh-200px)] items-center justify-center px-4 py-8">
+        <Card className="w-full max-w-md">
+          <div className="text-center space-y-4">
+            <Spinner size="xl" />
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              Cargando verificación...
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400">
+              Preparando la verificación de tu email
+            </p>
+          </div>
+        </Card>
+      </div>
+    }>
+      <VerifyEmailContent />
+    </Suspense>
+  );
 }

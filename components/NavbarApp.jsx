@@ -7,6 +7,7 @@ import {
   Dropdown,
   DropdownItem,
   DropdownDivider,
+  Button,
 } from "flowbite-react";
 import { useSession, signOut } from "next-auth/react";
 import logo from "@/public/logo_white.svg";
@@ -121,14 +122,9 @@ export default function NavbarApp() {
                   Mi Perfil
                 </Navbar.Link>
               </DropdownItem>
-              <DropdownItem>
-                <button
-                  onClick={handleSignOut}
-                  className="flex w-full items-center text-left text-white hover:text-gray-300"
-                >
-                  <FaSignOutAlt className="mr-2" />
-                  Cerrar Sesión
-                </button>
+              <DropdownItem onClick={handleSignOut} className="cursor-pointer">
+                <FaSignOutAlt className="mr-2" />
+                Cerrar Sesión
               </DropdownItem>
             </>
           ) : (

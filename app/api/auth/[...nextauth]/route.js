@@ -30,10 +30,8 @@ export const authOptions = {
             return null;
           }
 
-          // Verificar que el email esté verificado
-          if (!user.emailVerified) {
-            throw new Error('EMAIL_NOT_VERIFIED');
-          }
+          // Permitir login incluso sin verificación de email
+          // El middleware manejará las restricciones por ruta
 
           return {
             id: user.id,
@@ -76,11 +74,8 @@ export const authOptions = {
     },
 
     async signIn({ user, account, profile }) {
-      // Control adicional en el login
-      if (!user?.emailVerified && account?.provider === 'credentials') {
-        // Ya se maneja en authorize, pero doble verificación
-        return false;
-      }
+      // Permitir login siempre que las credenciales sean válidas
+      // El middleware controlará las restricciones por ruta
       return true;
     }
   },

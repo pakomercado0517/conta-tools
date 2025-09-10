@@ -5,7 +5,8 @@ import { useAuth } from '../../../components/AuthProvider';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Card, Button, TextInput, Label, Alert } from 'flowbite-react';
-import { FaEye, FaEyeSlash, FaEnvelope, FaLock, FaUser, FaUserPlus } from 'react-icons/fa';
+import { FaEye, FaEyeSlash, FaEnvelope, FaLock, FaUser, FaUserPlus, FaCheckCircle } from 'react-icons/fa';
+import { getContextualError } from '../../../lib/supabase/errorTranslations';
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -86,13 +87,9 @@ export default function RegisterPage() {
       );
       
       if (signUpError) {
-        if (signUpError.message.includes('already registered')) {
-          setError('Este email ya está registrado. ¿Quieres iniciar sesión?');
-        } else {
-          setError(signUpError.message);
-        }
+        setError(getContextualError(signUpError, 'signup'));
       } else {
-        setSuccess('Cuenta creada exitosamente. Revisa tu email para verificar tu cuenta.');
+        setSuccess('¡Cuenta creada exitosamente! Revisa tu email para verificar tu cuenta de ContaTools.');
         // Limpiar el formulario
         setFormData({
           name: '',
@@ -103,7 +100,7 @@ export default function RegisterPage() {
       }
     } catch (error) {
       console.error('Registration error:', error);
-      setError('Error al crear la cuenta. Inténtalo de nuevo.');
+      setError(getContextualError(error, 'signup'));
     } finally {
       setLoading(false);
     }
@@ -129,8 +126,13 @@ export default function RegisterPage() {
           )}
 
           {success && (
-            <Alert color="success" className="text-sm">
-              {success}
+            <Alert color="success" className="text-sm" icon={FaCheckCircle}>
+              <div>
+                <p className="font-medium">{success}</p>
+                <p className="text-xs mt-1">
+                  No olvides revisar tu carpeta de spam si no encuentras el email.
+                </p>
+              </div>
             </Alert>
           )}
 

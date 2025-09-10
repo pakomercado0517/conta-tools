@@ -5,7 +5,8 @@ import { useAuth } from '../../../components/AuthProvider';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Card, Button, TextInput, Label, Alert } from 'flowbite-react';
-import { FaLock, FaEye, FaEyeSlash, FaCheck } from 'react-icons/fa';
+import { FaLock, FaEye, FaEyeSlash, FaCheck, FaCheckCircle } from 'react-icons/fa';
+import { getContextualError } from '../../../lib/supabase/errorTranslations';
 
 function ResetPasswordContent() {
   const [formData, setFormData] = useState({
@@ -74,9 +75,9 @@ function ResetPasswordContent() {
       const { error: updateError } = await updatePassword(formData.password);
       
       if (updateError) {
-        setError(updateError.message);
+        setError(getContextualError(updateError, 'reset'));
       } else {
-        setSuccess('Contraseña actualizada exitosamente. Serás redirigido al dashboard...');
+        setSuccess('¡Contraseña actualizada exitosamente! Serás redirigido a ContaTools...');
         // Limpiar el formulario
         setFormData({
           password: '',
@@ -90,7 +91,7 @@ function ResetPasswordContent() {
       }
     } catch (error) {
       console.error('Password update error:', error);
-      setError('Error al actualizar la contraseña. Inténtalo de nuevo.');
+      setError(getContextualError(error, 'reset'));
     } finally {
       setLoading(false);
     }
@@ -116,8 +117,13 @@ function ResetPasswordContent() {
           )}
 
           {success && (
-            <Alert color="success" className="text-sm">
-              {success}
+            <Alert color="success" className="text-sm" icon={FaCheckCircle}>
+              <div>
+                <p className="font-medium">{success}</p>
+                <p className="text-xs mt-1">
+                  🔐 Tu cuenta de ContaTools ahora está más segura.
+                </p>
+              </div>
             </Alert>
           )}
 

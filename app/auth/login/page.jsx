@@ -5,7 +5,8 @@ import { useAuth } from '../../../components/AuthProvider';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Card, Button, TextInput, Label, Alert } from 'flowbite-react';
-import { FaEye, FaEyeSlash, FaEnvelope, FaLock, FaSignInAlt } from 'react-icons/fa';
+import { FaEye, FaEyeSlash, FaEnvelope, FaLock, FaSignInAlt, FaExclamationTriangle, FaInfoCircle } from 'react-icons/fa';
+import { getContextualError, isEmailNotConfirmedError } from '../../../lib/supabase/errorTranslations';
 
 function LoginContent() {
   const [email, setEmail] = useState('');
@@ -13,6 +14,7 @@ function LoginContent() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isEmailNotConfirmed, setIsEmailNotConfirmed] = useState(false);
   
   const { signIn, user } = useAuth();
   const router = useRouter();
@@ -41,18 +43,16 @@ function LoginContent() {
       const { data, error: signInError } = await signIn(email, password);
       
       if (signInError) {
-        setError(
-          signInError.message === 'Invalid login credentials'
-            ? 'Credenciales inválidas. Verifica tu email y contraseña.'
-            : signInError.message
-        );
+        const isEmailError = isEmailNotConfirmedError(signInError);
+        setIsEmailNotConfirmed(isEmailError);
+        setError(getContextualError(signInError, 'login'));
       } else if (data.user) {
         // Successful login, redirect will happen via useEffect
         console.log('Login successful');
       }
     } catch (error) {
       console.error('Login error:', error);
-      setError('Error al iniciar sesión. Inténtalo de nuevo.');
+      setError(getContextualError(error, 'login'));
     } finally {
       setLoading(false);
     }
@@ -72,8 +72,25 @@ function LoginContent() {
           </div>
           
           {error && (
-            <Alert color="failure" className="text-sm">
-              {error}
+            <Alert 
+              color={isEmailNotConfirmed ? "warning" : "failure"} 
+              className="text-sm"
+              icon={isEmailNotConfirmed ? FaExclamationTriangle : undefined}
+            >
+              <div className="flex flex-col gap-2">
+                <span>{error}</span>
+                {isEmailNotConfirmed && (
+                  <div className="text-xs">
+                    <FaInfoCircle className="inline mr-1" />
+                    <Link 
+                      href="/auth/resend-confirmation" 
+                      className="text-blue-600 hover:text-blue-800 underline"
+                    >
+                      Reenviar email de confirmación
+                    </Link>
+                  </div>
+                )}
+              </div>
             </Alert>
           )}
 

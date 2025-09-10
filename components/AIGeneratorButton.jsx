@@ -1,5 +1,5 @@
 "use client";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button, Spinner, Modal, Alert } from 'flowbite-react';
 import { BsStars } from 'react-icons/bs';
 import useAIGenerator from '@/hooks/useAIGenerator';
@@ -23,6 +23,22 @@ export default function AIGeneratorButton({
     generateContractConcept,
     clearState
   } = useAIGenerator();
+
+  // Update tempConcept when concept prop changes
+  useEffect(() => {
+    setTempConcept(concept);
+  }, [concept]);
+
+  // Auto-scroll to top when modal opens (especially useful for mobile)
+  useEffect(() => {
+    if (showModal) {
+      // Smooth scroll to top of the page
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+  }, [showModal]);
 
   const handleGenerate = async () => {
     if (!tempConcept.trim()) {

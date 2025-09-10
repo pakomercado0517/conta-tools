@@ -14,9 +14,9 @@ export default function QuotationProductsWithAI({
     // Simular un evento de cambio para actualizar la descripción
     const syntheticEvent = {
       target: {
-        name: 'descripcion',
-        value: generatedContent
-      }
+        name: "descripcion",
+        value: generatedContent,
+      },
     };
     handleProductoChange(syntheticEvent, index);
   };
@@ -30,7 +30,7 @@ export default function QuotationProductsWithAI({
         {datos.productos.map((producto, index) => (
           <div
             key={index}
-            className="my-3 grid grid-cols-1 gap-2 px-3 pb-3 md:grid-cols-2 lg:grid-cols-4 lg:px-0"
+            className="my-3 grid grid-cols-1 gap-2 px-3 pb-3 md:grid-cols-2 lg:px-0"
           >
             <TextInput
               placeholder="Cantidad"
@@ -46,7 +46,7 @@ export default function QuotationProductsWithAI({
               onChange={(e) => handleProductoChange(e, index)}
               className="text-white focus:ring-cyan-500"
             />
-            
+
             {/* Campo de descripción con botón de IA */}
             <div className="flex gap-2">
               <TextInput

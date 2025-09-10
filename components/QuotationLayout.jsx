@@ -2,7 +2,8 @@
 import { useState } from "react";
 import QuotationForm from "@/components/QuotationForm";
 import QuotationRecipients from "@/components/QuotationRecipients";
-import QuotationProducts from "@/components/QuotationProducts";
+// import QuotationProducts from "@/components/QuotationProducts";
+import QuotationProducts from "@/components/QuotationProductsWithAI";
 import QuotationClauses from "@/components/QuotationClauses";
 import QuotationDataBank from "@/components/QuotationDataBank";
 import QuotationPDFButtons from "@/components/QuotationPDFButtons";

@@ -5,7 +5,8 @@ import { useAuth } from '../../../components/AuthProvider';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Card, Button, TextInput, Label, Alert } from 'flowbite-react';
-import { FaEnvelope, FaArrowLeft, FaPaperPlane } from 'react-icons/fa';
+import { FaEnvelope, FaArrowLeft, FaPaperPlane, FaCheckCircle } from 'react-icons/fa';
+import { getContextualError } from '../../../lib/supabase/errorTranslations';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -50,14 +51,14 @@ export default function ForgotPasswordPage() {
       const { error: resetError } = await resetPassword(email);
       
       if (resetError) {
-        setError(resetError.message);
+        setError(getContextualError(resetError, 'recovery'));
       } else {
-        setSuccess('Se ha enviado un enlace de recuperación a tu correo electrónico. Revisa tu bandeja de entrada y spam.');
+        setSuccess('Se ha enviado un enlace de recuperación a tu correo electrónico de ContaTools. Revisa tu bandeja de entrada y spam.');
         setEmail('');
       }
     } catch (error) {
       console.error('Password reset error:', error);
-      setError('Error al enviar el correo. Inténtalo de nuevo.');
+      setError(getContextualError(error, 'recovery'));
     } finally {
       setLoading(false);
     }
@@ -83,8 +84,14 @@ export default function ForgotPasswordPage() {
           )}
 
           {success && (
-            <Alert color="success" className="text-sm">
-              {success}
+            <Alert color="success" className="text-sm" icon={FaCheckCircle}>
+              <div>
+                <p className="font-medium">¡Enlace enviado! 🚀</p>
+                <p className="text-xs mt-1">{success}</p>
+                <p className="text-xs mt-1 text-amber-600">
+                  ⚠️ El enlace expira en 1 hora por seguridad.
+                </p>
+              </div>
             </Alert>
           )}
 

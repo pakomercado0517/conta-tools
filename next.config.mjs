@@ -1,35 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Optimizaciones para producción y App Router
+  // Configuración limpia para uso con Supabase
   experimental: {
     serverComponentsExternalPackages: ['pg', 'bcryptjs'],
   },
   
-  // Configuración para NextAuth en entornos serverless
+  // Webpack config para PostgreSQL
   webpack: (config, { isServer }) => {
     if (isServer) {
       config.externals.push('pg-native');
     }
     return config;
-  },
-  
-  // Headers de seguridad
-  async headers() {
-    return [
-      {
-        source: '/api/auth/(.*)',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'no-cache, no-store, must-revalidate'
-          },
-          {
-            key: 'X-Frame-Options',
-            value: 'DENY'
-          }
-        ],
-      },
-    ];
   },
 };
 

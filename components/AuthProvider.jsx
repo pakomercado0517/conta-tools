@@ -1,11 +1,7 @@
+// AuthProvider eliminado - se usará Supabase en el futuro
 "use client";
 
-import { SessionProvider } from 'next-auth/react';
-
 export default function AuthProvider({ children }) {
-  return (
-    <SessionProvider>
-      {children}
-    </SessionProvider>
-  );
+  // Simple wrapper sin autenticación por ahora
+  return <>{children}</>;
 }

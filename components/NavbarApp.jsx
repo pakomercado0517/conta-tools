@@ -9,17 +9,14 @@ import {
   DropdownDivider,
   Button,
 } from "flowbite-react";
-import { useSession, signOut } from "next-auth/react";
+// NextAuth removido - se implementará Supabase
 import logo from "@/public/logo_white.svg";
 import { IoIosArrowDown } from "react-icons/io";
 import { FaSignInAlt, FaSignOutAlt, FaUser } from "react-icons/fa";
 
 export default function NavbarApp() {
-  const { data: session, status } = useSession();
-
-  const handleSignOut = async () => {
-    await signOut({ callbackUrl: "/" });
-  };
+  // Sesión temporal deshabilitada - se usará Supabase
+  const session = null; // Temporal
 
   return (
     <Navbar
@@ -122,9 +119,9 @@ export default function NavbarApp() {
                   Mi Perfil
                 </Navbar.Link>
               </DropdownItem>
-              <DropdownItem onClick={handleSignOut} className="cursor-pointer">
+              <DropdownItem className="cursor-pointer">
                 <FaSignOutAlt className="mr-2" />
-                Cerrar Sesión
+                Cerrar Sesión (Deshabilitado)
               </DropdownItem>
             </>
           ) : (

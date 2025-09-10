@@ -122,7 +122,7 @@ export default function AIGeneratorButton({
         >
           <div className="flex items-start justify-center min-h-full px-4 pt-4 pb-20">
             <div 
-              className="relative bg-white rounded-lg shadow-xl w-full max-w-lg mt-8"
+              className="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg mt-8"
               onClick={(e) => e.stopPropagation()}
               style={{
                 // Para iOS: asegurar que el modal sea scrolleable si es necesario
@@ -132,17 +132,17 @@ export default function AIGeneratorButton({
               }}
             >
               {/* Header */}
-              <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-600">
                 <div className="flex items-center gap-2">
                   <BsStars className="text-purple-500" />
-                  <h3 className="text-lg font-semibold text-gray-900">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                     Generador de Contenido con IA
                   </h3>
                 </div>
                 <button
                   type="button"
                   onClick={handleCancel}
-                  className="text-gray-500 hover:text-gray-700 p-1"
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 p-1"
                 >
                   <BsX className="text-2xl" />
                 </button>
@@ -152,7 +152,7 @@ export default function AIGeneratorButton({
               <div className="p-4 space-y-4">
                 {/* Input para el concepto */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Concepto base:
                   </label>
                   <input
@@ -160,7 +160,7 @@ export default function AIGeneratorButton({
                     value={tempConcept}
                     onChange={(e) => setTempConcept(e.target.value)}
                     placeholder={placeholder}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-base"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-base bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                     disabled={isLoading}
                     autoComplete="off"
                     autoCorrect="off"
@@ -202,11 +202,11 @@ export default function AIGeneratorButton({
                 {/* Mostrar resultado */}
                 {generatedResult && (
                   <div className="space-y-3">
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Contenido generado:
                     </label>
-                    <div className="p-4 bg-gray-50 rounded-md border max-h-40 overflow-y-auto">
-                      <p className="text-gray-800 leading-relaxed text-sm">
+                    <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-md border border-gray-300 dark:border-gray-600 max-h-40 overflow-y-auto">
+                      <p className="text-gray-800 dark:text-gray-200 leading-relaxed text-sm">
                         {generatedResult}
                       </p>
                     </div>
@@ -215,7 +215,7 @@ export default function AIGeneratorButton({
               </div>
 
               {/* Footer */}
-              <div className="flex flex-col gap-3 p-4 border-t border-gray-200 sm:flex-row sm:justify-end">
+              <div className="flex flex-col gap-3 p-4 border-t border-gray-200 dark:border-gray-600 sm:flex-row sm:justify-end">
                 <Button 
                   color="gray" 
                   onClick={handleCancel}

@@ -4,7 +4,7 @@ import { Button, Spinner, Alert } from 'flowbite-react';
 import { BsStars, BsX } from 'react-icons/bs';
 import useAIGenerator from '@/hooks/useAIGenerator';
 
-export default function AIGeneratorButton({
+export default function AIGeneratorButtonMobile({
   type = 'quotation', // 'quotation' | 'contract' | 'custom'
   concept = '', // El concepto base del usuario
   onGenerated = () => {}, // Callback cuando se genera contenido
@@ -29,11 +29,11 @@ export default function AIGeneratorButton({
     setTempConcept(concept);
   }, [concept]);
 
-  // Prevenir scroll del body cuando el modal está abierto (crucial para móviles)
+  // Prevenir scroll del body cuando el modal está abierto
   useEffect(() => {
     if (showModal) {
       document.body.style.overflow = 'hidden';
-      // Forzar el scroll al top en móviles para mejor UX
+      // Forzar el scroll al top del modal en móviles
       window.scrollTo(0, 0);
     } else {
       document.body.style.overflow = 'unset';

@@ -9,14 +9,24 @@ import {
   DropdownDivider,
   Button,
 } from "flowbite-react";
-// NextAuth removido - se implementará Supabase
+import { useAuth } from './AuthProvider';
 import logo from "@/public/logo_white.svg";
 import { IoIosArrowDown } from "react-icons/io";
 import { FaSignInAlt, FaSignOutAlt, FaUser } from "react-icons/fa";
+import { useRouter } from 'next/navigation';
 
 export default function NavbarApp() {
-  // Sesión temporal deshabilitada - se usará Supabase
-  const session = null; // Temporal
+  const { user, signOut, loading } = useAuth();
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      router.push('/');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
 
   return (
     <Navbar
@@ -104,7 +114,11 @@ export default function NavbarApp() {
           <DropdownDivider />
 
           {/* Autenticación */}
-          {session ? (
+          {loading ? (
+            <DropdownItem>
+              <span className="text-gray-400">Cargando...</span>
+            </DropdownItem>
+          ) : user ? (
             <>
               <DropdownItem>
                 <Navbar.Link href="/dashboard" className="text-white">
@@ -116,12 +130,18 @@ export default function NavbarApp() {
                   href="/profile/edit"
                   className="flex items-center text-white hover:text-gray-300"
                 >
+                  <FaUser className="mr-2" />
                   Mi Perfil
                 </Navbar.Link>
               </DropdownItem>
-              <DropdownItem className="cursor-pointer">
+              <DropdownItem>
+                <span className="text-xs text-gray-300">
+                  {user.email}
+                </span>
+              </DropdownItem>
+              <DropdownItem onClick={handleSignOut} className="cursor-pointer">
                 <FaSignOutAlt className="mr-2" />
-                Cerrar Sesión (Deshabilitado)
+                Cerrar Sesión
               </DropdownItem>
             </>
           ) : (

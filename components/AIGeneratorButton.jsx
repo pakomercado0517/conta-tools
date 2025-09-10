@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
-import { Button, Spinner, Modal, Alert } from 'flowbite-react';
-import { BsStars } from 'react-icons/bs';
+import { Button, Spinner, Alert } from 'flowbite-react';
+import { BsStars, BsX } from 'react-icons/bs';
 import useAIGenerator from '@/hooks/useAIGenerator';
 
 export default function AIGeneratorButton({
@@ -29,15 +29,33 @@ export default function AIGeneratorButton({
     setTempConcept(concept);
   }, [concept]);
 
-  // Auto-scroll to top when modal opens (especially useful for mobile)
+  // Modal management for iOS
   useEffect(() => {
     if (showModal) {
-      // Smooth scroll to top of the page
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
+      // Prevenir scroll del body
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+      document.body.style.height = '100%';
+      
+      // Para iOS: también prevenir touch events en el body
+      document.body.style.touchAction = 'none';
+    } else {
+      // Restaurar scroll
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.height = '';
+      document.body.style.touchAction = '';
     }
+
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.height = '';
+      document.body.style.touchAction = '';
+    };
   }, [showModal]);
 
   const handleGenerate = async () => {
@@ -71,6 +89,13 @@ export default function AIGeneratorButton({
     clearState();
   };
 
+  const handleModalClick = (e) => {
+    // Solo cerrar si se hace click en el backdrop, no en el contenido
+    if (e.target === e.currentTarget) {
+      handleCancel();
+    }
+  };
+
   return (
     <>
       <Button
@@ -84,87 +109,136 @@ export default function AIGeneratorButton({
         IA
       </Button>
 
-      <Modal show={showModal} onClose={handleCancel} size="lg">
-        <Modal.Header>
-          <div className="flex items-center gap-2">
-            <BsStars className="text-purple-500" />
-            Generador de Contenido con IA
-          </div>
-        </Modal.Header>
-        
-        <Modal.Body>
-          <div className="space-y-4">
-            {/* Input para el concepto */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Concepto base:
-              </label>
-              <input
-                type="text"
-                value={tempConcept}
-                onChange={(e) => setTempConcept(e.target.value)}
-                placeholder={placeholder}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                disabled={isLoading}
-              />
-            </div>
-
-            {/* Botón generar */}
-            <Button
-              onClick={handleGenerate}
-              disabled={!tempConcept.trim() || isLoading}
-              color="purple"
-              className="w-full"
+      {/* Modal personalizado para iOS */}
+      {showModal && (
+        <div 
+          className="fixed inset-0 z-[10000] bg-black bg-opacity-50"
+          style={{
+            // Importante para iOS: usar viewport units
+            minHeight: '100vh',
+            minHeight: '-webkit-fill-available'
+          }}
+          onClick={handleModalClick}
+        >
+          <div className="flex items-start justify-center min-h-full px-4 pt-4 pb-20">
+            <div 
+              className="relative bg-white rounded-lg shadow-xl w-full max-w-lg mt-8"
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                // Para iOS: asegurar que el modal sea scrolleable si es necesario
+                maxHeight: 'calc(100vh - 64px)',
+                overflowY: 'auto',
+                WebkitOverflowScrolling: 'touch'
+              }}
             >
-              {isLoading ? (
+              {/* Header */}
+              <div className="flex items-center justify-between p-4 border-b border-gray-200">
                 <div className="flex items-center gap-2">
-                  <Spinner size="sm" />
-                  Generando...
+                  <BsStars className="text-purple-500" />
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Generador de Contenido con IA
+                  </h3>
                 </div>
-              ) : (
-                <div className="flex items-center gap-2">
-                  <BsStars />
-                  Generar con IA
-                </div>
-              )}
-            </Button>
-
-            {/* Mostrar errores */}
-            {error && (
-              <Alert color="failure">
-                <span className="font-medium">Error:</span> {error}
-              </Alert>
-            )}
-
-            {/* Mostrar resultado */}
-            {generatedResult && (
-              <div className="space-y-3">
-                <label className="block text-sm font-medium text-gray-700">
-                  Contenido generado:
-                </label>
-                <div className="p-4 bg-gray-50 rounded-md border">
-                  <p className="text-gray-800 leading-relaxed">
-                    {generatedResult}
-                  </p>
-                </div>
+                <button
+                  type="button"
+                  onClick={handleCancel}
+                  className="text-gray-500 hover:text-gray-700 p-1"
+                >
+                  <BsX className="text-2xl" />
+                </button>
               </div>
-            )}
-          </div>
-        </Modal.Body>
 
-        <Modal.Footer>
-          <div className="flex justify-end gap-2 w-full">
-            <Button color="gray" onClick={handleCancel}>
-              Cancelar
-            </Button>
-            {generatedResult && (
-              <Button onClick={handleApply} color="purple">
-                Aplicar Contenido
-              </Button>
-            )}
+              {/* Body */}
+              <div className="p-4 space-y-4">
+                {/* Input para el concepto */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Concepto base:
+                  </label>
+                  <input
+                    type="text"
+                    value={tempConcept}
+                    onChange={(e) => setTempConcept(e.target.value)}
+                    placeholder={placeholder}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-base"
+                    disabled={isLoading}
+                    autoComplete="off"
+                    autoCorrect="off"
+                    autoCapitalize="off"
+                    spellCheck="false"
+                    // iOS specific: prevent zoom on focus
+                    style={{ fontSize: '16px' }}
+                  />
+                </div>
+
+                {/* Botón generar */}
+                <Button
+                  onClick={handleGenerate}
+                  disabled={!tempConcept.trim() || isLoading}
+                  color="purple"
+                  className="w-full"
+                  size="lg"
+                >
+                  {isLoading ? (
+                    <div className="flex items-center gap-2">
+                      <Spinner size="sm" />
+                      Generando...
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <BsStars />
+                      Generar con IA
+                    </div>
+                  )}
+                </Button>
+
+                {/* Mostrar errores */}
+                {error && (
+                  <Alert color="failure">
+                    <span className="font-medium">Error:</span> {error}
+                  </Alert>
+                )}
+
+                {/* Mostrar resultado */}
+                {generatedResult && (
+                  <div className="space-y-3">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Contenido generado:
+                    </label>
+                    <div className="p-4 bg-gray-50 rounded-md border max-h-40 overflow-y-auto">
+                      <p className="text-gray-800 leading-relaxed text-sm">
+                        {generatedResult}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Footer */}
+              <div className="flex flex-col gap-3 p-4 border-t border-gray-200 sm:flex-row sm:justify-end">
+                <Button 
+                  color="gray" 
+                  onClick={handleCancel}
+                  className="w-full sm:w-auto"
+                  size="lg"
+                >
+                  Cancelar
+                </Button>
+                {generatedResult && (
+                  <Button 
+                    onClick={handleApply} 
+                    color="purple"
+                    className="w-full sm:w-auto"
+                    size="lg"
+                  >
+                    Aplicar Contenido
+                  </Button>
+                )}
+              </div>
+            </div>
           </div>
-        </Modal.Footer>
-      </Modal>
+        </div>
+      )}
     </>
   );
 }

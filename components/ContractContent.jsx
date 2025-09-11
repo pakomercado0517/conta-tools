@@ -236,11 +236,12 @@ export function generateContractContent(contractData) {
   const clienteNombre = (
     contractData.cliente || "[NOMBRE DEL COMPRADOR]"
   ).toUpperCase();
+  // Formato: "NOMBRE, COMO REPRESENTANTE DEL ACTO [REPRESENTANTE]"
   const representanteVendedor = contractData.representantePrestador
-    ? `, REPRESENTADA EN ESTE ACTO POR ${contractData.representantePrestador.toUpperCase()}`
+    ? `, COMO REPRESENTANTE DEL ACTO ${contractData.representantePrestador.toUpperCase()}`
     : "";
   const representanteCliente = contractData.representanteCliente
-    ? `, REPRESENTADA POR ${contractData.representanteCliente.toUpperCase()}`
+    ? `, COMO REPRESENTANTE DEL ACTO ${contractData.representanteCliente.toUpperCase()}`
     : "";
 
   // Régimen fiscal
@@ -295,7 +296,10 @@ export function generateContractContent(contractData) {
   }
 
   return {
-    // Datos básicos
+    // Datos originales para uso directo (primero)
+    ...contractData,
+    
+    // Datos procesados (estos sobrescriben los originales)
     prestadorNombre,
     clienteNombre,
     representanteVendedor,
@@ -317,9 +321,6 @@ export function generateContractContent(contractData) {
     montoTotalText,
     montoTextoCompleto,
     montoTotalRaw,
-
-    // Datos originales para uso directo
-    ...contractData,
   };
 }
 

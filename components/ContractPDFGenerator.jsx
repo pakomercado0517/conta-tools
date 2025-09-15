@@ -156,7 +156,7 @@ export function generateContractPDF(contractData, invoicesData) {
 
   // Título
   addText(
-    "CONTRATO DE COMPRAVENTA DE MATERIALES Y/O SERVICIOS",
+    content.terminoTitulo,
     16,
     true,
     "center",
@@ -164,7 +164,7 @@ export function generateContractPDF(contractData, invoicesData) {
   addSpace(10);
 
   // Introducción
-  const introText = `QUE CELEBRAN POR UNA PARTE **${content.prestadorNombre}**${content.representanteVendedor}, A QUIEN EN LO SUCESIVO SE LE DENOMINARÁ COMO **"EL VENDEDOR"**, POR LA OTRA PARTE **${content.clienteNombre}**${content.representanteCliente}, A QUIEN EN LO SUCESIVO SE LE DENOMINARÁ COMO **"EL COMPRADOR"**, Y A QUIENES DE MANERA CONJUNTA SE LES DENOMINARÁN COMO **"LAS PARTES"** AL TENOR DE LAS SIGUIENTES DECLARACIONES Y CLÁUSULAS:`;
+  const introText = `QUE CELEBRAN POR UNA PARTE **${content.prestadorNombre}**${content.representanteVendedor}, A QUIEN EN LO SUCESIVO SE LE DENOMINARÁ COMO **"${content.terminoVendedor}"**, POR LA OTRA PARTE **${content.clienteNombre}**${content.representanteCliente}, A QUIEN EN LO SUCESIVO SE LE DENOMINARÁ COMO **"EL COMPRADOR"**, Y A QUIENES DE MANERA CONJUNTA SE LES DENOMINARÁN COMO **"LAS PARTES"** AL TENOR DE LAS SIGUIENTES DECLARACIONES Y CLÁUSULAS:`;
   addText(introText, 10, false, "justify");
   addSpace();
 
@@ -174,7 +174,7 @@ export function generateContractPDF(contractData, invoicesData) {
 
   // Declaración del VENDEDOR
   addText(
-    "I. Declara **EL VENDEDOR**, por conducto de sus representantes legales que:",
+    `I. Declara **${content.terminoVendedor}**, por conducto de sus representantes legales que:`,
     10,
     false,
     "justify",
@@ -200,7 +200,7 @@ export function generateContractPDF(contractData, invoicesData) {
   }
 
   addText(
-    `**${content.representantePrestador ? "C" : "B"}.** Tiene su domicilio en **${content.domicilioPrestador || "[DOMICILIO COMPLETO DEL VENDEDOR]"}**.`,
+    `**${content.representantePrestador ? "C" : "B"}.** Tiene su domicilio en **${content.domicilioPrestador || `[DOMICILIO COMPLETO DEL ${content.terminoVendedorMin.toUpperCase()}]`}**.`,
     10,
     false,
     "justify",
@@ -208,7 +208,7 @@ export function generateContractPDF(contractData, invoicesData) {
   addSpace(3);
 
   addText(
-    `**${content.representantePrestador ? "D" : "C"}.** Es su deseo vender y transferir, sin reserva y limitación alguna y libre de cualquier gravamen u otra limitación de dominio al **COMPRADOR** los materiales/servicios que se describen en la cláusula primera del presente Contrato.`,
+    `**${content.representantePrestador ? "D" : "C"}.** Es su deseo ${content.terminoObjetivo}, sin reserva y limitación alguna y libre de cualquier gravamen u otra limitación de dominio al **COMPRADOR** los materiales/servicios que se describen en la cláusula primera del presente Contrato.`,
     10,
     false,
     "justify",
@@ -281,7 +281,7 @@ export function generateContractPDF(contractData, invoicesData) {
   // PRIMERA - Objeto
   addText("**PRIMERA. OBJETO:**", 11, true);
   addText(
-    `**EL VENDEDOR** se obliga a transmitir la propiedad sin reserva de dominio, libre de gravamen y limitación alguna de los materiales/servicios consistentes en: **${content.servicios || "[DESCRIPCIÓN DETALLADA DE MATERIALES/SERVICIOS]"}** al **COMPRADOR**, quien sabe y conoce plenamente las condiciones en que se encuentran los materiales/servicios, y quien deberá pagar la contraprestación prevista en la cláusula Segunda.`,
+    `**${content.terminoVendedor}** se obliga a ${content.esServicio ? "prestar los servicios" : "transmitir la propiedad sin reserva de dominio, libre de gravamen y limitación alguna"} de los ${content.esServicio ? "servicios" : "materiales/servicios"} consistentes en: **${content.servicios || "[DESCRIPCIÓN DETALLADA DE MATERIALES/SERVICIOS]"}** al **COMPRADOR**, quien sabe y conoce plenamente las condiciones en que se encuentran los ${content.esServicio ? "servicios" : "materiales/servicios"}, y quien deberá pagar la contraprestación prevista en la cláusula Segunda.`,
     10,
     false,
     "justify",
@@ -343,7 +343,7 @@ export function generateContractPDF(contractData, invoicesData) {
 
   // Compromiso de facturación (siempre se incluye)
   addText(
-    `**RECIBOS Y FACTURACION. EL VENDEDOR**  se compromete a emitir los  **recibos o facturas fiscales**  correspondientes por cada pago recibido, conforme a lo estipulado por las leyes fiscales vigentes.`,
+    `**RECIBOS Y FACTURACION. ${content.terminoVendedor}**  se compromete a emitir los  **recibos o facturas fiscales**  correspondientes por cada pago recibido, conforme a lo estipulado por las leyes fiscales vigentes.`,
     10,
     false,
     "justify",
@@ -369,7 +369,7 @@ export function generateContractPDF(contractData, invoicesData) {
     fechaTerminoStr = fechaEnLetras(f);
   }
 
-  const vigenciaText = `El presente Contrato tendrá vigencia necesaria y suficiente para soportar la presente compraventa, misma que deberá realizarse en el periodo que va del **${fechaInicioStr}** al **${fechaTerminoStr}**.`;
+  const vigenciaText = `El presente Contrato tendrá vigencia necesaria y suficiente para soportar la presente ${content.esServicio ? "prestación de servicios" : "compraventa"}, misma que deberá realizarse en el periodo que va del **${fechaInicioStr}** al **${fechaTerminoStr}**.`;
   addText(vigenciaText, 10, false, "justify");
   addSpace();
 
@@ -477,10 +477,10 @@ export function generateContractPDF(contractData, invoicesData) {
     yPosition = margin + 20;
   }
 
-  // EL VENDEDOR (abajo, centrado)
+  // VENDEDOR/PRESTADOR (abajo, centrado)
   doc.setFont("helvetica", "bold");
   doc.setFontSize(11);
-  doc.text("EL VENDEDOR", centerX, yPosition, { align: "center" });
+  doc.text(content.terminoVendedor, centerX, yPosition, { align: "center" });
 
   yPosition += 8;
 

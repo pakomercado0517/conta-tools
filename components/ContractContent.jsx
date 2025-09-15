@@ -243,7 +243,7 @@ export function generateContractContent(contractData) {
     contractData.prestador || `[NOMBRE DEL ${terminoVendedorMin.toUpperCase()}]`
   ).toUpperCase();
   const clienteNombre = (
-    contractData.cliente || "[NOMBRE DEL COMPRADOR]"
+    contractData.cliente || "[NOMBRE DEL CLIENTE]"
   ).toUpperCase();
   // Formato: "NOMBRE, COMO REPRESENTANTE DEL ACTO [REPRESENTANTE]"
   const representanteVendedor = contractData.representantePrestador
@@ -363,7 +363,7 @@ export default function ContractContent({ contractData, invoicesData }) {
           DENOMINARÁ COMO <strong>&quot;{content.terminoVendedor}&quot;</strong>, POR LA OTRA
           PARTE <strong>{content.clienteNombre}</strong>
           {content.representanteCliente}, A QUIEN EN LO SUCESIVO SE LE
-          DENOMINARÁ COMO <strong>&quot;EL COMPRADOR&quot;</strong>, Y A QUIENES
+          DENOMINARÁ COMO <strong>&quot;EL CLIENTE&quot;</strong>, Y A QUIENES
           DE MANERA CONJUNTA SE LES DENOMINARÁN COMO{" "}
           <strong>&quot;LAS PARTES&quot;</strong> AL TENOR DE LAS SIGUIENTES
           DECLARACIONES Y CLÁUSULAS:
@@ -409,7 +409,7 @@ export default function ContractContent({ contractData, invoicesData }) {
                   <strong>{content.representantePrestador ? "D" : "C"}.</strong>{" "}
                   Es su deseo {content.terminoObjetivo}, sin reserva y limitación
                   alguna y libre de cualquier gravamen u otra limitación de
-                  dominio al <strong>COMPRADOR</strong> los materiales/servicios
+                  dominio al <strong>CLIENTE</strong> los materiales/servicios
                   que se describen en la cláusula primera del presente Contrato.
                 </p>
               </div>
@@ -417,7 +417,7 @@ export default function ContractContent({ contractData, invoicesData }) {
 
             <div>
               <p className="font-semibold">
-                II. DECLARA <strong>EL COMPRADOR</strong>, POR CONDUCTO DE SU
+                II. DECLARA <strong>EL CLIENTE</strong>, POR CONDUCTO DE SU
                 REPRESENTANTE LEGAL:
               </p>
               <div className="ml-4 mt-2 space-y-2">
@@ -440,7 +440,7 @@ export default function ContractContent({ contractData, invoicesData }) {
                   Tiene su domicilio en{" "}
                   <strong>
                     {content.domicilioCliente ||
-                      "[DOMICILIO COMPLETO DEL COMPRADOR]"}
+                      "[DOMICILIO COMPLETO DEL CLIENTE]"}
                   </strong>
                   .
                 </p>
@@ -486,7 +486,7 @@ export default function ContractContent({ contractData, invoicesData }) {
                   {content.servicios ||
                     "[DESCRIPCIÓN DETALLADA DE MATERIALES/SERVICIOS]"}
                 </strong>{" "}
-                al <strong>COMPRADOR</strong>, quien sabe y conoce plenamente
+                al <strong>CLIENTE</strong>, quien sabe y conoce plenamente
                 las condiciones en que se encuentran los {content.esServicio ? "servicios" : "materiales/servicios"}, y
                 quien deberá pagar la contraprestación prevista en la cláusula
                 Segunda.
@@ -521,7 +521,7 @@ export default function ContractContent({ contractData, invoicesData }) {
                   <div>
                     <p>
                       Las Partes acuerdan que previo al retiro de los
-                      materiales/servicios, <strong>EL COMPRADOR</strong> deberá
+                      materiales/servicios, <strong>EL CLIENTE</strong> deberá
                       depositar el pago a la siguiente cuenta:
                     </p>
                     <ul className="ml-4 mt-2 space-y-1">
@@ -612,9 +612,9 @@ export default function ContractContent({ contractData, invoicesData }) {
           </p>
 
           <div className="mt-12 space-y-8">
-            {/* EL COMPRADOR */}
+            {/* EL CLIENTE */}
             <div className="text-center">
-              <p className="mb-2 text-lg font-semibold">EL COMPRADOR</p>
+              <p className="mb-2 text-lg font-semibold">EL CLIENTE</p>
 
               {content.imagenFirmaComprador && (
                 <div className="mb-2">

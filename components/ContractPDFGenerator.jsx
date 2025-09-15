@@ -164,7 +164,7 @@ export function generateContractPDF(contractData, invoicesData) {
   addSpace(10);
 
   // Introducción
-  const introText = `QUE CELEBRAN POR UNA PARTE **${content.prestadorNombre}**${content.representanteVendedor}, A QUIEN EN LO SUCESIVO SE LE DENOMINARÁ COMO **"${content.terminoVendedor}"**, POR LA OTRA PARTE **${content.clienteNombre}**${content.representanteCliente}, A QUIEN EN LO SUCESIVO SE LE DENOMINARÁ COMO **"EL COMPRADOR"**, Y A QUIENES DE MANERA CONJUNTA SE LES DENOMINARÁN COMO **"LAS PARTES"** AL TENOR DE LAS SIGUIENTES DECLARACIONES Y CLÁUSULAS:`;
+  const introText = `QUE CELEBRAN POR UNA PARTE **${content.prestadorNombre}**${content.representanteVendedor}, A QUIEN EN LO SUCESIVO SE LE DENOMINARÁ COMO **"${content.terminoVendedor}"**, POR LA OTRA PARTE **${content.clienteNombre}**${content.representanteCliente}, A QUIEN EN LO SUCESIVO SE LE DENOMINARÁ COMO **"EL CLIENTE"**, Y A QUIENES DE MANERA CONJUNTA SE LES DENOMINARÁN COMO **"LAS PARTES"** AL TENOR DE LAS SIGUIENTES DECLARACIONES Y CLÁUSULAS:`;
   addText(introText, 10, false, "justify");
   addSpace();
 
@@ -208,16 +208,16 @@ export function generateContractPDF(contractData, invoicesData) {
   addSpace(3);
 
   addText(
-    `**${content.representantePrestador ? "D" : "C"}.** Es su deseo ${content.terminoObjetivo}, sin reserva y limitación alguna y libre de cualquier gravamen u otra limitación de dominio al **COMPRADOR** los materiales/servicios que se describen en la cláusula primera del presente Contrato.`,
+    `**${content.representantePrestador ? "D" : "C"}.** Es su deseo ${content.terminoObjetivo}, sin reserva y limitación alguna y libre de cualquier gravamen u otra limitación de dominio al **CLIENTE** los materiales/servicios que se describen en la cláusula primera del presente Contrato.`,
     10,
     false,
     "justify",
   );
   addSpace();
 
-  // Declaración del COMPRADOR
+  // Declaración del CLIENTE
   addText(
-    "II. DECLARA **EL COMPRADOR**, POR CONDUCTO DE SU REPRESENTANTE LEGAL:",
+    "II. DECLARA **EL CLIENTE**, POR CONDUCTO DE SU REPRESENTANTE LEGAL:",
     10,
     false,
     "justify",
@@ -243,7 +243,7 @@ export function generateContractPDF(contractData, invoicesData) {
   }
 
   addText(
-    `**${content.representanteCliente ? "C" : "B"}.** Tiene su domicilio en **${content.domicilioCliente || "[DOMICILIO COMPLETO DEL COMPRADOR]"}**.`,
+    `**${content.representanteCliente ? "C" : "B"}.** Tiene su domicilio en **${content.domicilioCliente || "[DOMICILIO COMPLETO DEL CLIENTE]"}**.`,
     10,
     false,
     "justify",
@@ -281,7 +281,7 @@ export function generateContractPDF(contractData, invoicesData) {
   // PRIMERA - Objeto
   addText("**PRIMERA. OBJETO:**", 11, true);
   addText(
-    `**${content.terminoVendedor}** se obliga a ${content.esServicio ? "prestar los servicios" : "transmitir la propiedad sin reserva de dominio, libre de gravamen y limitación alguna"} de los ${content.esServicio ? "servicios" : "materiales/servicios"} consistentes en: **${content.servicios || "[DESCRIPCIÓN DETALLADA DE MATERIALES/SERVICIOS]"}** al **COMPRADOR**, quien sabe y conoce plenamente las condiciones en que se encuentran los ${content.esServicio ? "servicios" : "materiales/servicios"}, y quien deberá pagar la contraprestación prevista en la cláusula Segunda.`,
+    `**${content.terminoVendedor}** se obliga a ${content.esServicio ? "prestar los servicios" : "transmitir la propiedad sin reserva de dominio, libre de gravamen y limitación alguna"} de los ${content.esServicio ? "servicios" : "materiales/servicios"} consistentes en: **${content.servicios || "[DESCRIPCIÓN DETALLADA DE MATERIALES/SERVICIOS]"}** al **CLIENTE**, quien sabe y conoce plenamente las condiciones en que se encuentran los ${content.esServicio ? "servicios" : "materiales/servicios"}, y quien deberá pagar la contraprestación prevista en la cláusula Segunda.`,
     10,
     false,
     "justify",
@@ -312,7 +312,7 @@ export function generateContractPDF(contractData, invoicesData) {
     content.clabeInterbancaria
   ) {
     addText(
-      `Las Partes acuerdan que previo al retiro de los materiales/servicios, **EL COMPRADOR** deberá depositar el pago a la siguiente cuenta:`,
+      `Las Partes acuerdan que previo al retiro de los materiales/servicios, **EL CLIENTE** deberá depositar el pago a la siguiente cuenta:`,
       10,
       false,
       "justify",
@@ -399,8 +399,8 @@ export function generateContractPDF(contractData, invoicesData) {
   const nombreVendedor = (
     contractData.prestador || "[NOMBRE DEL VENDEDOR]"
   ).toUpperCase();
-  const nombreComprador = (
-    contractData.cliente || "[NOMBRE DEL COMPRADOR]"
+  const nombreCliente = (
+    contractData.cliente || "[NOMBRE DEL CLIENTE]"
   ).toUpperCase();
 
   // Verificar si hay espacio suficiente para las firmas (aproximadamente 120px)
@@ -412,14 +412,14 @@ export function generateContractPDF(contractData, invoicesData) {
   // Sección de firmas siguiendo el formato de la imagen
   const centerX = pageWidth / 2;
 
-  // EL COMPRADOR (arriba, centrado)
+  // EL CLIENTE (arriba, centrado)
   doc.setFont("helvetica", "bold");
   doc.setFontSize(11);
-  doc.text("EL COMPRADOR", centerX, yPosition, { align: "center" });
+  doc.text("EL CLIENTE", centerX, yPosition, { align: "center" });
 
   yPosition += 8;
 
-  // Imagen de firma del comprador si existe
+  // Imagen de firma del cliente si existe
   if (contractData.imagenFirmaComprador) {
     try {
       doc.addImage(
@@ -432,14 +432,14 @@ export function generateContractPDF(contractData, invoicesData) {
       );
       yPosition += 18;
     } catch (error) {
-      console.log("Error adding comprador signature image:", error);
+      console.log("Error adding cliente signature image:", error);
       yPosition += 12;
     }
   } else {
     yPosition += 12;
   }
 
-  // Línea de firma del comprador
+  // Línea de firma del cliente
   const lineLength = 40;
   const startX = centerX - lineLength / 2;
   const endX = centerX + lineLength / 2;
@@ -447,12 +447,12 @@ export function generateContractPDF(contractData, invoicesData) {
 
   yPosition += 6;
 
-  // Nombre del comprador
+  // Nombre del cliente
   doc.setFont("helvetica", "bold");
   doc.setFontSize(9);
-  doc.text(nombreComprador, centerX, yPosition, { align: "center" });
+  doc.text(nombreCliente, centerX, yPosition, { align: "center" });
 
-  // Representante del comprador si existe
+  // Representante del cliente si existe
   if (contractData.representanteCliente) {
     yPosition += 5;
     doc.setFont("helvetica", "normal");

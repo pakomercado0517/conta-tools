@@ -171,13 +171,13 @@ export default function ContractGeneratorFormWithAI() {
             </div>
 
             <div>
-              <Label htmlFor="cliente" value="Nombre del Comprador *" />
+              <Label htmlFor="cliente" value="Nombre del Cliente *" />
               <TextInput
                 id="cliente"
                 name="cliente"
                 value={contractData.cliente}
                 onChange={handleInputChange}
-                placeholder="Nombre completo del comprador"
+                placeholder="Nombre completo del cliente"
                 required
               />
             </div>
@@ -194,13 +194,13 @@ export default function ContractGeneratorFormWithAI() {
             </div>
 
             <div>
-              <Label htmlFor="representanteCliente" value="Representante del Comprador (opcional)" />
+              <Label htmlFor="representanteCliente" value="Representante del Cliente (opcional)" />
               <TextInput
                 id="representanteCliente"
                 name="representanteCliente"
                 value={contractData.representanteCliente}
                 onChange={handleInputChange}
-                placeholder="Nombre del representante legal del comprador"
+                placeholder="Nombre del representante legal del cliente"
               />
             </div>
 
@@ -216,13 +216,13 @@ export default function ContractGeneratorFormWithAI() {
             </div>
 
             <div>
-              <Label htmlFor="domicilioCliente" value="Domicilio del Comprador" />
+              <Label htmlFor="domicilioCliente" value="Domicilio del Cliente" />
               <TextInput
                 id="domicilioCliente"
                 name="domicilioCliente"
                 value={contractData.domicilioCliente}
                 onChange={handleInputChange}
-                placeholder="Domicilio completo del comprador"
+                placeholder="Domicilio completo del cliente"
               />
             </div>
 
@@ -270,9 +270,9 @@ export default function ContractGeneratorFormWithAI() {
               )}
             </div>
 
-            {/* Régimen Fiscal del Comprador */}
+            {/* Régimen Fiscal del Cliente */}
             <div className="space-y-2">
-              <Label value="Régimen Fiscal del Comprador" />
+              <Label value="Régimen Fiscal del Cliente" />
               <select
                 name="regimenComprador"
                 value={contractData.regimenComprador}
@@ -292,7 +292,7 @@ export default function ContractGeneratorFormWithAI() {
                   name="regimenCompradorCustom"
                   value={contractData.regimenCompradorCustom}
                   onChange={handleInputChange}
-                  placeholder="Especifica el régimen fiscal del comprador"
+                  placeholder="Especifica el régimen fiscal del cliente"
                 />
               )}
             </div>
@@ -520,13 +520,13 @@ export default function ContractGeneratorFormWithAI() {
             </div>
 
             <div>
-              <Label htmlFor="firmaComprador" value="Texto de Firma del Comprador (opcional)" />
+              <Label htmlFor="firmaComprador" value="Texto de Firma del Cliente (opcional)" />
               <TextInput
                 id="firmaComprador"
                 name="firmaComprador"
                 value={contractData.firmaComprador}
                 onChange={handleInputChange}
-                placeholder="Texto personalizado para la firma del comprador"
+                placeholder="Texto personalizado para la firma del cliente"
               />
             </div>
           </div>
@@ -576,7 +576,7 @@ export default function ContractGeneratorFormWithAI() {
             </div>
             
             <div className="space-y-3">
-              <Label value="Imagen de Firma del Comprador (opcional)" />
+              <Label value="Imagen de Firma del Cliente (opcional)" />
               <div className="flex items-center justify-center w-full">
                 <label htmlFor="imagenFirmaComprador" className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500">
                   {contractData.imagenFirmaComprador ? (

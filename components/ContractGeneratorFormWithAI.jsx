@@ -23,6 +23,9 @@ export default function ContractGeneratorFormWithAI() {
     regimenComprador: "Persona Física", 
     regimenCompradorCustom: "",
     
+    // Tipo de contrato
+    tipoProducto: "venta", // "venta" o "servicio"
+    
     // Objeto del contrato
     servicios: "",
     
@@ -168,13 +171,13 @@ export default function ContractGeneratorFormWithAI() {
             </div>
 
             <div>
-              <Label htmlFor="cliente" value="Nombre del Comprador *" />
+              <Label htmlFor="cliente" value="Nombre del Cliente *" />
               <TextInput
                 id="cliente"
                 name="cliente"
                 value={contractData.cliente}
                 onChange={handleInputChange}
-                placeholder="Nombre completo del comprador"
+                placeholder="Nombre completo del cliente"
                 required
               />
             </div>
@@ -191,13 +194,13 @@ export default function ContractGeneratorFormWithAI() {
             </div>
 
             <div>
-              <Label htmlFor="representanteCliente" value="Representante del Comprador (opcional)" />
+              <Label htmlFor="representanteCliente" value="Representante del Cliente (opcional)" />
               <TextInput
                 id="representanteCliente"
                 name="representanteCliente"
                 value={contractData.representanteCliente}
                 onChange={handleInputChange}
-                placeholder="Nombre del representante legal del comprador"
+                placeholder="Nombre del representante legal del cliente"
               />
             </div>
 
@@ -213,14 +216,31 @@ export default function ContractGeneratorFormWithAI() {
             </div>
 
             <div>
-              <Label htmlFor="domicilioCliente" value="Domicilio del Comprador" />
+              <Label htmlFor="domicilioCliente" value="Domicilio del Cliente" />
               <TextInput
                 id="domicilioCliente"
                 name="domicilioCliente"
                 value={contractData.domicilioCliente}
                 onChange={handleInputChange}
-                placeholder="Domicilio completo del comprador"
+                placeholder="Domicilio completo del cliente"
               />
+            </div>
+
+            {/* Tipo de Producto/Servicio */}
+            <div className="space-y-2 md:col-span-2">
+              <Label value="Tipo de Contrato *" />
+              <select
+                name="tipoProducto"
+                value={contractData.tipoProducto}
+                onChange={handleInputChange}
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              >
+                <option value="venta">Venta de Productos</option>
+                <option value="servicio">Prestación de Servicios</option>
+              </select>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Selecciona si el contrato es para venta de productos o prestación de servicios
+              </p>
             </div>
 
             {/* Régimen Fiscal del Vendedor */}
@@ -250,9 +270,9 @@ export default function ContractGeneratorFormWithAI() {
               )}
             </div>
 
-            {/* Régimen Fiscal del Comprador */}
+            {/* Régimen Fiscal del Cliente */}
             <div className="space-y-2">
-              <Label value="Régimen Fiscal del Comprador" />
+              <Label value="Régimen Fiscal del Cliente" />
               <select
                 name="regimenComprador"
                 value={contractData.regimenComprador}
@@ -272,7 +292,7 @@ export default function ContractGeneratorFormWithAI() {
                   name="regimenCompradorCustom"
                   value={contractData.regimenCompradorCustom}
                   onChange={handleInputChange}
-                  placeholder="Especifica el régimen fiscal del comprador"
+                  placeholder="Especifica el régimen fiscal del cliente"
                 />
               )}
             </div>
@@ -500,13 +520,13 @@ export default function ContractGeneratorFormWithAI() {
             </div>
 
             <div>
-              <Label htmlFor="firmaComprador" value="Texto de Firma del Comprador (opcional)" />
+              <Label htmlFor="firmaComprador" value="Texto de Firma del Cliente (opcional)" />
               <TextInput
                 id="firmaComprador"
                 name="firmaComprador"
                 value={contractData.firmaComprador}
                 onChange={handleInputChange}
-                placeholder="Texto personalizado para la firma del comprador"
+                placeholder="Texto personalizado para la firma del cliente"
               />
             </div>
           </div>
@@ -556,7 +576,7 @@ export default function ContractGeneratorFormWithAI() {
             </div>
             
             <div className="space-y-3">
-              <Label value="Imagen de Firma del Comprador (opcional)" />
+              <Label value="Imagen de Firma del Cliente (opcional)" />
               <div className="flex items-center justify-center w-full">
                 <label htmlFor="imagenFirmaComprador" className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500">
                   {contractData.imagenFirmaComprador ? (
@@ -598,15 +618,25 @@ export default function ContractGeneratorFormWithAI() {
             </div>
           </div>
 
-          {/* Descripción de servicios con integración de IA */}
+          {/* Descripción de productos/servicios con integración de IA */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <Label htmlFor="servicios" value="Descripción de los Servicios *" />
+              <Label 
+                htmlFor="servicios" 
+                value={contractData.tipoProducto === "venta" 
+                  ? "Descripción de los Productos *" 
+                  : "Descripción de los Servicios *"
+                } 
+              />
               <AIGeneratorButton
-                type="contract"
+                type="contract-object"
                 concept={contractData.servicios}
+                tipoProducto={contractData.tipoProducto}
                 onGenerated={handleAIGenerated}
-                placeholder="Ej: prestación de servicios de consultoría, venta de equipos..."
+                placeholder={contractData.tipoProducto === "venta" 
+                  ? "Ej: venta de equipos electrónicos, materiales de construcción..."
+                  : "Ej: prestación de servicios de consultoría, mantenimiento..."
+                }
                 className="ml-2"
               />
             </div>
@@ -616,11 +646,14 @@ export default function ContractGeneratorFormWithAI() {
               value={contractData.servicios}
               onChange={handleInputChange}
               rows={4}
-              placeholder="Describe de manera clara y detallada los servicios que se prestarán..."
+              placeholder={contractData.tipoProducto === "venta" 
+                ? "Describe de manera clara y detallada los productos que se venderán..."
+                : "Describe de manera clara y detallada los servicios que se prestarán..."
+              }
               required
             />
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              💡 Tip: Usa el botón de IA para generar una descripción legal profesional basada en tu concepto inicial.
+              💡 Tip: Usa el botón de IA para generar una descripción legal profesional para el objeto del contrato.
             </p>
           </div>
         </div>

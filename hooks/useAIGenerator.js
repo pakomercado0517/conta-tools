@@ -70,6 +70,20 @@ export default function useAIGenerator() {
     [generateContent],
   );
 
+  // Función específica para objeto del contrato
+  const generateContractObject = useCallback(
+    async (concept, tipoProducto = "venta") => {
+      const tipoTexto = tipoProducto === "venta" ? "venta de productos" : "prestación de servicios";
+      const prompt = `Redacta un objeto de contrato legal para ${tipoTexto} de: ${concept}. 
+    Debe ser una descripción clara y precisa que se usará en la cláusula PRIMERA del contrato. 
+    Incluye especificaciones técnicas y características relevantes. 
+    Máximo 150 palabras, lenguaje formal y jurídico apropiado para contratos.`;
+
+      return await generateContent(prompt);
+    },
+    [generateContent],
+  );
+
   // Función para limpiar estados
   const clearState = useCallback(() => {
     setError(null);
@@ -102,6 +116,7 @@ export default function useAIGenerator() {
     // Funciones específicas
     generateQuotationConcept,
     generateContractConcept,
+    generateContractObject,
 
     // Estado de disponibilidad
     isAvailable: !isLoading,

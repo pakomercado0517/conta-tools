@@ -229,9 +229,18 @@ export function numeroALetras(monto) {
 // ===== COMPONENTE DE CONTENIDO DEL CONTRATO =====
 
 export function generateContractContent(contractData) {
+  // Determinar tipo de contrato y términos apropiados
+  const esServicio = contractData.tipoProducto === "servicio";
+  const terminoVendedor = esServicio ? "EL PRESTADOR DE SERVICIOS" : "EL VENDEDOR";
+  const terminoVendedorMin = esServicio ? "prestador de servicios" : "vendedor";
+  const terminoObjetivo = esServicio ? "prestar" : "vender y transferir";
+  const terminoTitulo = esServicio ? 
+    "CONTRATO DE PRESTACIÓN DE SERVICIOS" : 
+    "CONTRATO DE COMPRAVENTA DE MATERIALES Y/O SERVICIOS";
+  
   // Nombres para usar en el contrato
   const prestadorNombre = (
-    contractData.prestador || "[NOMBRE DEL VENDEDOR]"
+    contractData.prestador || `[NOMBRE DEL ${terminoVendedorMin.toUpperCase()}]`
   ).toUpperCase();
   const clienteNombre = (
     contractData.cliente || "[NOMBRE DEL COMPRADOR]"
@@ -305,6 +314,13 @@ export function generateContractContent(contractData) {
     representanteVendedor,
     representanteCliente,
 
+    // Términos dinámicos según tipo de contrato
+    esServicio,
+    terminoVendedor,
+    terminoVendedorMin,
+    terminoObjetivo,
+    terminoTitulo,
+
     // Regímenes
     regimenVendedor,
     regimenComprador,
@@ -336,7 +352,7 @@ export default function ContractContent({ contractData, invoicesData }) {
         {/* Título */}
         <div className="text-center">
           <h2 className="text-xl font-bold uppercase">
-            CONTRATO DE COMPRAVENTA DE MATERIALES Y/O SERVICIOS
+            {content.terminoTitulo}
           </h2>
         </div>
 
@@ -344,7 +360,7 @@ export default function ContractContent({ contractData, invoicesData }) {
         <p className="text-justify">
           QUE CELEBRAN POR UNA PARTE <strong>{content.prestadorNombre}</strong>
           {content.representanteVendedor}, A QUIEN EN LO SUCESIVO SE LE
-          DENOMINARÁ COMO <strong>&quot;EL VENDEDOR&quot;</strong>, POR LA OTRA
+          DENOMINARÁ COMO <strong>&quot;{content.terminoVendedor}&quot;</strong>, POR LA OTRA
           PARTE <strong>{content.clienteNombre}</strong>
           {content.representanteCliente}, A QUIEN EN LO SUCESIVO SE LE
           DENOMINARÁ COMO <strong>&quot;EL COMPRADOR&quot;</strong>, Y A QUIENES
@@ -360,7 +376,7 @@ export default function ContractContent({ contractData, invoicesData }) {
           <div className="space-y-3">
             <div>
               <p className="font-semibold">
-                I. Declara <strong>EL VENDEDOR</strong>, por conducto de sus
+                I. Declara <strong>{content.terminoVendedor}</strong>, por conducto de sus
                 representantes legales que:
               </p>
               <div className="ml-4 mt-2 space-y-2">
@@ -384,14 +400,14 @@ export default function ContractContent({ contractData, invoicesData }) {
                   Tiene su domicilio en{" "}
                   <strong>
                     {content.domicilioPrestador ||
-                      "[DOMICILIO COMPLETO DEL VENDEDOR]"}
+                      `[DOMICILIO COMPLETO DEL ${content.terminoVendedorMin.toUpperCase()}]`}
                   </strong>
                   .
                 </p>
 
                 <p>
                   <strong>{content.representantePrestador ? "D" : "C"}.</strong>{" "}
-                  Es su deseo vender y transferir, sin reserva y limitación
+                  Es su deseo {content.terminoObjetivo}, sin reserva y limitación
                   alguna y libre de cualquier gravamen u otra limitación de
                   dominio al <strong>COMPRADOR</strong> los materiales/servicios
                   que se describen en la cláusula primera del presente Contrato.
@@ -463,15 +479,15 @@ export default function ContractContent({ contractData, invoicesData }) {
             <div>
               <p className="font-semibold">PRIMERA. OBJETO:</p>
               <p className="ml-4 text-justify">
-                <strong>EL VENDEDOR</strong> se obliga a transmitir la propiedad
-                sin reserva de dominio, libre de gravamen y limitación alguna de
-                los materiales/servicios consistentes en:{" "}
+                <strong>{content.terminoVendedor}</strong> se obliga a {content.esServicio ? "prestar los servicios" : "transmitir la propiedad"}
+                {!content.esServicio && " sin reserva de dominio, libre de gravamen y limitación alguna"} de
+                los {content.esServicio ? "servicios" : "materiales/servicios"} consistentes en:{" "}
                 <strong>
                   {content.servicios ||
                     "[DESCRIPCIÓN DETALLADA DE MATERIALES/SERVICIOS]"}
                 </strong>{" "}
                 al <strong>COMPRADOR</strong>, quien sabe y conoce plenamente
-                las condiciones en que se encuentran los materiales/servicios, y
+                las condiciones en que se encuentran los {content.esServicio ? "servicios" : "materiales/servicios"}, y
                 quien deberá pagar la contraprestación prevista en la cláusula
                 Segunda.
               </p>
@@ -537,7 +553,7 @@ export default function ContractContent({ contractData, invoicesData }) {
                 )}
 
                 <p>
-                  <strong>RECIBOS Y FACTURACIÓN. EL VENDEDOR</strong> se
+                  <strong>RECIBOS Y FACTURACIÓN. {content.terminoVendedor}</strong> se
                   compromete a emitir los{" "}
                   <strong>recibos o facturas fiscales</strong> correspondientes
                   por cada pago recibido, conforme a lo estipulado por las leyes
@@ -551,7 +567,7 @@ export default function ContractContent({ contractData, invoicesData }) {
               <p className="font-semibold">TERCERA. VIGENCIA:</p>
               <p className="ml-4 text-justify">
                 El presente Contrato tendrá vigencia necesaria y suficiente para
-                soportar la presente compraventa, misma que deberá realizarse en
+                soportar la presente {content.esServicio ? "prestación de servicios" : "compraventa"}, misma que deberá realizarse en
                 el periodo que va del <strong>{content.fechaInicioStr}</strong>{" "}
                 al <strong>{content.fechaTerminoStr}</strong>.
               </p>
@@ -623,9 +639,9 @@ export default function ContractContent({ contractData, invoicesData }) {
               )}
             </div>
 
-            {/* EL VENDEDOR */}
+            {/* VENDEDOR/PRESTADOR */}
             <div className="mt-16 text-center">
-              <p className="mb-2 text-lg font-semibold">EL VENDEDOR</p>
+              <p className="mb-2 text-lg font-semibold">{content.terminoVendedor}</p>
 
               {content.imagenFirmaVendedor && (
                 <div className="mb-2">

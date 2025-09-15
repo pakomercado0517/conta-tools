@@ -23,6 +23,9 @@ export default function ContractGeneratorFormWithAI() {
     regimenComprador: "Persona Física", 
     regimenCompradorCustom: "",
     
+    // Tipo de contrato
+    tipoProducto: "venta", // "venta" o "servicio"
+    
     // Objeto del contrato
     servicios: "",
     
@@ -221,6 +224,23 @@ export default function ContractGeneratorFormWithAI() {
                 onChange={handleInputChange}
                 placeholder="Domicilio completo del comprador"
               />
+            </div>
+
+            {/* Tipo de Producto/Servicio */}
+            <div className="space-y-2 md:col-span-2">
+              <Label value="Tipo de Contrato *" />
+              <select
+                name="tipoProducto"
+                value={contractData.tipoProducto}
+                onChange={handleInputChange}
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              >
+                <option value="venta">Venta de Productos</option>
+                <option value="servicio">Prestación de Servicios</option>
+              </select>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Selecciona si el contrato es para venta de productos o prestación de servicios
+              </p>
             </div>
 
             {/* Régimen Fiscal del Vendedor */}
@@ -598,15 +618,25 @@ export default function ContractGeneratorFormWithAI() {
             </div>
           </div>
 
-          {/* Descripción de servicios con integración de IA */}
+          {/* Descripción de productos/servicios con integración de IA */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <Label htmlFor="servicios" value="Descripción de los Servicios *" />
+              <Label 
+                htmlFor="servicios" 
+                value={contractData.tipoProducto === "venta" 
+                  ? "Descripción de los Productos *" 
+                  : "Descripción de los Servicios *"
+                } 
+              />
               <AIGeneratorButton
-                type="contract"
+                type="contract-object"
                 concept={contractData.servicios}
+                tipoProducto={contractData.tipoProducto}
                 onGenerated={handleAIGenerated}
-                placeholder="Ej: prestación de servicios de consultoría, venta de equipos..."
+                placeholder={contractData.tipoProducto === "venta" 
+                  ? "Ej: venta de equipos electrónicos, materiales de construcción..."
+                  : "Ej: prestación de servicios de consultoría, mantenimiento..."
+                }
                 className="ml-2"
               />
             </div>
@@ -616,11 +646,14 @@ export default function ContractGeneratorFormWithAI() {
               value={contractData.servicios}
               onChange={handleInputChange}
               rows={4}
-              placeholder="Describe de manera clara y detallada los servicios que se prestarán..."
+              placeholder={contractData.tipoProducto === "venta" 
+                ? "Describe de manera clara y detallada los productos que se venderán..."
+                : "Describe de manera clara y detallada los servicios que se prestarán..."
+              }
               required
             />
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              💡 Tip: Usa el botón de IA para generar una descripción legal profesional basada en tu concepto inicial.
+              💡 Tip: Usa el botón de IA para generar una descripción legal profesional para el objeto del contrato.
             </p>
           </div>
         </div>

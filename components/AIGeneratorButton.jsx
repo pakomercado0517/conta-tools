@@ -5,8 +5,9 @@ import { BsStars, BsX } from 'react-icons/bs';
 import useAIGenerator from '@/hooks/useAIGenerator';
 
 export default function AIGeneratorButton({
-  type = 'quotation', // 'quotation' | 'contract' | 'custom'
+  type = 'quotation', // 'quotation' | 'contract' | 'contract-object' | 'custom'
   concept = '', // El concepto base del usuario
+  tipoProducto = 'venta', // 'venta' | 'servicio' - para contract-object
   onGenerated = () => {}, // Callback cuando se genera contenido
   placeholder = 'Ingrese un concepto...',
   disabled = false,
@@ -21,6 +22,7 @@ export default function AIGeneratorButton({
     error,
     generateQuotationConcept,
     generateContractConcept,
+    generateContractObject,
     clearState
   } = useAIGenerator();
 
@@ -70,6 +72,8 @@ export default function AIGeneratorButton({
       result = await generateQuotationConcept(tempConcept);
     } else if (type === 'contract') {
       result = await generateContractConcept(tempConcept);
+    } else if (type === 'contract-object') {
+      result = await generateContractObject(tempConcept, tipoProducto);
     }
 
     if (result.success) {

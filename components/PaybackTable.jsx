@@ -49,7 +49,7 @@ export default function PaybackTable({
             Monto
           </Table.HeadCell>
           <Table.HeadCell className="bg-gray-800 text-gray-100">
-            Comisión
+            {`Comisión ${data[0]?.percentage}%`}
           </Table.HeadCell>
           <Table.HeadCell className="bg-gray-800 text-gray-100">
             Total

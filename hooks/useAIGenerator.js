@@ -50,7 +50,6 @@ export default function useAIGenerator() {
   const generateQuotationConcept = useCallback(
     async (concept) => {
       const prompt = `Crea un concepto profesional para cotización de: ${concept}. 
-    Incluye características técnicas relevantes. 
     Máximo 100 palabras, lenguaje formal y profesional y que sea lo mas breve posible.`;
 
       return await generateContent(prompt);
@@ -62,7 +61,7 @@ export default function useAIGenerator() {
   const generateContractConcept = useCallback(
     async (concept) => {
       const prompt = `Crea una descripción legal y profesional para contrato de: ${concept}. 
-    Usa términos jurídicos apropiados. 
+    Usa términos jurídicos apropiados y omite las responsabilidades de las dos partes, solo devuelve el concepto. 
     Máximo 120 palabras, lenguaje formal y legal.`;
 
       return await generateContent(prompt);
@@ -73,7 +72,10 @@ export default function useAIGenerator() {
   // Función específica para objeto del contrato
   const generateContractObject = useCallback(
     async (concept, tipoProducto = "venta") => {
-      const tipoTexto = tipoProducto === "venta" ? "venta de productos" : "prestación de servicios";
+      const tipoTexto =
+        tipoProducto === "venta"
+          ? "venta de productos"
+          : "prestación de servicios";
       const prompt = `Redacta un objeto de contrato legal para ${tipoTexto} de: ${concept}. 
     Debe ser una descripción clara y precisa que se usará en la cláusula PRIMERA del contrato. 
     Incluye especificaciones técnicas y características relevantes. 

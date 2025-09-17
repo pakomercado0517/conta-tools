@@ -19,7 +19,7 @@ export default function PDFButton({ data, discount, isChecked }) {
     const head = [
       "Empresa",
       "Monto",
-      "Comisión",
+      `Comisión ${data[0].percentage}%`,
       "Total",
       ...(isChecked ? ["Fecha", "Concepto"] : []),
     ];

@@ -1,0 +1,74 @@
+{
+  "compilerOptions": {
+    // Target y librerías
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "es6", "es2017"],
+    
+    // Configuración de módulos
+    "module": "esnext",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "isolatedModules": true,
+    
+    // Configuración Next.js
+    "jsx": "preserve",
+    "incremental": true,
+    "noEmit": true,
+    
+    // Configuración de archivos
+    "allowJs": true, // CRÍTICO: Permite JS durante la migración
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    
+    // Configuración strict (habilitada gradualmente)
+    "strict": false,
+    "noImplicitAny": true, // ✅ HABILITADO - Requiere tipos explícitos
+    "strictNullChecks": true, // ✅ HABILITADO - Null y undefined seguros
+    "strictFunctionTypes": true, // ✅ HABILITADO - Tipos de función seguros
+    "strictBindCallApply": true, // ✅ HABILITADO - call/apply/bind seguros
+    "strictPropertyInitialization": false, // ⏸️  PENDIENTE - Props inicializadas (requiere refactor)
+    "noImplicitReturns": true, // ✅ HABILITADO - Returns explícitos
+    "noImplicitThis": true, // ✅ HABILITADO - 'this' tipado
+    "noUncheckedIndexedAccess": false, // ⏸️  PENDIENTE - Acceso seguro (requiere refactor extenso)
+    
+    // Configuración adicional
+    "forceConsistentCasingInFileNames": true,
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": true,
+    
+    // Paths para imports absolutos
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    },
+    
+    // Configuración para plugins de Next.js
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js", 
+    "**/*.jsx",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next",
+    "out",
+    "build",
+    "dist"
+  ],
+  "ts-node": {
+    "compilerOptions": {
+      "module": "commonjs"
+    }
+  }
+}

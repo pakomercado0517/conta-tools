@@ -1,0 +1,113 @@
+"use client";
+
+import { useState, ChangeEvent } from "react";
+import { Table, TextInput } from "flowbite-react";
+import useFormatNumber from "@/hooks/useFormatNumber";
+
+// Tipos para los billetes disponibles
+type BillDenomination = 1000 | 500 | 200 | 100 | 50 | 20;
+
+// Tipo para el contador de billetes
+type CounterState = Record<BillDenomination, number>;
+
+// Tipo para los totales por denominación
+type TotalState = Partial<Record<BillDenomination, number>>;
+
+export default function CounterMoneyTable() {
+  const [counter, setCounter] = useState<CounterState>({
+    1000: 0,
+    500: 0,
+    200: 0,
+    100: 0,
+    50: 0,
+    20: 0,
+  });
+
+  const formatNumber = useFormatNumber();
+
+  const [total, setTotal] = useState<TotalState>({});
+
+  const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    const name = e.target.name;
+    const value = parseInt(e.target.value) || 0;
+    const denomination = parseInt(name) as BillDenomination;
+    
+    setCounter({
+      ...counter,
+      [name]: value,
+    });
+    setTotal({
+      ...total,
+      [name]: denomination * value,
+    });
+  };
+
+  const getResults = (): string => {
+    const totalValues = Object.values(total).filter((value): value is number => value !== undefined);
+    const sum = totalValues.reduce((a, b) => a + b, 0);
+    return formatNumber.format(sum);
+  };
+
+  return (
+    <section className="mx-auto mt-10 max-w-4xl">
+      <Table>
+        <Table.Head>
+          <Table.HeadCell>Billete &#40;Denominación&#41;</Table.HeadCell>
+          <Table.HeadCell>Cantidad</Table.HeadCell>
+          <Table.HeadCell>Total</Table.HeadCell>
+        </Table.Head>
+        <Table.Body className="divide-y">
+          <Table.Row>
+            <Table.Cell>$1,000</Table.Cell>
+            <Table.Cell>
+              <TextInput type="number" name="1000" onChange={handleChange} />
+            </Table.Cell>
+            <Table.Cell>{`${total[1000] ? formatNumber.format(total[1000]) : 0}`}</Table.Cell>
+          </Table.Row>
+          <Table.Row>
+            <Table.Cell>$500</Table.Cell>
+            <Table.Cell>
+              <TextInput type="number" name="500" onChange={handleChange} />
+            </Table.Cell>
+            <Table.Cell>{` ${total[500] ? formatNumber.format(total[500]) : 0}`}</Table.Cell>
+          </Table.Row>
+          <Table.Row>
+            <Table.Cell>$200</Table.Cell>
+            <Table.Cell>
+              <TextInput type="number" name="200" onChange={handleChange} />
+            </Table.Cell>
+            <Table.Cell>{` ${total[200] ? formatNumber.format(total[200]) : 0}`}</Table.Cell>
+          </Table.Row>
+          <Table.Row>
+            <Table.Cell>$100</Table.Cell>
+            <Table.Cell>
+              <TextInput type="number" name="100" onChange={handleChange} />
+            </Table.Cell>
+            <Table.Cell>{`${total[100] ? formatNumber.format(total[100]) : 0}`}</Table.Cell>
+          </Table.Row>
+          <Table.Row>
+            <Table.Cell>$50</Table.Cell>
+            <Table.Cell>
+              <TextInput type="number" name="50" onChange={handleChange} />
+            </Table.Cell>
+            <Table.Cell>{`${total[50] ? formatNumber.format(total[50]) : 0}`}</Table.Cell>
+          </Table.Row>
+          <Table.Row>
+            <Table.Cell>$20</Table.Cell>
+            <Table.Cell>
+              <TextInput type="number" name="20" onChange={handleChange} />
+            </Table.Cell>
+            <Table.Cell>{`${total[20] ? formatNumber.format(total[20]) : 0}`}</Table.Cell>
+          </Table.Row>
+          <Table.Row>
+            <Table.Cell className="sr-only">NO INFO</Table.Cell>
+            <Table.Cell className="text-center text-lg font-semibold">
+              Total:
+            </Table.Cell>
+            <Table.Cell className="text-lg font-semibold">{` ${getResults()}`}</Table.Cell>
+          </Table.Row>
+        </Table.Body>
+      </Table>
+    </section>
+  );
+}

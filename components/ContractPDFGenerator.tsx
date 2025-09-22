@@ -90,7 +90,7 @@ export function generateContractPDF(
      * Tokenizar un párrafo separando texto normal de texto en negritas
      */
     const tokenizeParagraph = (paragraph: string): TextToken[] => {
-      const parts = paragraph.split(/(\\*\\*.*?\\*\\*)/g).filter(Boolean);
+      const parts = paragraph.split(/(\*\*.*?\*\*)/g).filter(Boolean);
       const tokens: TextToken[] = [];
 
       parts.forEach((part, idx) => {
@@ -113,7 +113,7 @@ export function generateContractPDF(
         }
 
         // Dividir en palabras y crear tokens
-        const words = clean.split(/(\\s+)/);
+        const words = clean.split(/(\s+)/);
         words.forEach((word) => {
           if (word.length > 0) {
             tokens.push({
@@ -155,7 +155,7 @@ export function generateContractPDF(
     };
 
     doc.setFontSize(fontSize);
-    const paragraphs = String(text).split("\\n");
+    const paragraphs = String(text).split("\n");
 
     paragraphs.forEach((p, pIdx) => {
       if (yPosition > pageHeight - margin) {

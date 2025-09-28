@@ -57,7 +57,12 @@ export default function PaybackForm() {
   const createDocument = useCreatePDF();
 
   useEffect(() => {
-    if (Object.keys(data).length !== 0 && data.name && data.percentage && data.total) {
+    if (
+      Object.keys(data).length !== 0 &&
+      data.name &&
+      data.percentage &&
+      data.total
+    ) {
       // Convert percentage and total to numbers for calculations
       const percentage = parseFloat(data.percentage) || 0;
       const total = parseFloat(data.total) || 0;
@@ -86,13 +91,14 @@ export default function PaybackForm() {
         });
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, cell]);
+  }, [data]);
 
   /**
    * Maneja los cambios en los inputs del formulario
    */
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ): void => {
     const { name, value } = e.target;
     setData({
       ...data,
@@ -117,11 +123,13 @@ export default function PaybackForm() {
   /**
    * Convierte PaybackResult a PDFData
    */
-  const paybackResultToPDFData = (result: PaybackResult): import('@/hooks/useCreatePDF').PDFData => {
+  const paybackResultToPDFData = (
+    result: PaybackResult,
+  ): import("@/hooks/useCreatePDF").PDFData => {
     return {
       empresa: result.empresa,
       percentage: result.percentage,
-      beforeTax: result.beforeTax ? 'Sí' : 'No',
+      beforeTax: result.beforeTax ? "Sí" : "No",
       monto: result.monto,
       comision: result.comision,
       total: result.total,
@@ -161,7 +169,7 @@ export default function PaybackForm() {
     setEditingRow(null);
     setEditingIndex(null);
   };
-  
+
   /**
    * Maneja la edición de una fila de la tabla
    */
@@ -196,6 +204,54 @@ export default function PaybackForm() {
     });
   };
 
+  /**
+   * Calcula el resultado basado en los datos del formulario
+   */
+  const calculateResult = (): PaybackResult | null => {
+    if (!data.name || !data.percentage || !data.total) {
+      return null;
+    }
+
+    const percentage = parseFloat(data.percentage) || 0;
+    const total = parseFloat(data.total) || 0;
+
+    if (!data.beforeTax) {
+      const totalMount = total * (1 - percentage / 100);
+      const comision = total * (percentage / 100);
+      return {
+        percentage: data.percentage || "",
+        beforeTax: data.beforeTax || false,
+        empresa: data.name || "",
+        monto: total,
+        comision: comision,
+        total: totalMount,
+      };
+    } else {
+      const montoAntesIVA = total / 1.16;
+      const getComision = (montoAntesIVA * percentage) / 100;
+      const costTotal = total - getComision;
+      return {
+        beforeTax: data.beforeTax || false,
+        percentage: data.percentage || "",
+        empresa: data.name || "",
+        monto: total,
+        comision: getComision,
+        total: costTotal,
+      };
+    }
+  };
+
+  /**
+   * Maneja el clic del botón agregar/actualizar registro
+   */
+  const handleAddRecord = (e: FormEvent): void => {
+    e.preventDefault();
+    const calculatedResult = calculateResult();
+    if (calculatedResult) {
+      addCell(e, calculatedResult);
+    }
+  };
+
   return (
     <section>
       <div className="rounded-xl bg-gray-900/60 p-6 shadow-md">
@@ -209,7 +265,7 @@ export default function PaybackForm() {
                 id="name"
                 className="text-white focus:ring-cyan-500 dark:bg-gray-800"
                 placeholder=" "
-required
+                required
                 icon={LuFactory}
                 value={data?.name || ""}
               />
@@ -229,7 +285,7 @@ required
                 className="text-white focus:ring-cyan-500 dark:bg-gray-800"
                 icon={TbSquareRoundedPercentage}
                 placeholder=" "
-required
+                required
                 value={data?.percentage || ""}
               />
               <Label
@@ -245,7 +301,7 @@ required
                 name="beforeTax"
                 id="beforeTax"
                 className="text-white focus:ring-cyan-500 dark:bg-gray-800"
-required
+                required
                 value={
                   data?.beforeTax !== undefined
                     ? !data.beforeTax
@@ -310,7 +366,8 @@ required
             <div className="mt-4">
               <Button
                 className="bg-cyan-600 font-semibold text-white hover:bg-cyan-700"
-                onClick={(e) => getTotal && addCell(e, getTotal)}
+                onClick={handleAddRecord}
+                disabled={!data.name || !data.percentage || !data.total}
               >
                 {editingIndex !== null
                   ? "Actualizar registro"

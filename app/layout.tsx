@@ -6,9 +6,9 @@ import ConditionalLayout from "@/components/ConditionalLayout";
 import type { RootLayoutProps } from "@/types/layout";
 
 // Configuración de la fuente Oswald
-const oswald = Oswald({ 
-  subsets: ["latin"], 
-  weight: "400" 
+const oswald = Oswald({
+  subsets: ["latin"],
+  weight: "400",
 });
 
 // Metadatos estáticos de la aplicación
@@ -21,18 +21,18 @@ export const metadata: Metadata = {
     "contratos",
     "cotizaciones",
     "facturación",
-    "finanzas"
+    "finanzas",
   ],
   authors: [
     {
-      name: "ContaTools Team"
-    }
+      name: "ContaTools Team",
+    },
   ],
   creator: "ContaTools",
   publisher: "ContaTools",
   robots: {
     index: true,
-    follow: true
+    follow: true,
   },
   openGraph: {
     type: "website",
@@ -40,27 +40,29 @@ export const metadata: Metadata = {
     url: "https://conta-tools.vercel.app",
     title: "ContaTools",
     description: "Herramientas contables del día a día",
-    siteName: "ContaTools"
+    siteName: "ContaTools",
   },
   twitter: {
     card: "summary_large_image",
     title: "ContaTools",
-    description: "Herramientas contables del día a día"
+    description: "Herramientas contables del día a día",
   },
-  viewport: {
-    width: "device-width",
-    initialScale: 1
-  },
+};
+
+// Configuración del viewport
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#111827" }
-  ]
+    { media: "(prefers-color-scheme: dark)", color: "#111827" },
+  ],
 };
 
 /**
  * Layout raíz de la aplicación Next.js
  * Proporciona la estructura HTML base y configuración global
- * 
+ *
  * @param children - Contenido de la página que se renderizará
  * @returns JSX del layout raíz con proveedores y estructura global
  */
@@ -68,15 +70,13 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="es" suppressHydrationWarning>
       <body
-        className={`${oswald.className} dark:backdrop-blur-md relative bg-white/80 shadow-md backdrop-blur-md dark:bg-gray-900/80`}
+        className={`${oswald.className} relative bg-white/80 shadow-md backdrop-blur-md dark:bg-gray-900/80 dark:backdrop-blur-md`}
         suppressHydrationWarning
       >
         {/* Proveedor de autenticación global */}
         <AuthProvider>
           {/* Layout condicional basado en autenticación */}
-          <ConditionalLayout>
-            {children}
-          </ConditionalLayout>
+          <ConditionalLayout>{children}</ConditionalLayout>
         </AuthProvider>
       </body>
     </html>

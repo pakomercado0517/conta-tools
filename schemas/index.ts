@@ -88,6 +88,15 @@ export const ContractDataSchema = z.object({
       'Ingresa un monto válido mayor a 0'
     ),
     
+  tipoPago: z.enum(['una_exhibicion', 'parcialidades', 'otro'], {
+    message: 'Selecciona un tipo de pago válido'
+  }),
+  
+  condicionesPago: z.string()
+    .max(500, 'Máximo 500 caracteres')
+    .optional()
+    .transform(val => val === '' ? undefined : val),
+    
   formaPago: z.string()
     .min(1, 'La forma de pago es requerida')
     .max(200, 'Máximo 200 caracteres')
@@ -155,6 +164,16 @@ export const ContractDataSchema = z.object({
 }, {
   message: "Especifica la fecha de término personalizada",
   path: ["fechaTerminoTexto"]
+})
+.refine((data) => {
+  // Si tipoPago es "parcialidades" u "otro", condicionesPago es requerido
+  if (data.tipoPago === "parcialidades" || data.tipoPago === "otro") {
+    return data.condicionesPago && data.condicionesPago.trim().length > 0;
+  }
+  return true;
+}, {
+  message: "Especifica las condiciones de pago",
+  path: ["condicionesPago"]
 })
 .refine((data) => {
   // Si se proporciona numeroCuenta, banco es requerido

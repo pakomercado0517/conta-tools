@@ -387,16 +387,33 @@ export function generateContractPDF(
 
   // Condiciones de pago según el tipo seleccionado
   const tipoPago = content.tipoPago || "una_exhibicion";
+  const metodoPagoText = content.formaPago || "[MÉTODO DE PAGO]";
   
   if (tipoPago === "una_exhibicion") {
-    // Pago en una sola exhibición - mantener el formato original
-    const formaPagoText = content.formaPago || "[FORMA DE PAGO]";
-    addText(`**Forma de pago:** ${formaPagoText}`, 10, false, "justify");
+    // Pago en una sola exhibición - mostrar forma de pago y método de pago
+    addText(`**Forma de pago:** Pago en una sola exhibición`, 10, false, "justify");
     addSpace(3);
-  } else if (tipoPago === "parcialidades" || tipoPago === "otro") {
-    // Pago en parcialidades u otro - agregar las condiciones específicas
+    addText(`**Método de pago:** ${metodoPagoText}`, 10, false, "justify");
+    addSpace(3);
+  } else if (tipoPago === "parcialidades") {
+    // Pago en parcialidades - mostrar forma de pago, condiciones y método de pago
+    addText(`**Forma de pago:** Pago en parcialidades`, 10, false, "justify");
+    addSpace(3);
+    
     const condicionesPago = content.condicionesPago || "[CONDICIONES DE PAGO]";
-    const formaPagoText = content.formaPago || "[FORMA DE PAGO]";
+    addText(
+      `**Condiciones de pago:** ${condicionesPago}`,
+      10,
+      false,
+      "justify",
+    );
+    addSpace(3);
+    
+    addText(`**Método de pago:** ${metodoPagoText}`, 10, false, "justify");
+    addSpace(3);
+  } else if (tipoPago === "otro") {
+    // Otro tipo de pago - solo condiciones de pago y método de pago (sin Forma de pago)
+    const condicionesPago = content.condicionesPago || "[CONDICIONES DE PAGO]";
     
     addText(
       `**Condiciones de pago:** ${condicionesPago}`,
@@ -406,7 +423,7 @@ export function generateContractPDF(
     );
     addSpace(3);
     
-    addText(`**Forma de pago:** ${formaPagoText}`, 10, false, "justify");
+    addText(`**Método de pago:** ${metodoPagoText}`, 10, false, "justify");
     addSpace(3);
   }
 

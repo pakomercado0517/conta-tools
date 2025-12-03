@@ -590,17 +590,46 @@ export default function ContractContent({ contractData }: ContractContentProps) 
                   <strong>IVA</strong>.
                 </p>
 
-                {(content.tipoPago === "parcialidades" || content.tipoPago === "otro") && content.condicionesPago && (
-                  <p>
-                    <strong>Condiciones de pago:</strong>{" "}
-                    {content.condicionesPago}
-                  </p>
+                {content.tipoPago === "una_exhibicion" ? (
+                  <>
+                    <p>
+                      <strong>Forma de pago:</strong> Pago en una sola exhibición
+                    </p>
+                    <p>
+                      <strong>Método de pago:</strong>{" "}
+                      {content.formaPago || "[MÉTODO DE PAGO]"}
+                    </p>
+                  </>
+                ) : content.tipoPago === "parcialidades" ? (
+                  <>
+                    <p>
+                      <strong>Forma de pago:</strong> Pago en parcialidades
+                    </p>
+                    {content.condicionesPago && (
+                      <p>
+                        <strong>Condiciones de pago:</strong>{" "}
+                        {content.condicionesPago}
+                      </p>
+                    )}
+                    <p>
+                      <strong>Método de pago:</strong>{" "}
+                      {content.formaPago || "[MÉTODO DE PAGO]"}
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    {content.tipoPago === "otro" && content.condicionesPago && (
+                      <p>
+                        <strong>Condiciones de pago:</strong>{" "}
+                        {content.condicionesPago}
+                      </p>
+                    )}
+                    <p>
+                      <strong>Método de pago:</strong>{" "}
+                      {content.formaPago || "[MÉTODO DE PAGO]"}
+                    </p>
+                  </>
                 )}
-
-                <p>
-                  <strong>Forma de pago:</strong>{" "}
-                  {content.formaPago || "[FORMA DE PAGO]"}
-                </p>
 
                 {(content.banco ||
                   content.titularCuenta ||

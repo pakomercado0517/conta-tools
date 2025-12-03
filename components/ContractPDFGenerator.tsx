@@ -51,7 +51,7 @@ export function generateContractPDF(
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.width;
   const pageHeight = doc.internal.pageSize.height;
-  const margin = 20;
+  const margin = 15;
   const lineHeight = 6;
   let yPosition = margin;
 
@@ -134,23 +134,58 @@ export function generateContractPDF(
     const renderLine = (
       lineTokens: TextToken[], 
       y: number, 
-      alignMode: "left" | "center" = "left"
+      alignMode: "left" | "center" | "justify" = "left",
+      isLastLine: boolean = false
     ): void => {
+      // Calcular ancho total de la línea
       let lineWidth = 0;
       lineTokens.forEach((t) => {
         lineWidth += measure(t.text, t.style);
       });
 
+      // Separar palabras de espacios para justificación
+      const wordTokens = lineTokens.filter(t => !/^\s+$/.test(t.text) && t.text !== " ");
+      const totalWords = wordTokens.length;
+
       let startX = margin;
+      let extraSpacePerGap = 0;
+
       if (alignMode === "center") {
         startX = margin + (usableWidth - lineWidth) / 2;
+      } else if (alignMode === "justify" && !isLastLine && totalWords > 1) {
+        // Calcular ancho de solo las palabras
+        const wordsWidth = wordTokens.reduce((sum, t) => sum + measure(t.text, t.style), 0);
+        // Calcular espacio disponible para distribuir entre palabras
+        const availableSpace = usableWidth - wordsWidth;
+        const spaceCount = totalWords - 1;
+        extraSpacePerGap = availableSpace / spaceCount;
       }
 
       let x = startX;
+      let wordCount = 0;
+      
       lineTokens.forEach((t) => {
-        doc.setFont("helvetica", t.style);
-        doc.text(t.text, x, y);
-        x += measure(t.text, t.style);
+        const isSpace = /^\s+$/.test(t.text) || t.text === " ";
+        const tokenWidth = measure(t.text, t.style);
+        
+        if (!isSpace) {
+          // Renderizar palabra
+          doc.setFont("helvetica", t.style);
+          doc.text(t.text, x, y);
+          x += tokenWidth;
+          wordCount++;
+          
+          // Agregar espacio justificado después de cada palabra (excepto la última)
+          if (alignMode === "justify" && !isLastLine && wordCount < totalWords) {
+            x += extraSpacePerGap;
+          }
+        } else if (alignMode !== "justify" || isLastLine) {
+          // Renderizar espacio normalmente si no estamos justificando o es la última línea
+          doc.setFont("helvetica", t.style);
+          doc.text(t.text, x, y);
+          x += tokenWidth;
+        }
+        // Si estamos justificando y no es la última línea, no renderizamos los espacios
       });
     };
 
@@ -182,10 +217,11 @@ export function generateContractPDF(
       });
       if (currentLine.length > 0) lines.push(currentLine);
 
-      lines.forEach((line) => {
+      lines.forEach((line, lineIdx) => {
         ensurePageSpace();
-        const mode = align === "center" ? "center" : "left"; // "justify" -> "left"
-        renderLine(line, yPosition, mode);
+        const mode: "left" | "center" | "justify" = align === "center" ? "center" : (align === "justify" ? "justify" : "left");
+        const isLastLine = lineIdx === lines.length - 1;
+        renderLine(line, yPosition, mode, isLastLine);
         yPosition += lineHeight;
       });
 
@@ -349,10 +385,30 @@ export function generateContractPDF(
   );
   addSpace(3);
 
-  // Forma de pago
-  const formaPagoText = content.formaPago || "[FORMA DE PAGO]";
-  addText(`**Forma de pago:** ${formaPagoText}`, 10, false, "justify");
-  addSpace(3);
+  // Condiciones de pago según el tipo seleccionado
+  const tipoPago = content.tipoPago || "una_exhibicion";
+  
+  if (tipoPago === "una_exhibicion") {
+    // Pago en una sola exhibición - mantener el formato original
+    const formaPagoText = content.formaPago || "[FORMA DE PAGO]";
+    addText(`**Forma de pago:** ${formaPagoText}`, 10, false, "justify");
+    addSpace(3);
+  } else if (tipoPago === "parcialidades" || tipoPago === "otro") {
+    // Pago en parcialidades u otro - agregar las condiciones específicas
+    const condicionesPago = content.condicionesPago || "[CONDICIONES DE PAGO]";
+    const formaPagoText = content.formaPago || "[FORMA DE PAGO]";
+    
+    addText(
+      `**Condiciones de pago:** ${condicionesPago}`,
+      10,
+      false,
+      "justify",
+    );
+    addSpace(3);
+    
+    addText(`**Forma de pago:** ${formaPagoText}`, 10, false, "justify");
+    addSpace(3);
+  }
 
   // Datos bancarios si están disponibles
   if (

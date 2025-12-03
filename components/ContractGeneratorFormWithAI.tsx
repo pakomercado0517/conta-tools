@@ -10,8 +10,13 @@ import type { ContractData } from "@/schemas";
 
 // Tipos específicos para el formulario
 type TipoProducto = "venta" | "servicio";
-type RegimenFiscal = "Persona Física" | "Persona Moral" | "Persona Física con Actividad Empresarial" | 
-                    "Régimen de Incorporación Fiscal" | "Régimen Simplificado de Confianza" | "Otro";
+type RegimenFiscal =
+  | "Persona Física"
+  | "Persona Moral"
+  | "Persona Física con Actividad Empresarial"
+  | "Régimen de Incorporación Fiscal"
+  | "Régimen Simplificado de Confianza"
+  | "Otro";
 type TipoFechaTermino = "fecha" | "otro";
 type TipoImagenFirma = "imagenFirmaVendedor" | "imagenFirmaComprador";
 
@@ -36,49 +41,51 @@ export default function ContractGeneratorFormWithAI({}: ContractGeneratorFormWit
     representanteCliente: "",
     domicilioPrestador: "",
     domicilioCliente: "",
-    
+
     // Régimen fiscal
     regimenVendedor: "Persona Física",
     regimenVendedorCustom: "",
-    regimenComprador: "Persona Física", 
+    regimenComprador: "Persona Física",
     regimenCompradorCustom: "",
-    
+
     // Tipo de contrato
     tipoProducto: "venta", // "venta" o "servicio"
-    
+
     // Objeto del contrato
     servicios: "",
-    
+
     // Fechas
     fechaInicio: "",
     fechaTermino: "",
     fechaTerminoTexto: "",
     fechaFirma: "",
-    
+
     // Información de pago
     montoTotal: "",
+    tipoPago: "una_exhibicion",
+    condicionesPago: "",
     formaPago: "",
-    
+
     // Datos bancarios
     banco: "",
     titularCuenta: "",
     numeroCuenta: "",
     clabeInterbancaria: "",
-    
+
     // Datos bancarios - opciones
     usarNombreVendedorComoTitular: false,
-    
+
     // Jurisdicción y firma
     jurisdiccion: "",
     ciudadFirma: "",
-    
+
     // Firmas personalizadas e imágenes
     firmaVendedor: "",
     firmaComprador: "",
     imagenFirmaVendedor: null,
     imagenFirmaComprador: null,
   });
-  
+
   const [showPreview, setShowPreview] = useState<boolean>(false);
 
   /**
@@ -86,9 +93,9 @@ export default function ContractGeneratorFormWithAI({}: ContractGeneratorFormWit
    * @param generatedContent - Contenido generado por la IA
    */
   const handleAIGenerated = (generatedContent: string): void => {
-    setContractData(prev => ({
+    setContractData((prev) => ({
       ...prev,
-      servicios: generatedContent
+      servicios: generatedContent,
     }));
   };
 
@@ -96,19 +103,23 @@ export default function ContractGeneratorFormWithAI({}: ContractGeneratorFormWit
    * Manejar cambios en los campos del formulario
    * @param event - Evento de cambio del input
    */
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>): void => {
+  const handleInputChange = (
+    event: ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ): void => {
     const { name, value } = event.target;
-    setContractData(prev => {
+    setContractData((prev) => {
       const newData = {
         ...prev,
-        [name]: value
+        [name]: value,
       };
-      
+
       // Si se está cambiando el nombre del prestador y la opción de usar como titular está activa
-      if (name === 'prestador' && prev.usarNombreVendedorComoTitular) {
+      if (name === "prestador" && prev.usarNombreVendedorComoTitular) {
         newData.titularCuenta = value;
       }
-      
+
       return newData;
     });
   };
@@ -117,19 +128,21 @@ export default function ContractGeneratorFormWithAI({}: ContractGeneratorFormWit
    * Manejar tipo de fecha de término
    * @param event - Evento de cambio del radio button
    */
-  const handleFechaTerminoChange = (event: ChangeEvent<HTMLInputElement>): void => {
+  const handleFechaTerminoChange = (
+    event: ChangeEvent<HTMLInputElement>,
+  ): void => {
     const value = event.target.value as TipoFechaTermino;
     if (value === "otro") {
-      setContractData(prev => ({
+      setContractData((prev) => ({
         ...prev,
         fechaTermino: "otro",
-        fechaTerminoTexto: ""
+        fechaTerminoTexto: "",
       }));
     } else {
-      setContractData(prev => ({
+      setContractData((prev) => ({
         ...prev,
         fechaTermino: "",
-        fechaTerminoTexto: ""
+        fechaTerminoTexto: "",
       }));
     }
   };
@@ -138,12 +151,14 @@ export default function ContractGeneratorFormWithAI({}: ContractGeneratorFormWit
    * Manejar checkbox de titular de cuenta
    * @param event - Evento de cambio del checkbox
    */
-  const handleTitularCheckboxChange = (event: ChangeEvent<HTMLInputElement>): void => {
+  const handleTitularCheckboxChange = (
+    event: ChangeEvent<HTMLInputElement>,
+  ): void => {
     const isChecked = event.target.checked;
-    setContractData(prev => ({
+    setContractData((prev) => ({
       ...prev,
       usarNombreVendedorComoTitular: isChecked,
-      titularCuenta: isChecked ? prev.prestador : ""
+      titularCuenta: isChecked ? prev.prestador : "",
     }));
   };
 
@@ -152,16 +167,19 @@ export default function ContractGeneratorFormWithAI({}: ContractGeneratorFormWit
    * @param event - Evento de cambio del input file
    * @param tipo - Tipo de imagen (vendedor o comprador)
    */
-  const handleImagenFirmaChange = (event: ChangeEvent<HTMLInputElement>, tipo: TipoImagenFirma): void => {
+  const handleImagenFirmaChange = (
+    event: ChangeEvent<HTMLInputElement>,
+    tipo: TipoImagenFirma,
+  ): void => {
     const file = event.target.files?.[0];
-    if (file && file.type.startsWith('image/')) {
+    if (file && file.type.startsWith("image/")) {
       const reader = new FileReader();
       reader.onload = (e: ProgressEvent<FileReader>) => {
         const result = e.target?.result;
-        if (typeof result === 'string') {
-          setContractData(prev => ({
+        if (typeof result === "string") {
+          setContractData((prev) => ({
             ...prev,
-            [tipo]: result
+            [tipo]: result,
           }));
         }
       };
@@ -174,9 +192,9 @@ export default function ContractGeneratorFormWithAI({}: ContractGeneratorFormWit
    * @param tipo - Tipo de imagen a eliminar
    */
   const handleEliminarImagen = (tipo: TipoImagenFirma): void => {
-    setContractData(prev => ({
+    setContractData((prev) => ({
       ...prev,
-      [tipo]: null
+      [tipo]: null,
     }));
   };
 
@@ -185,19 +203,30 @@ export default function ContractGeneratorFormWithAI({}: ContractGeneratorFormWit
    * @returns true si el formulario es válido
    */
   const isFormValid = (): boolean => {
-    const hasFechaTermino = contractData.fechaTermino === "otro" ? 
-      contractData.fechaTerminoTexto?.trim() !== "" : 
-      contractData.fechaTermino !== "";
-    
-    return contractData.prestador.trim() !== "" && 
-           contractData.cliente.trim() !== "" && 
-           contractData.servicios.trim() !== "" && 
-           contractData.fechaInicio !== "" &&
-           hasFechaTermino &&
-           contractData.montoTotal.trim() !== "" &&
-           contractData.formaPago.trim() !== "" &&
-           contractData.jurisdiccion.trim() !== "" &&
-           contractData.ciudadFirma.trim() !== "";
+    const hasFechaTermino =
+      contractData.fechaTermino === "otro"
+        ? contractData.fechaTerminoTexto?.trim() !== ""
+        : contractData.fechaTermino !== "";
+
+    const hasCondicionesPago =
+      contractData.tipoPago === "parcialidades" ||
+      contractData.tipoPago === "otro"
+        ? contractData.condicionesPago?.trim() !== "" &&
+          contractData.condicionesPago !== undefined
+        : true;
+
+    return (
+      contractData.prestador.trim() !== "" &&
+      contractData.cliente.trim() !== "" &&
+      contractData.servicios.trim() !== "" &&
+      contractData.fechaInicio !== "" &&
+      hasFechaTermino &&
+      contractData.montoTotal.trim() !== "" &&
+      contractData.formaPago.trim() !== "" &&
+      hasCondicionesPago &&
+      contractData.jurisdiccion.trim() !== "" &&
+      contractData.ciudadFirma.trim() !== ""
+    );
   };
 
   /**
@@ -216,7 +245,7 @@ export default function ContractGeneratorFormWithAI({}: ContractGeneratorFormWit
             1. Datos de las Partes
           </h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {/* Datos del Vendedor (Prestador) */}
             <div>
               <Label htmlFor="prestador" value="Nombre del Vendedor *" />
@@ -243,7 +272,10 @@ export default function ContractGeneratorFormWithAI({}: ContractGeneratorFormWit
             </div>
 
             <div>
-              <Label htmlFor="representantePrestador" value="Representante del Vendedor (opcional)" />
+              <Label
+                htmlFor="representantePrestador"
+                value="Representante del Vendedor (opcional)"
+              />
               <TextInput
                 id="representantePrestador"
                 name="representantePrestador"
@@ -254,7 +286,10 @@ export default function ContractGeneratorFormWithAI({}: ContractGeneratorFormWit
             </div>
 
             <div>
-              <Label htmlFor="representanteCliente" value="Representante del Cliente (opcional)" />
+              <Label
+                htmlFor="representanteCliente"
+                value="Representante del Cliente (opcional)"
+              />
               <TextInput
                 id="representanteCliente"
                 name="representanteCliente"
@@ -265,7 +300,10 @@ export default function ContractGeneratorFormWithAI({}: ContractGeneratorFormWit
             </div>
 
             <div>
-              <Label htmlFor="domicilioPrestador" value="Domicilio del Vendedor" />
+              <Label
+                htmlFor="domicilioPrestador"
+                value="Domicilio del Vendedor"
+              />
               <TextInput
                 id="domicilioPrestador"
                 name="domicilioPrestador"
@@ -293,13 +331,14 @@ export default function ContractGeneratorFormWithAI({}: ContractGeneratorFormWit
                 name="tipoProducto"
                 value={contractData.tipoProducto}
                 onChange={handleInputChange}
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
               >
                 <option value="venta">Venta de Productos</option>
                 <option value="servicio">Prestación de Servicios</option>
               </select>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Selecciona si el contrato es para venta de productos o prestación de servicios
+                Selecciona si el contrato es para venta de productos o
+                prestación de servicios
               </p>
             </div>
 
@@ -310,16 +349,22 @@ export default function ContractGeneratorFormWithAI({}: ContractGeneratorFormWit
                 name="regimenVendedor"
                 value={contractData.regimenVendedor}
                 onChange={handleInputChange}
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
               >
                 <option value="Persona Física">Persona Física</option>
                 <option value="Persona Moral">Persona Moral</option>
-                <option value="Persona Física con Actividad Empresarial">Persona Física con Actividad Empresarial</option>
-                <option value="Régimen de Incorporación Fiscal">Régimen de Incorporación Fiscal</option>
-                <option value="Régimen Simplificado de Confianza">Régimen Simplificado de Confianza</option>
+                <option value="Persona Física con Actividad Empresarial">
+                  Persona Física con Actividad Empresarial
+                </option>
+                <option value="Régimen de Incorporación Fiscal">
+                  Régimen de Incorporación Fiscal
+                </option>
+                <option value="Régimen Simplificado de Confianza">
+                  Régimen Simplificado de Confianza
+                </option>
                 <option value="Otro">Otro (personalizado)</option>
               </select>
-              
+
               {(contractData.regimenVendedor as any) === "Otro" && (
                 <TextInput
                   name="regimenVendedorCustom"
@@ -337,16 +382,22 @@ export default function ContractGeneratorFormWithAI({}: ContractGeneratorFormWit
                 name="regimenComprador"
                 value={contractData.regimenComprador}
                 onChange={handleInputChange}
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
               >
                 <option value="Persona Física">Persona Física</option>
                 <option value="Persona Moral">Persona Moral</option>
-                <option value="Persona Física con Actividad Empresarial">Persona Física con Actividad Empresarial</option>
-                <option value="Régimen de Incorporación Fiscal">Régimen de Incorporación Fiscal</option>
-                <option value="Régimen Simplificado de Confianza">Régimen Simplificado de Confianza</option>
+                <option value="Persona Física con Actividad Empresarial">
+                  Persona Física con Actividad Empresarial
+                </option>
+                <option value="Régimen de Incorporación Fiscal">
+                  Régimen de Incorporación Fiscal
+                </option>
+                <option value="Régimen Simplificado de Confianza">
+                  Régimen Simplificado de Confianza
+                </option>
                 <option value="Otro">Otro (personalizado)</option>
               </select>
-              
+
               {(contractData.regimenComprador as any) === "Otro" && (
                 <TextInput
                   name="regimenCompradorCustom"
@@ -409,7 +460,11 @@ export default function ContractGeneratorFormWithAI({}: ContractGeneratorFormWit
                   <TextInput
                     name="fechaTermino"
                     type="date"
-                    value={contractData.fechaTermino === "otro" ? "" : contractData.fechaTermino || ""}
+                    value={
+                      contractData.fechaTermino === "otro"
+                        ? ""
+                        : contractData.fechaTermino || ""
+                    }
                     onChange={handleInputChange}
                   />
                 )}
@@ -438,7 +493,7 @@ export default function ContractGeneratorFormWithAI({}: ContractGeneratorFormWit
             2. Información de Pago
           </h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div>
               <Label htmlFor="montoTotal" value="Monto Total *" />
               <TextInput
@@ -450,6 +505,46 @@ export default function ContractGeneratorFormWithAI({}: ContractGeneratorFormWit
                 required
               />
             </div>
+
+            <div>
+              <Label value="Tipo de Pago *" />
+              <select
+                name="tipoPago"
+                value={contractData.tipoPago}
+                onChange={handleInputChange}
+                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                required
+              >
+                <option value="una_exhibicion">
+                  Pago en una sola exhibición
+                </option>
+                <option value="parcialidades">En parcialidades</option>
+                <option value="otro">Otro</option>
+              </select>
+            </div>
+
+            {(contractData.tipoPago === "parcialidades" ||
+              contractData.tipoPago === "otro") && (
+              <div className="md:col-span-2">
+                <Label
+                  htmlFor="condicionesPago"
+                  value="Condiciones de Pago *"
+                />
+                <Textarea
+                  id="condicionesPago"
+                  name="condicionesPago"
+                  value={contractData.condicionesPago || ""}
+                  onChange={handleInputChange}
+                  placeholder="Ej: Los pagos se efectuarán conforme se terminen los trabajos, o Crédito a 30 días, etc."
+                  rows={3}
+                  required
+                />
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                  Especifica las condiciones específicas de pago que se
+                  incluirán en el contrato.
+                </p>
+              </div>
+            )}
 
             <div>
               <Label htmlFor="formaPago" value="Forma de Pago *" />
@@ -473,7 +568,7 @@ export default function ContractGeneratorFormWithAI({}: ContractGeneratorFormWit
             3. Datos Bancarios para el Pago
           </h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div>
               <Label htmlFor="banco" value="Banco" />
               <TextInput
@@ -494,9 +589,12 @@ export default function ContractGeneratorFormWithAI({}: ContractGeneratorFormWit
                     id="usarNombreVendedorComoTitular"
                     checked={contractData.usarNombreVendedorComoTitular}
                     onChange={handleTitularCheckboxChange}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                   />
-                  <label htmlFor="usarNombreVendedorComoTitular" className="text-sm text-gray-700 dark:text-gray-300">
+                  <label
+                    htmlFor="usarNombreVendedorComoTitular"
+                    className="text-sm text-gray-700 dark:text-gray-300"
+                  >
                     Usar el mismo nombre del vendedor
                   </label>
                 </div>
@@ -543,7 +641,7 @@ export default function ContractGeneratorFormWithAI({}: ContractGeneratorFormWit
             4. Jurisdicción y Firmas
           </h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div>
               <Label htmlFor="jurisdiccion" value="Jurisdicción *" />
               <TextInput
@@ -569,7 +667,10 @@ export default function ContractGeneratorFormWithAI({}: ContractGeneratorFormWit
             </div>
 
             <div>
-              <Label htmlFor="firmaVendedor" value="Texto de Firma del Vendedor (opcional)" />
+              <Label
+                htmlFor="firmaVendedor"
+                value="Texto de Firma del Vendedor (opcional)"
+              />
               <TextInput
                 id="firmaVendedor"
                 name="firmaVendedor"
@@ -580,7 +681,10 @@ export default function ContractGeneratorFormWithAI({}: ContractGeneratorFormWit
             </div>
 
             <div>
-              <Label htmlFor="firmaComprador" value="Texto de Firma del Cliente (opcional)" />
+              <Label
+                htmlFor="firmaComprador"
+                value="Texto de Firma del Cliente (opcional)"
+              />
               <TextInput
                 id="firmaComprador"
                 name="firmaComprador"
@@ -590,86 +694,126 @@ export default function ContractGeneratorFormWithAI({}: ContractGeneratorFormWit
               />
             </div>
           </div>
-          
+
           {/* Carga de imágenes de firma */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div className="space-y-3">
               <Label value="Imagen de Firma del Vendedor (opcional)" />
-              <div className="flex items-center justify-center w-full">
-                <label htmlFor="imagenFirmaVendedor" className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500">
+              <div className="flex w-full items-center justify-center">
+                <label
+                  htmlFor="imagenFirmaVendedor"
+                  className="dark:hover:bg-bray-800 flex h-32 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:border-gray-500"
+                >
                   {contractData.imagenFirmaVendedor ? (
                     /* eslint-disable-next-line @next/next/no-img-element */
-                    <img 
-                      src={contractData.imagenFirmaVendedor} 
-                      alt="Firma Vendedor" 
+                    <img
+                      src={contractData.imagenFirmaVendedor}
+                      alt="Firma Vendedor"
                       className="max-h-28 max-w-full object-contain"
                     />
                   ) : (
-                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                      <svg className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                    <div className="flex flex-col items-center justify-center pb-6 pt-5">
+                      <svg
+                        className="mb-4 h-8 w-8 text-gray-500 dark:text-gray-400"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 20 16"
+                      >
+                        <path
+                          stroke="currentColor"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                        />
                       </svg>
                       <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                        <span className="font-semibold">Click para subir</span> imagen de firma
+                        <span className="font-semibold">Click para subir</span>{" "}
+                        imagen de firma
                       </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">PNG, JPG, JPEG (MAX. 2MB)</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        PNG, JPG, JPEG (MAX. 2MB)
+                      </p>
                     </div>
                   )}
-                  <input 
-                    id="imagenFirmaVendedor" 
-                    type="file" 
-                    className="hidden" 
+                  <input
+                    id="imagenFirmaVendedor"
+                    type="file"
+                    className="hidden"
                     accept="image/*"
-                    onChange={(e) => handleImagenFirmaChange(e, 'imagenFirmaVendedor')}
+                    onChange={(e) =>
+                      handleImagenFirmaChange(e, "imagenFirmaVendedor")
+                    }
                   />
                 </label>
               </div>
               {contractData.imagenFirmaVendedor && (
                 <button
                   type="button"
-                  onClick={() => handleEliminarImagen('imagenFirmaVendedor')}
+                  onClick={() => handleEliminarImagen("imagenFirmaVendedor")}
                   className="text-sm text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-200"
                 >
                   Eliminar imagen
                 </button>
               )}
             </div>
-            
+
             <div className="space-y-3">
               <Label value="Imagen de Firma del Cliente (opcional)" />
-              <div className="flex items-center justify-center w-full">
-                <label htmlFor="imagenFirmaComprador" className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500">
+              <div className="flex w-full items-center justify-center">
+                <label
+                  htmlFor="imagenFirmaComprador"
+                  className="dark:hover:bg-bray-800 flex h-32 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:border-gray-500"
+                >
                   {contractData.imagenFirmaComprador ? (
                     /* eslint-disable-next-line @next/next/no-img-element */
-                    <img 
-                      src={contractData.imagenFirmaComprador} 
-                      alt="Firma Comprador" 
+                    <img
+                      src={contractData.imagenFirmaComprador}
+                      alt="Firma Comprador"
                       className="max-h-28 max-w-full object-contain"
                     />
                   ) : (
-                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                      <svg className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                    <div className="flex flex-col items-center justify-center pb-6 pt-5">
+                      <svg
+                        className="mb-4 h-8 w-8 text-gray-500 dark:text-gray-400"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 20 16"
+                      >
+                        <path
+                          stroke="currentColor"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                        />
                       </svg>
                       <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                        <span className="font-semibold">Click para subir</span> imagen de firma
+                        <span className="font-semibold">Click para subir</span>{" "}
+                        imagen de firma
                       </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">PNG, JPG, JPEG (MAX. 2MB)</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        PNG, JPG, JPEG (MAX. 2MB)
+                      </p>
                     </div>
                   )}
-                  <input 
-                    id="imagenFirmaComprador" 
-                    type="file" 
-                    className="hidden" 
+                  <input
+                    id="imagenFirmaComprador"
+                    type="file"
+                    className="hidden"
                     accept="image/*"
-                    onChange={(e) => handleImagenFirmaChange(e, 'imagenFirmaComprador')}
+                    onChange={(e) =>
+                      handleImagenFirmaChange(e, "imagenFirmaComprador")
+                    }
                   />
                 </label>
               </div>
               {contractData.imagenFirmaComprador && (
                 <button
                   type="button"
-                  onClick={() => handleEliminarImagen('imagenFirmaComprador')}
+                  onClick={() => handleEliminarImagen("imagenFirmaComprador")}
                   className="text-sm text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-200"
                 >
                   Eliminar imagen
@@ -681,21 +825,23 @@ export default function ContractGeneratorFormWithAI({}: ContractGeneratorFormWit
           {/* Descripción de productos/servicios con integración de IA */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <Label 
-                htmlFor="servicios" 
-                value={contractData.tipoProducto === "venta" 
-                  ? "Descripción de los Productos *" 
-                  : "Descripción de los Servicios *"
-                } 
+              <Label
+                htmlFor="servicios"
+                value={
+                  contractData.tipoProducto === "venta"
+                    ? "Descripción de los Productos *"
+                    : "Descripción de los Servicios *"
+                }
               />
               <AIGeneratorButton
                 type="contract-object"
                 concept={contractData.servicios}
                 tipoProducto={contractData.tipoProducto}
                 onGenerated={handleAIGenerated as any}
-                placeholder={contractData.tipoProducto === "venta" 
-                  ? "Ej: venta de equipos electrónicos, materiales de construcción..."
-                  : "Ej: prestación de servicios de consultoría, mantenimiento..."
+                placeholder={
+                  contractData.tipoProducto === "venta"
+                    ? "Ej: venta de equipos electrónicos, materiales de construcción..."
+                    : "Ej: prestación de servicios de consultoría, mantenimiento..."
                 }
                 className="ml-2"
               />
@@ -706,40 +852,35 @@ export default function ContractGeneratorFormWithAI({}: ContractGeneratorFormWit
               value={contractData.servicios}
               onChange={handleInputChange}
               rows={4}
-              placeholder={contractData.tipoProducto === "venta" 
-                ? "Describe de manera clara y detallada los productos que se venderán..."
-                : "Describe de manera clara y detallada los servicios que se prestarán..."
+              placeholder={
+                contractData.tipoProducto === "venta"
+                  ? "Describe de manera clara y detallada los productos que se venderán..."
+                  : "Describe de manera clara y detallada los servicios que se prestarán..."
               }
               required
             />
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              💡 Tip: Usa el botón de IA para generar una descripción legal profesional para el objeto del contrato.
+              💡 Tip: Usa el botón de IA para generar una descripción legal
+              profesional para el objeto del contrato.
             </p>
           </div>
         </div>
       </Card>
 
       {/* Botones de acción */}
-      <div className="flex flex-col sm:flex-row gap-4 justify-center">
-        <Button
-          color="info"
-          onClick={togglePreview}
-          disabled={!isFormValid()}
-        >
+      <div className="flex flex-col justify-center gap-4 sm:flex-row">
+        <Button color="info" onClick={togglePreview} disabled={!isFormValid()}>
           <FaEye className="mr-2" />
           {showPreview ? "Ocultar Vista Previa" : "Ver Vista Previa"}
         </Button>
 
-        <ContractPDFGenerator
-          contractData={contractData}
-          invoicesData={[]}
-        />
+        <ContractPDFGenerator contractData={contractData} invoicesData={[]} />
       </div>
 
       {/* Vista previa del contrato */}
       {showPreview && (
         <div className="mt-8">
-          <h3 className="text-2xl font-semibold text-gray-800 dark:text-white mb-6 text-center">
+          <h3 className="mb-6 text-center text-2xl font-semibold text-gray-800 dark:text-white">
             Vista Previa del Contrato
           </h3>
           <ContractPreview contractData={contractData} invoicesData={[]} />

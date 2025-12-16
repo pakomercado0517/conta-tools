@@ -3,7 +3,6 @@
 import { useState, ChangeEvent } from "react";
 import CreatePDF from "./CreatePDF";
 import { Label, Button, TextInput, Table, FileInput } from "flowbite-react";
-import extractDataFromPDF from "@/utils/pdfUtils";
 import useFormatNumber from "@/hooks/useFormatNumber";
 
 // Tipo para el elemento extraído del PDF
@@ -15,31 +14,59 @@ interface CostoItem {
 export default function GetCostForm() {
   const [extractedData, setExtractedData] = useState<CostoItem[]>([]);
   const [totalMonto, setTotalMonto] = useState<number>(0);
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const formatNumber = useFormatNumber();
   const styleInput = `border border-slate-600 rounded-md my-2`;
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
+  const handleChange = async (
+    e: ChangeEvent<HTMLInputElement>,
+  ): Promise<void> => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = async (event: ProgressEvent<FileReader>): Promise<void> => {
-        const pdfData = event.target?.result;
-        if (pdfData instanceof ArrayBuffer) {
-          const data = await extractDataFromPDF(new Uint8Array(pdfData));
-          setExtractedData(data);
-          // calculamos el total de todos los montos obtenidos.
-          const total = data.reduce((sum: number, entry: CostoItem) => sum + entry.monto, 0);
-          setTotalMonto(total);
+      setIsProcessing(true);
+      try {
+        const formData = new FormData();
+        formData.append("pdf", file);
+
+        const response = await fetch("/api/extract-pdf", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error("Error al procesar el PDF");
         }
-      };
-      reader.readAsArrayBuffer(file);
+
+        const result = await response.json();
+        setExtractedData(result.data);
+        // calculamos el total de todos los montos obtenidos.
+        const total = result.data.reduce(
+          (sum: number, entry: CostoItem) => sum + entry.monto,
+          0,
+        );
+        setTotalMonto(total);
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Error al procesar el PDF. Por favor, intenta de nuevo.");
+      } finally {
+        setIsProcessing(false);
+      }
     }
   };
 
   return (
     <div className="mt-8 bg-fixed bg-no-repeat">
       <form className="mx-auto max-w-xl">
-        <FileInput accept="application/pdf" onChange={handleChange} />
+        <FileInput
+          accept="application/pdf"
+          onChange={handleChange}
+          disabled={isProcessing}
+        />
+        {isProcessing && (
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            Procesando PDF...
+          </p>
+        )}
       </form>
 
       {/* Here showing the table with the data... */}

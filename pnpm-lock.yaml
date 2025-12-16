@@ -48,8 +48,8 @@ importers:
         specifier: ^3.8.2
         version: 3.8.3(jspdf@2.5.1)
       next:
-        specifier: 16.0.7
-        version: 16.0.7(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+        specifier: 16.0.10
+        version: 16.0.10(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
       node-fetch:
         specifier: ^3.3.2
         version: 3.3.2
@@ -503,56 +503,56 @@ packages:
     resolution: {integrity: sha512-Yhlar6v9WQgUp/He7BdgzOz8lqMQ8sU+jkCq7Wx8Myc5YFJLbEe7lgui/V7G1qB1DJykHSGwreceSaD60Y0PUQ==}
     hasBin: true
 
-  '@next/env@16.0.7':
-    resolution: {integrity: sha512-gpaNgUh5nftFKRkRQGnVi5dpcYSKGcZZkQffZ172OrG/XkrnS7UBTQ648YY+8ME92cC4IojpI2LqTC8sTDhAaw==}
+  '@next/env@16.0.10':
+    resolution: {integrity: sha512-8tuaQkyDVgeONQ1MeT9Mkk8pQmZapMKFh5B+OrFUlG3rVmYTXcXlBetBgTurKXGaIZvkoqRT9JL5K3phXcgang==}
 
   '@next/eslint-plugin-next@14.2.5':
     resolution: {integrity: sha512-LY3btOpPh+OTIpviNojDpUdIbHW9j0JBYBjsIp8IxtDFfYFyORvw3yNq6N231FVqQA7n7lwaf7xHbVJlA1ED7g==}
 
-  '@next/swc-darwin-arm64@16.0.7':
-    resolution: {integrity: sha512-LlDtCYOEj/rfSnEn/Idi+j1QKHxY9BJFmxx7108A6D8K0SB+bNgfYQATPk/4LqOl4C0Wo3LACg2ie6s7xqMpJg==}
+  '@next/swc-darwin-arm64@16.0.10':
+    resolution: {integrity: sha512-4XgdKtdVsaflErz+B5XeG0T5PeXKDdruDf3CRpnhN+8UebNa5N2H58+3GDgpn/9GBurrQ1uWW768FfscwYkJRg==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [darwin]
 
-  '@next/swc-darwin-x64@16.0.7':
-    resolution: {integrity: sha512-rtZ7BhnVvO1ICf3QzfW9H3aPz7GhBrnSIMZyr4Qy6boXF0b5E3QLs+cvJmg3PsTCG2M1PBoC+DANUi4wCOKXpA==}
+  '@next/swc-darwin-x64@16.0.10':
+    resolution: {integrity: sha512-spbEObMvRKkQ3CkYVOME+ocPDFo5UqHb8EMTS78/0mQ+O1nqE8toHJVioZo4TvebATxgA8XMTHHrScPrn68OGw==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [darwin]
 
-  '@next/swc-linux-arm64-gnu@16.0.7':
-    resolution: {integrity: sha512-mloD5WcPIeIeeZqAIP5c2kdaTa6StwP4/2EGy1mUw8HiexSHGK/jcM7lFuS3u3i2zn+xH9+wXJs6njO7VrAqww==}
+  '@next/swc-linux-arm64-gnu@16.0.10':
+    resolution: {integrity: sha512-uQtWE3X0iGB8apTIskOMi2w/MKONrPOUCi5yLO+v3O8Mb5c7K4Q5KD1jvTpTF5gJKa3VH/ijKjKUq9O9UhwOYw==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
 
-  '@next/swc-linux-arm64-musl@16.0.7':
-    resolution: {integrity: sha512-+ksWNrZrthisXuo9gd1XnjHRowCbMtl/YgMpbRvFeDEqEBd523YHPWpBuDjomod88U8Xliw5DHhekBC3EOOd9g==}
+  '@next/swc-linux-arm64-musl@16.0.10':
+    resolution: {integrity: sha512-llA+hiDTrYvyWI21Z0L1GiXwjQaanPVQQwru5peOgtooeJ8qx3tlqRV2P7uH2pKQaUfHxI/WVarvI5oYgGxaTw==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
 
-  '@next/swc-linux-x64-gnu@16.0.7':
-    resolution: {integrity: sha512-4WtJU5cRDxpEE44Ana2Xro1284hnyVpBb62lIpU5k85D8xXxatT+rXxBgPkc7C1XwkZMWpK5rXLXTh9PFipWsA==}
+  '@next/swc-linux-x64-gnu@16.0.10':
+    resolution: {integrity: sha512-AK2q5H0+a9nsXbeZ3FZdMtbtu9jxW4R/NgzZ6+lrTm3d6Zb7jYrWcgjcpM1k8uuqlSy4xIyPR2YiuUr+wXsavA==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
 
-  '@next/swc-linux-x64-musl@16.0.7':
-    resolution: {integrity: sha512-HYlhqIP6kBPXalW2dbMTSuB4+8fe+j9juyxwfMwCe9kQPPeiyFn7NMjNfoFOfJ2eXkeQsoUGXg+O2SE3m4Qg2w==}
+  '@next/swc-linux-x64-musl@16.0.10':
+    resolution: {integrity: sha512-1TDG9PDKivNw5550S111gsO4RGennLVl9cipPhtkXIFVwo31YZ73nEbLjNC8qG3SgTz/QZyYyaFYMeY4BKZR/g==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
 
-  '@next/swc-win32-arm64-msvc@16.0.7':
-    resolution: {integrity: sha512-EviG+43iOoBRZg9deGauXExjRphhuYmIOJ12b9sAPy0eQ6iwcPxfED2asb/s2/yiLYOdm37kPaiZu8uXSYPs0Q==}
+  '@next/swc-win32-arm64-msvc@16.0.10':
+    resolution: {integrity: sha512-aEZIS4Hh32xdJQbHz121pyuVZniSNoqDVx1yIr2hy+ZwJGipeqnMZBJHyMxv2tiuAXGx6/xpTcQJ6btIiBjgmg==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [win32]
 
-  '@next/swc-win32-x64-msvc@16.0.7':
-    resolution: {integrity: sha512-gniPjy55zp5Eg0896qSrf3yB1dw4F/3s8VK1ephdsZZ129j2n6e1WqCbE2YgcKhW9hPB9TVZENugquWJD5x0ug==}
+  '@next/swc-win32-x64-msvc@16.0.10':
+    resolution: {integrity: sha512-E+njfCoFLb01RAFEnGZn6ERoOqhK1Gl3Lfz1Kjnj0Ulfu7oJbuMyvBKNj/bw8XZnenHDASlygTjZICQW+rYW1Q==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [win32]
@@ -1549,6 +1549,7 @@ packages:
   eslint@8.57.1:
     resolution: {integrity: sha512-ypowyDxpVSYpkXr9WPv2PAZCtNip1Mv5KTW0SCurXv/9iOpcrH9PaqUElksqEB6pChqHGDRCFTyrZlGhnLNGiA==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
 
   espree@9.6.1:
@@ -2137,8 +2138,8 @@ packages:
   natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
 
-  next@16.0.7:
-    resolution: {integrity: sha512-3mBRJyPxT4LOxAJI6IsXeFtKfiJUbjCLgvXO02fV8Wy/lIhPvP94Fe7dGhUgHXcQy4sSuYwQNcOLhIfOm0rL0A==}
+  next@16.0.10:
+    resolution: {integrity: sha512-RtWh5PUgI+vxlV3HdR+IfWA1UUHu0+Ram/JBO4vWB54cVPentCD0e+lxyAYEsDTqGGMg7qpjhKh6dc6aW7W/sA==}
     engines: {node: '>=20.9.0'}
     hasBin: true
     peerDependencies:
@@ -2971,13 +2972,13 @@ snapshots:
 
   '@aws-crypto/supports-web-crypto@5.2.0':
     dependencies:
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@aws-crypto/util@5.2.0':
     dependencies:
       '@aws-sdk/types': 3.887.0
       '@smithy/util-utf8': 2.3.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@aws-sdk/client-sesv2@3.891.0':
     dependencies:
@@ -3063,7 +3064,7 @@ snapshots:
       '@smithy/util-middleware': 4.1.1
       '@smithy/util-retry': 4.1.2
       '@smithy/util-utf8': 4.1.0
-      tslib: 2.7.0
+      tslib: 2.8.1
     transitivePeerDependencies:
       - aws-crt
 
@@ -3091,7 +3092,7 @@ snapshots:
       '@aws-sdk/types': 3.887.0
       '@smithy/property-provider': 4.1.1
       '@smithy/types': 4.5.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@aws-sdk/credential-provider-http@3.890.0':
     dependencies:
@@ -3104,7 +3105,7 @@ snapshots:
       '@smithy/smithy-client': 4.6.3
       '@smithy/types': 4.5.0
       '@smithy/util-stream': 4.3.2
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@aws-sdk/credential-provider-ini@3.891.0':
     dependencies:
@@ -3120,7 +3121,7 @@ snapshots:
       '@smithy/property-provider': 4.1.1
       '@smithy/shared-ini-file-loader': 4.2.0
       '@smithy/types': 4.5.0
-      tslib: 2.7.0
+      tslib: 2.8.1
     transitivePeerDependencies:
       - aws-crt
 
@@ -3148,7 +3149,7 @@ snapshots:
       '@smithy/property-provider': 4.1.1
       '@smithy/shared-ini-file-loader': 4.2.0
       '@smithy/types': 4.5.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@aws-sdk/credential-provider-sso@3.891.0':
     dependencies:
@@ -3159,7 +3160,7 @@ snapshots:
       '@smithy/property-provider': 4.1.1
       '@smithy/shared-ini-file-loader': 4.2.0
       '@smithy/types': 4.5.0
-      tslib: 2.7.0
+      tslib: 2.8.1
     transitivePeerDependencies:
       - aws-crt
 
@@ -3171,7 +3172,7 @@ snapshots:
       '@smithy/property-provider': 4.1.1
       '@smithy/shared-ini-file-loader': 4.2.0
       '@smithy/types': 4.5.0
-      tslib: 2.7.0
+      tslib: 2.8.1
     transitivePeerDependencies:
       - aws-crt
 
@@ -3211,7 +3212,7 @@ snapshots:
       '@smithy/util-middleware': 4.1.1
       '@smithy/util-stream': 4.3.2
       '@smithy/util-utf8': 4.1.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@aws-sdk/middleware-user-agent@3.891.0':
     dependencies:
@@ -3262,7 +3263,7 @@ snapshots:
       '@smithy/util-middleware': 4.1.1
       '@smithy/util-retry': 4.1.2
       '@smithy/util-utf8': 4.1.0
-      tslib: 2.7.0
+      tslib: 2.8.1
     transitivePeerDependencies:
       - aws-crt
 
@@ -3292,7 +3293,7 @@ snapshots:
       '@smithy/property-provider': 4.1.1
       '@smithy/shared-ini-file-loader': 4.2.0
       '@smithy/types': 4.5.0
-      tslib: 2.7.0
+      tslib: 2.8.1
     transitivePeerDependencies:
       - aws-crt
 
@@ -3303,7 +3304,7 @@ snapshots:
 
   '@aws-sdk/util-arn-parser@3.873.0':
     dependencies:
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@aws-sdk/util-endpoints@3.891.0':
     dependencies:
@@ -3315,7 +3316,7 @@ snapshots:
 
   '@aws-sdk/util-locate-window@3.873.0':
     dependencies:
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@aws-sdk/util-user-agent-browser@3.887.0':
     dependencies:
@@ -3335,7 +3336,7 @@ snapshots:
   '@aws-sdk/xml-builder@3.887.0':
     dependencies:
       '@smithy/types': 4.5.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@aws/lambda-invoke-store@0.0.1': {}
 
@@ -3345,7 +3346,7 @@ snapshots:
 
   '@emnapi/runtime@1.7.1':
     dependencies:
-      tslib: 2.7.0
+      tslib: 2.8.1
     optional: true
 
   '@eslint-community/eslint-utils@4.4.0(eslint@8.57.1)':
@@ -3557,34 +3558,34 @@ snapshots:
       - supports-color
     optional: true
 
-  '@next/env@16.0.7': {}
+  '@next/env@16.0.10': {}
 
   '@next/eslint-plugin-next@14.2.5':
     dependencies:
       glob: 10.3.10
 
-  '@next/swc-darwin-arm64@16.0.7':
+  '@next/swc-darwin-arm64@16.0.10':
     optional: true
 
-  '@next/swc-darwin-x64@16.0.7':
+  '@next/swc-darwin-x64@16.0.10':
     optional: true
 
-  '@next/swc-linux-arm64-gnu@16.0.7':
+  '@next/swc-linux-arm64-gnu@16.0.10':
     optional: true
 
-  '@next/swc-linux-arm64-musl@16.0.7':
+  '@next/swc-linux-arm64-musl@16.0.10':
     optional: true
 
-  '@next/swc-linux-x64-gnu@16.0.7':
+  '@next/swc-linux-x64-gnu@16.0.10':
     optional: true
 
-  '@next/swc-linux-x64-musl@16.0.7':
+  '@next/swc-linux-x64-musl@16.0.10':
     optional: true
 
-  '@next/swc-win32-arm64-msvc@16.0.7':
+  '@next/swc-win32-arm64-msvc@16.0.10':
     optional: true
 
-  '@next/swc-win32-x64-msvc@16.0.7':
+  '@next/swc-win32-x64-msvc@16.0.10':
     optional: true
 
   '@nodelib/fs.scandir@2.1.5':
@@ -3779,7 +3780,7 @@ snapshots:
   '@smithy/abort-controller@4.1.1':
     dependencies:
       '@smithy/types': 4.5.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@smithy/config-resolver@4.2.2':
     dependencies:
@@ -3809,7 +3810,7 @@ snapshots:
       '@smithy/property-provider': 4.1.1
       '@smithy/types': 4.5.0
       '@smithy/url-parser': 4.1.1
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@smithy/fetch-http-handler@5.2.1':
     dependencies:
@@ -3833,11 +3834,11 @@ snapshots:
 
   '@smithy/is-array-buffer@2.2.0':
     dependencies:
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@smithy/is-array-buffer@4.1.0':
     dependencies:
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@smithy/middleware-content-length@4.1.1':
     dependencies:
@@ -3898,7 +3899,7 @@ snapshots:
   '@smithy/property-provider@4.1.1':
     dependencies:
       '@smithy/types': 4.5.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@smithy/protocol-http@5.2.1':
     dependencies:
@@ -3909,12 +3910,12 @@ snapshots:
     dependencies:
       '@smithy/types': 4.5.0
       '@smithy/util-uri-escape': 4.1.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@smithy/querystring-parser@4.1.1':
     dependencies:
       '@smithy/types': 4.5.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@smithy/service-error-classification@4.1.2':
     dependencies:
@@ -3923,7 +3924,7 @@ snapshots:
   '@smithy/shared-ini-file-loader@4.2.0':
     dependencies:
       '@smithy/types': 4.5.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@smithy/signature-v4@5.2.1':
     dependencies:
@@ -3934,7 +3935,7 @@ snapshots:
       '@smithy/util-middleware': 4.1.1
       '@smithy/util-uri-escape': 4.1.0
       '@smithy/util-utf8': 4.1.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@smithy/smithy-client@4.6.3':
     dependencies:
@@ -3973,16 +3974,16 @@ snapshots:
   '@smithy/util-buffer-from@2.2.0':
     dependencies:
       '@smithy/is-array-buffer': 2.2.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@smithy/util-buffer-from@4.1.0':
     dependencies:
       '@smithy/is-array-buffer': 4.1.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@smithy/util-config-provider@4.1.0':
     dependencies:
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@smithy/util-defaults-mode-browser@4.1.3':
     dependencies:
@@ -4010,7 +4011,7 @@ snapshots:
 
   '@smithy/util-hex-encoding@4.1.0':
     dependencies:
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@smithy/util-middleware@4.1.1':
     dependencies:
@@ -4032,16 +4033,16 @@ snapshots:
       '@smithy/util-buffer-from': 4.1.0
       '@smithy/util-hex-encoding': 4.1.0
       '@smithy/util-utf8': 4.1.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@smithy/util-uri-escape@4.1.0':
     dependencies:
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@smithy/util-utf8@2.3.0':
     dependencies:
       '@smithy/util-buffer-from': 2.2.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@smithy/util-utf8@4.1.0':
     dependencies:
@@ -4845,7 +4846,7 @@ snapshots:
       debug: 4.3.7
       enhanced-resolve: 5.17.1
       eslint: 8.57.1
-      eslint-module-utils: 2.11.0(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.9.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.3(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.9.2))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.30.0)(eslint@8.57.1))(eslint@8.57.1)
+      eslint-module-utils: 2.11.0(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.9.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.3)(eslint@8.57.1)
       fast-glob: 3.3.2
       get-tsconfig: 4.8.1
       is-bun-module: 1.2.1
@@ -4858,7 +4859,7 @@ snapshots:
       - eslint-import-resolver-webpack
       - supports-color
 
-  eslint-module-utils@2.11.0(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.9.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.3(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.9.2))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.30.0)(eslint@8.57.1))(eslint@8.57.1):
+  eslint-module-utils@2.11.0(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.9.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.3)(eslint@8.57.1):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
@@ -5627,9 +5628,9 @@ snapshots:
 
   natural-compare@1.4.0: {}
 
-  next@16.0.7(react-dom@19.2.1(react@19.2.1))(react@19.2.1):
+  next@16.0.10(react-dom@19.2.1(react@19.2.1))(react@19.2.1):
     dependencies:
-      '@next/env': 16.0.7
+      '@next/env': 16.0.10
       '@swc/helpers': 0.5.15
       caniuse-lite: 1.0.30001660
       postcss: 8.4.31
@@ -5637,14 +5638,14 @@ snapshots:
       react-dom: 19.2.1(react@19.2.1)
       styled-jsx: 5.1.6(react@19.2.1)
     optionalDependencies:
-      '@next/swc-darwin-arm64': 16.0.7
-      '@next/swc-darwin-x64': 16.0.7
-      '@next/swc-linux-arm64-gnu': 16.0.7
-      '@next/swc-linux-arm64-musl': 16.0.7
-      '@next/swc-linux-x64-gnu': 16.0.7
-      '@next/swc-linux-x64-musl': 16.0.7
-      '@next/swc-win32-arm64-msvc': 16.0.7
-      '@next/swc-win32-x64-msvc': 16.0.7
+      '@next/swc-darwin-arm64': 16.0.10
+      '@next/swc-darwin-x64': 16.0.10
+      '@next/swc-linux-arm64-gnu': 16.0.10
+      '@next/swc-linux-arm64-musl': 16.0.10
+      '@next/swc-linux-x64-gnu': 16.0.10
+      '@next/swc-linux-x64-musl': 16.0.10
+      '@next/swc-win32-arm64-msvc': 16.0.10
+      '@next/swc-win32-x64-msvc': 16.0.10
       sharp: 0.34.5
     transitivePeerDependencies:
       - '@babel/core'

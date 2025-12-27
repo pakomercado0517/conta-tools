@@ -1,13 +1,13 @@
-import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth/next';
-import { revalidatePath } from 'next/cache';
-import { authOptions } from '../../../../lib/auth-config.js';
+import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth/next";
+import { revalidatePath } from "next/cache";
+import { authOptions } from "../../../../lib/auth-config.js";
 
 // Indicate that this route uses dynamic features
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
-const { userDb } = require('../../../../lib/userDbPostgres.cjs');
-import { emailService } from '../../../../lib/emailService.js';
+const { userDb } = require("../../../../lib/userDbPostgres.cjs");
+import { emailService } from "../../../../lib/emailService.js";
 
 export async function GET(request) {
   try {
@@ -15,7 +15,7 @@ export async function GET(request) {
     const session = await getServerSession(authOptions);
 
     if (!session || !session.user) {
-      return NextResponse.json({ message: 'No autorizado' }, { status: 401 });
+      return NextResponse.json({ message: "No autorizado" }, { status: 401 });
     }
 
     const userId = session.user.id;
@@ -23,9 +23,12 @@ export async function GET(request) {
     // Obtener perfil del usuario
     try {
       const user = await userDb.findById(userId);
-      
+
       if (!user) {
-        return NextResponse.json({ message: 'Usuario no encontrado' }, { status: 404 });
+        return NextResponse.json(
+          { message: "Usuario no encontrado" },
+          { status: 404 }
+        );
       }
 
       return NextResponse.json({
@@ -35,17 +38,22 @@ export async function GET(request) {
           name: user.name,
           emailVerified: user.emailVerified,
           createdAt: user.createdAt,
-          updatedAt: user.updatedAt
-        }
+          updatedAt: user.updatedAt,
+        },
       });
     } catch (error) {
-      console.error('Get profile error:', error);
-      return NextResponse.json({ message: 'Error interno del servidor' }, { status: 500 });
+      console.error("Get profile error:", error);
+      return NextResponse.json(
+        { message: "Error interno del servidor" },
+        { status: 500 }
+      );
     }
-
   } catch (error) {
-    console.error('Profile API error:', error);
-    return NextResponse.json({ message: 'Error interno del servidor' }, { status: 500 });
+    console.error("Profile API error:", error);
+    return NextResponse.json(
+      { message: "Error interno del servidor" },
+      { status: 500 }
+    );
   }
 }
 
@@ -55,7 +63,7 @@ export async function PUT(request) {
     const session = await getServerSession(authOptions);
 
     if (!session || !session.user) {
-      return NextResponse.json({ message: 'No autorizado' }, { status: 401 });
+      return NextResponse.json({ message: "No autorizado" }, { status: 401 });
     }
 
     const userId = session.user.id;
@@ -65,14 +73,14 @@ export async function PUT(request) {
     // Validación básica
     if (!name && !email) {
       return NextResponse.json(
-        { message: 'Se requiere al menos un campo para actualizar' }, 
+        { message: "Se requiere al menos un campo para actualizar" },
         { status: 400 }
       );
     }
 
     if (name && name.trim().length < 2) {
       return NextResponse.json(
-        { message: 'El nombre debe tener al menos 2 caracteres' }, 
+        { message: "El nombre debe tener al menos 2 caracteres" },
         { status: 400 }
       );
     }
@@ -81,7 +89,7 @@ export async function PUT(request) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email)) {
         return NextResponse.json(
-          { message: 'El formato del email no es válido' }, 
+          { message: "El formato del email no es válido" },
           { status: 400 }
         );
       }
@@ -101,58 +109,65 @@ export async function PUT(request) {
           );
 
           if (!emailResult.success) {
-            console.error('Failed to send verification email:', emailResult.error);
+            console.error(
+              "Failed to send verification email:",
+              emailResult.error
+            );
           }
         } catch (emailError) {
-          console.error('Email service error:', emailError);
+          console.error("Email service error:", emailError);
           // No fallar la actualización si el email no se puede enviar
         }
       }
 
       const response = NextResponse.json({
-        message: updatedUser.emailChanged 
-          ? 'Perfil actualizado. Se ha enviado un email de verificación a tu nueva dirección. Tu sesión se cerrará para proteger tu cuenta.'
-          : 'Perfil actualizado exitosamente',
+        message: updatedUser.emailChanged
+          ? "Perfil actualizado. Se ha enviado un email de verificación a tu nueva dirección. Tu sesión se cerrará para proteger tu cuenta."
+          : "Perfil actualizado exitosamente",
         user: {
           id: updatedUser.id,
           email: updatedUser.email,
           name: updatedUser.name,
           emailVerified: updatedUser.emailVerified,
-          updatedAt: updatedUser.updatedAt
+          updatedAt: updatedUser.updatedAt,
         },
         emailChanged: updatedUser.emailChanged,
         // Indicar al frontend que debe cerrar la sesión
-        shouldSignOut: updatedUser.emailChanged
+        shouldSignOut: updatedUser.emailChanged,
       });
 
       // Revalidar las rutas que dependen de los datos del perfil
-      revalidatePath('/profile/edit');
-      revalidatePath('/dashboard');
-      revalidatePath('/api/user/profile');
-      
+      revalidatePath("/profile/edit");
+      revalidatePath("/dashboard");
+      revalidatePath("/api/user/profile");
+
       // Si se cambió el email, cerrar la sesión del usuario
       if (updatedUser.emailChanged) {
-        console.log('📧 Email changed, invalidating session for user:', userId);
+        console.log("📧 Email changed, invalidating session for user:", userId);
         // Agregar headers para invalidar la sesión
-        response.headers.set('X-Session-Invalidate', 'true');
+        response.headers.set("X-Session-Invalidate", "true");
         // Revalidar rutas adicionales por el cambio de email
-        revalidatePath('/');
+        revalidatePath("/");
       }
 
       return response;
-
     } catch (error) {
-      console.error('Update profile error:', error);
-      
-      if (error.message.includes('ya está en uso')) {
+      console.error("Update profile error:", error);
+
+      if (error.message.includes("ya está en uso")) {
         return NextResponse.json({ message: error.message }, { status: 409 });
       }
 
-      return NextResponse.json({ message: 'Error interno del servidor' }, { status: 500 });
+      return NextResponse.json(
+        { message: "Error interno del servidor" },
+        { status: 500 }
+      );
     }
-
   } catch (error) {
-    console.error('Profile API error:', error);
-    return NextResponse.json({ message: 'Error interno del servidor' }, { status: 500 });
+    console.error("Profile API error:", error);
+    return NextResponse.json(
+      { message: "Error interno del servidor" },
+      { status: 500 }
+    );
   }
 }

@@ -1,49 +1,56 @@
 "use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { Card, Button, TextInput, Label, Alert } from 'flowbite-react';
-import { FaEye, FaEyeSlash, FaEnvelope, FaLock, FaUser, FaUserPlus } from 'react-icons/fa';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Card, Button, TextInput, Label, Alert } from "flowbite-react";
+import {
+  FaEye,
+  FaEyeSlash,
+  FaEnvelope,
+  FaLock,
+  FaUser,
+  FaUserPlus,
+} from "react-icons/fa";
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
   const router = useRouter();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const validateForm = () => {
     if (!formData.name.trim()) {
-      setError('El nombre es requerido');
+      setError("El nombre es requerido");
       return false;
     }
     if (!formData.email.trim()) {
-      setError('El email es requerido');
+      setError("El email es requerido");
       return false;
     }
     if (formData.password.length < 6) {
-      setError('La contraseña debe tener al menos 6 caracteres');
+      setError("La contraseña debe tener al menos 6 caracteres");
       return false;
     }
     if (formData.password !== formData.confirmPassword) {
-      setError('Las contraseñas no coinciden');
+      setError("Las contraseñas no coinciden");
       return false;
     }
     return true;
@@ -52,7 +59,7 @@ export default function RegisterPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
+    setError("");
 
     if (!validateForm()) {
       setLoading(false);
@@ -60,34 +67,33 @@ export default function RegisterPage() {
     }
 
     try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           name: formData.name.trim(),
           email: formData.email.toLowerCase().trim(),
-          password: formData.password
+          password: formData.password,
         }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.message || 'Error al crear la cuenta');
+        setError(data.message || "Error al crear la cuenta");
         return;
       }
 
       setSuccess(true);
       // Redirigir a login después de 3 segundos
       setTimeout(() => {
-        router.push('/auth/login');
+        router.push("/auth/login");
       }, 3000);
-
     } catch (error) {
-      console.error('Registration error:', error);
-      setError('Error al conectar con el servidor');
+      console.error("Registration error:", error);
+      setError("Error al conectar con el servidor");
     } finally {
       setLoading(false);
     }
@@ -97,16 +103,18 @@ export default function RegisterPage() {
     return (
       <div className="flex min-h-[calc(100vh-200px)] items-center justify-center px-4 py-8">
         <Card className="w-full max-w-md">
-          <div className="text-center space-y-4">
-            <div className="text-6xl text-green-500 mb-4">✅</div>
+          <div className="space-y-4 text-center">
+            <div className="mb-4 text-6xl text-green-500">✅</div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
               ¡Cuenta creada exitosamente!
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
-              Te hemos enviado un email de verificación a <strong>{formData.email}</strong>
+              Te hemos enviado un email de verificación a{" "}
+              <strong>{formData.email}</strong>
             </p>
             <p className="text-sm text-gray-500 dark:text-gray-500">
-              Por favor, revisa tu bandeja de entrada y haz clic en el enlace de verificación para activar tu cuenta.
+              Por favor, revisa tu bandeja de entrada y haz clic en el enlace de
+              verificación para activar tu cuenta.
             </p>
             <div className="pt-4">
               <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -184,7 +192,7 @@ export default function RegisterPage() {
                 <TextInput
                   id="password"
                   name="password"
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   icon={FaLock}
                   placeholder="••••••••"
                   value={formData.password}
@@ -212,7 +220,7 @@ export default function RegisterPage() {
                 <TextInput
                   id="confirmPassword"
                   name="confirmPassword"
-                  type={showConfirmPassword ? 'text' : 'password'}
+                  type={showConfirmPassword ? "text" : "password"}
                   icon={FaLock}
                   placeholder="••••••••"
                   value={formData.confirmPassword}
@@ -231,20 +239,16 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={loading}
-            >
+            <Button type="submit" className="w-full" disabled={loading}>
               <FaUserPlus className="mr-2" />
-              {loading ? 'Creando cuenta...' : 'Crear Cuenta'}
+              {loading ? "Creando cuenta..." : "Crear Cuenta"}
             </Button>
           </form>
 
           {/* Login Link */}
           <div className="text-center">
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              ¿Ya tienes una cuenta?{' '}
+              ¿Ya tienes una cuenta?{" "}
               <Link
                 href="/auth/login"
                 className="font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-200"

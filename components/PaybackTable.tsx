@@ -63,7 +63,7 @@ export default function PaybackTable({
     if (isChecked) {
       const newTotal = discount.reduce(
         (sum, item) => sum + (item.total || 0),
-        0,
+        0
       );
       setTotalSum(totales - newTotal);
     }

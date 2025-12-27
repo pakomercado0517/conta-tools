@@ -1,30 +1,35 @@
 "use client";
 
-import { useState, useEffect, FormEvent, ChangeEvent } from 'react';
-import { useAuth } from '../../../components/AuthProvider';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { Card, Button, TextInput, Label, Alert } from 'flowbite-react';
-import { FaEnvelope, FaArrowLeft, FaPaperPlane, FaCheckCircle } from 'react-icons/fa';
-import { getContextualError } from '../../../lib/supabase/errorTranslations';
+import { useState, useEffect, FormEvent, ChangeEvent } from "react";
+import { useAuth } from "../../../components/AuthProvider";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Card, Button, TextInput, Label, Alert } from "flowbite-react";
+import {
+  FaEnvelope,
+  FaArrowLeft,
+  FaPaperPlane,
+  FaCheckCircle,
+} from "react-icons/fa";
+import { getContextualError } from "../../../lib/supabase/errorTranslations";
 
 /**
  * Página de recuperación de contraseña
  * Permite al usuario enviar un enlace de recuperación a su email
  */
 export default function ForgotPasswordPage() {
-  const [email, setEmail] = useState<string>('');
+  const [email, setEmail] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>('');
-  const [success, setSuccess] = useState<string>('');
-  
+  const [error, setError] = useState<string>("");
+  const [success, setSuccess] = useState<string>("");
+
   const { resetPassword, user } = useAuth();
   const router = useRouter();
 
   // Si ya está autenticado, redirigir
   useEffect(() => {
     if (user) {
-      router.push('/dashboard');
+      router.push("/dashboard");
     }
   }, [user, router]);
 
@@ -45,33 +50,35 @@ export default function ForgotPasswordPage() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setLoading(true);
-    setError('');
-    setSuccess('');
+    setError("");
+    setSuccess("");
 
     if (!email) {
-      setError('Por favor, ingresa tu correo electrónico');
+      setError("Por favor, ingresa tu correo electrónico");
       setLoading(false);
       return;
     }
 
     if (!validateEmail(email)) {
-      setError('El formato del email no es válido');
+      setError("El formato del email no es válido");
       setLoading(false);
       return;
     }
 
     try {
       const { error: resetError } = await resetPassword(email);
-      
+
       if (resetError) {
-        setError(getContextualError(resetError, 'recovery'));
+        setError(getContextualError(resetError, "recovery"));
       } else {
-        setSuccess('Se ha enviado un enlace de recuperación a tu correo electrónico de ContaTools. Revisa tu bandeja de entrada y spam.');
-        setEmail('');
+        setSuccess(
+          "Se ha enviado un enlace de recuperación a tu correo electrónico de ContaTools. Revisa tu bandeja de entrada y spam."
+        );
+        setEmail("");
       }
     } catch (error) {
-      console.error('Password reset error:', error);
-      setError(getContextualError(error, 'recovery'));
+      console.error("Password reset error:", error);
+      setError(getContextualError(error, "recovery"));
     } finally {
       setLoading(false);
     }
@@ -89,7 +96,7 @@ export default function ForgotPasswordPage() {
               Ingresa tu email para recibir un enlace de recuperación
             </p>
           </div>
-          
+
           {error && (
             <Alert color="failure" className="text-sm">
               {error}
@@ -100,8 +107,8 @@ export default function ForgotPasswordPage() {
             <Alert color="success" className="text-sm" icon={FaCheckCircle}>
               <div>
                 <p className="font-medium">¡Enlace enviado! 🚀</p>
-                <p className="text-xs mt-1">{success}</p>
-                <p className="text-xs mt-1 text-amber-600">
+                <p className="mt-1 text-xs">{success}</p>
+                <p className="mt-1 text-xs text-amber-600">
                   ⚠️ El enlace expira en 1 hora por seguridad.
                 </p>
               </div>
@@ -118,25 +125,23 @@ export default function ForgotPasswordPage() {
                 icon={FaEnvelope}
                 placeholder="tu@email.com"
                 value={email}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  setEmail(e.target.value)
+                }
                 required
                 disabled={loading}
               />
             </div>
 
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={loading}
-            >
+            <Button type="submit" className="w-full" disabled={loading}>
               <FaPaperPlane className="mr-2" />
-              {loading ? 'Enviando...' : 'Enviar Enlace de Recuperación'}
+              {loading ? "Enviando..." : "Enviar Enlace de Recuperación"}
             </Button>
           </form>
 
-          <div className="text-center space-y-2">
+          <div className="space-y-2 text-center">
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              ¿Recordaste tu contraseña?{' '}
+              ¿Recordaste tu contraseña?{" "}
               <Link
                 href="/auth/login"
                 className="font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-200"
@@ -144,9 +149,9 @@ export default function ForgotPasswordPage() {
                 Iniciar sesión
               </Link>
             </p>
-            
+
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              ¿No tienes una cuenta?{' '}
+              ¿No tienes una cuenta?{" "}
               <Link
                 href="/auth/register"
                 className="font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-200"
@@ -154,7 +159,7 @@ export default function ForgotPasswordPage() {
                 Crear cuenta
               </Link>
             </p>
-            
+
             <Link
               href="/"
               className="inline-flex items-center text-sm text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200"

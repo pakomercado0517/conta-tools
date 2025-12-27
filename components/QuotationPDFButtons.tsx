@@ -10,7 +10,7 @@ import type { QuotationPDFButtonsProps, BankData } from "@/types/quotation";
 /**
  * Componente para generar y previsualizar PDFs de cotización
  * Incluye funcionalidad para cargar firma digital y generar PDF
- * 
+ *
  * @param datos - Datos del formulario de cotización
  * @param setPdfDataUrl - Función para establecer URL del PDF para preview
  * @param dataBank - Datos bancarios opcionales
@@ -26,8 +26,18 @@ export default function QuotationPDFButtons({
 
   // Meses en español para formato de fecha
   const meses = [
-    "enero", "febrero", "marzo", "abril", "mayo", "junio",
-    "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
+    "enero",
+    "febrero",
+    "marzo",
+    "abril",
+    "mayo",
+    "junio",
+    "julio",
+    "agosto",
+    "septiembre",
+    "octubre",
+    "noviembre",
+    "diciembre",
   ];
 
   /**
@@ -108,7 +118,9 @@ export default function QuotationPDFButtons({
     doc.setTextColor(96, 96, 96); // Gris oscuro
     doc.text(datos.empresa, pageWidth / 2, 10, { align: "center" });
     doc.setFontSize(10);
-    doc.text(String(datos.rfc).toUpperCase(), pageWidth / 2, 15, { align: "center" });
+    doc.text(String(datos.rfc).toUpperCase(), pageWidth / 2, 15, {
+      align: "center",
+    });
     doc.text(datos.domicilio, pageWidth / 2, 20, { align: "center" });
     doc.text(contacto, pageWidth / 2, 25, { align: "center" });
 
@@ -137,7 +149,9 @@ export default function QuotationPDFButtons({
           producto.unidad,
           producto.descripcion,
           formatNumber.format(Number(producto.precioUnitario)),
-          formatNumber.format(Number(producto.precioUnitario) * Number(producto.cantidad)),
+          formatNumber.format(
+            Number(producto.precioUnitario) * Number(producto.cantidad)
+          ),
         ]),
         // Espacio de dos filas vacías
         [
@@ -164,9 +178,10 @@ export default function QuotationPDFButtons({
           formatNumber.format(
             datos.productos.reduce(
               (total, producto) =>
-                total + Number(producto.precioUnitario) * Number(producto.cantidad),
-              0,
-            ),
+                total +
+                Number(producto.precioUnitario) * Number(producto.cantidad),
+              0
+            )
           ),
         ],
       ],
@@ -229,12 +244,12 @@ export default function QuotationPDFButtons({
     doc.setFontSize(12);
     doc.setTextColor(96, 96, 96); // Gris oscuro
     doc.text("Atentamente", 12, finalY + 10);
-    
+
     // Agregar imagen de la firma
     if (firmaImg) {
       doc.addImage(firmaImg, "PNG", 10, finalY + 10, 15, 14);
     }
-    
+
     doc.text(datos.firma, 12, finalY + 30);
     doc.setFontSize(10);
     doc.text(datos.cargo, 12, finalY + 35);
@@ -259,7 +274,7 @@ export default function QuotationPDFButtons({
           Cargar firma digital
         </h2>
         <div>
-          <Label 
+          <Label
             htmlFor="firmaImg"
             className="mb-1 text-sm font-medium text-gray-300"
           >
@@ -276,11 +291,11 @@ export default function QuotationPDFButtons({
           />
         </div>
       </section>
-      
+
       <section className="mt-4 grid grid-cols-2 gap-4 px-3">
-        <Button 
-          color="cyan" 
-          size="xl" 
+        <Button
+          color="cyan"
+          size="xl"
           onClick={() => generarPDF()}
           type="button"
         >

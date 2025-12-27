@@ -46,13 +46,13 @@ const fuse = new Fuse(catalogo as CatalogoItem[], {
   includeScore: true,
   minMatchCharLength: 3,
   findAllMatches: false,
-  useExtendedSearch: true
+  useExtendedSearch: true,
 });
 
 /**
  * Función para buscar claves del catálogo SAT
  * Combina búsqueda difusa con Fuse.js y búsqueda exacta
- * 
+ *
  * @param descripcion - Texto de descripción a buscar
  * @returns Array de resultados únicos
  */
@@ -63,9 +63,10 @@ function buscarClaves(descripcion: string): BusquedaResult[] {
   const fuseResults = fuse.search(texto);
 
   // Búsqueda por coincidencia directa (respaldo)
-  const exactMatches = (catalogo as CatalogoItem[]).filter((item) =>
-    item.descripcion?.toLowerCase().includes(texto) ||
-    item.palabrasSimilares?.toLowerCase().includes(texto)
+  const exactMatches = (catalogo as CatalogoItem[]).filter(
+    (item) =>
+      item.descripcion?.toLowerCase().includes(texto) ||
+      item.palabrasSimilares?.toLowerCase().includes(texto)
   );
 
   // Combinar ambos resultados sin duplicados usando Map
@@ -99,10 +100,10 @@ function buscarClaves(descripcion: string): BusquedaResult[] {
  */
 function validarRequest(body: unknown): body is GeneradorConceptosRequest {
   return (
-    typeof body === 'object' &&
+    typeof body === "object" &&
     body !== null &&
-    'descripcion' in body &&
-    typeof (body as Record<string, unknown>).descripcion === 'string'
+    "descripcion" in body &&
+    typeof (body as Record<string, unknown>).descripcion === "string"
   );
 }
 
@@ -119,7 +120,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     if (!validarRequest(body)) {
       const errorResponse: ErrorResponse = {
         error: "Invalid request body",
-        message: "El cuerpo de la petición debe incluir 'descripcion' como string"
+        message:
+          "El cuerpo de la petición debe incluir 'descripcion' como string",
       };
       return NextResponse.json(errorResponse, { status: 400 });
     }
@@ -131,7 +133,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       const response: GeneradorConceptosResponse = {
         claves: ["00000000 - Descripción muy corta"],
         total: 0,
-        descripcionBusqueda: descripcion
+        descripcionBusqueda: descripcion,
       };
       return NextResponse.json(response, { status: 400 });
     }
@@ -140,7 +142,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     if (descripcion.length > 500) {
       const errorResponse: ErrorResponse = {
         error: "Description too long",
-        message: "La descripción no puede exceder 500 caracteres"
+        message: "La descripción no puede exceder 500 caracteres",
       };
       return NextResponse.json(errorResponse, { status: 400 });
     }
@@ -153,7 +155,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       const response: GeneradorConceptosResponse = {
         claves: ["00000000 - No se encontraron coincidencias"],
         total: 0,
-        descripcionBusqueda: descripcion
+        descripcionBusqueda: descripcion,
       };
       return NextResponse.json(response, { status: 200 });
     }
@@ -165,25 +167,24 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const response: GeneradorConceptosResponse = {
       claves: resultadosLimitados.map((c) => `${c.clave} - ${c.descripcion}`),
       total: resultadosLimitados.length,
-      descripcionBusqueda: descripcion
+      descripcionBusqueda: descripcion,
     };
 
     return NextResponse.json(response, {
       status: 200,
       headers: {
-        'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=3600' // Cache por 1 hora
-      }
+        "Content-Type": "application/json",
+        "Cache-Control": "public, max-age=3600", // Cache por 1 hora
+      },
     });
-
   } catch (error) {
-    console.error('Error en generador_conceptos API:', error);
+    console.error("Error en generador_conceptos API:", error);
 
     // Determinar el tipo de error y responder apropiadamente
     if (error instanceof SyntaxError) {
       const errorResponse: ErrorResponse = {
         error: "Invalid JSON",
-        message: "El cuerpo de la petición debe ser JSON válido"
+        message: "El cuerpo de la petición debe ser JSON válido",
       };
       return NextResponse.json(errorResponse, { status: 400 });
     }
@@ -191,7 +192,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Error genérico del servidor
     const errorResponse: ErrorResponse = {
       error: "Internal server error",
-      message: "Error interno del servidor al procesar la búsqueda"
+      message: "Error interno del servidor al procesar la búsqueda",
     };
     return NextResponse.json(errorResponse, { status: 500 });
   }
@@ -205,24 +206,25 @@ export async function GET(): Promise<NextResponse> {
   const info = {
     endpoint: "/api/generador_conceptos",
     method: "POST",
-    description: "Busca códigos de productos/servicios del SAT basado en una descripción",
+    description:
+      "Busca códigos de productos/servicios del SAT basado en una descripción",
     body: {
-      descripcion: "string (requerido, min: 2 caracteres, max: 500 caracteres)"
+      descripcion: "string (requerido, min: 2 caracteres, max: 500 caracteres)",
     },
     response: {
       claves: "string[] - Array de claves con formato 'CODIGO - DESCRIPCIÓN'",
       total: "number - Cantidad de resultados encontrados",
-      descripcionBusqueda: "string - Descripción que se buscó"
+      descripcionBusqueda: "string - Descripción que se buscó",
     },
     catalogoVersion: "SAT 2019",
-    totalItems: catalogo.length
+    totalItems: catalogo.length,
   };
 
   return NextResponse.json(info, {
     status: 200,
     headers: {
-      'Content-Type': 'application/json',
-      'Cache-Control': 'public, max-age=86400' // Cache por 24 horas
-    }
+      "Content-Type": "application/json",
+      "Cache-Control": "public, max-age=86400", // Cache por 24 horas
+    },
   });
 }

@@ -5,34 +5,38 @@ import type { GeneradorContratosPageProps } from "@/types/pages";
 // Metadatos específicos para el generador de contratos
 export const metadata: Metadata = {
   title: "Generador de Contratos - ContaTools",
-  description: "Genera contratos de compraventa de materiales y/o servicios con formato profesional. Herramienta inteligente con IA para crear contratos legales.",
+  description:
+    "Genera contratos de compraventa de materiales y/o servicios con formato profesional. Herramienta inteligente con IA para crear contratos legales.",
   keywords: [
     "generador de contratos",
     "contratos de compraventa",
     "contratos comerciales",
     "documentos legales",
     "contratos con IA",
-    "formato profesional"
+    "formato profesional",
   ],
   openGraph: {
     title: "Generador de Contratos - ContaTools",
-    description: "Genera contratos de compraventa de materiales y/o servicios con formato profesional.",
-    type: "website"
+    description:
+      "Genera contratos de compraventa de materiales y/o servicios con formato profesional.",
+    type: "website",
   },
   robots: {
     index: true,
-    follow: true
-  }
+    follow: true,
+  },
 };
 
 /**
  * Página del Generador de Contratos de ContaTools
  * Permite generar contratos de compraventa con formato profesional usando IA
- * 
+ *
  * @param params - Parámetros de la URL
  * @param searchParams - Parámetros de búsqueda de la URL
  */
-export default async function GeneradorContratosPage(_props: GeneradorContratosPageProps) {
+export default async function GeneradorContratosPage(
+  _props: GeneradorContratosPageProps
+) {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mx-auto max-w-6xl">
@@ -45,7 +49,7 @@ export default async function GeneradorContratosPage(_props: GeneradorContratosP
             formato profesional usando inteligencia artificial.
           </p>
         </header>
-        
+
         <main>
           <ContractGeneratorForm />
         </main>

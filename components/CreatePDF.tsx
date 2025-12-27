@@ -18,7 +18,9 @@ interface CreatePDFProps {
 }
 
 export default function CreatePDF({ costo, totalMonto }: CreatePDFProps) {
-  const [totalResult, setTotalResult] = useState<string[] | undefined>(undefined);
+  const [totalResult, setTotalResult] = useState<string[] | undefined>(
+    undefined
+  );
   const doc = new jsPDF();
   const formatNumber = useFormatNumber();
 
@@ -39,7 +41,7 @@ export default function CreatePDF({ costo, totalMonto }: CreatePDFProps) {
     result[0] = result[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     return result.join(".");
   };
-  
+
   const formatSubtotal = (num: number): string => {
     const result = num.toFixed(2).toString().split(".");
     result[0] = result[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");

@@ -1,154 +1,157 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Confirma tu cuenta - ContaTools</title>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f8fafc;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background-color: #ffffff;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .header {
-            background: linear-gradient(135deg, #0e7490 0%, #0d9488 100%);
-            padding: 40px 20px;
-            text-align: center;
-            color: white;
-        }
-        .logo {
-            font-size: 32px;
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
-        .tagline {
-            font-style: italic;
-            opacity: 0.9;
-            font-size: 16px;
-        }
-        .content {
-            padding: 40px 30px;
-        }
-        .welcome-title {
-            font-size: 24px;
-            font-weight: bold;
-            color: #1f2937;
-            margin-bottom: 16px;
-            text-align: center;
-        }
-        .message {
-            font-size: 16px;
-            color: #4b5563;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-        .cta-button {
-            display: inline-block;
-            background: linear-gradient(135deg, #0e7490 0%, #0d9488 100%);
-            color: white !important;
-            text-decoration: none;
-            padding: 16px 32px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 16px;
-            text-align: center;
-            margin: 20px auto;
-            display: block;
-            max-width: 250px;
-            transition: all 0.3s ease;
-        }
-        .cta-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(14, 116, 144, 0.3);
-        }
-        .footer {
-            background-color: #f9fafb;
-            padding: 30px;
-            text-align: center;
-            border-top: 1px solid #e5e7eb;
-        }
-        .footer p {
-            margin: 8px 0;
-            font-size: 14px;
-            color: #6b7280;
-        }
-        .link-fallback {
-            background-color: #f3f4f6;
-            border-radius: 6px;
-            padding: 16px;
-            margin: 20px 0;
-            border-left: 4px solid #0e7490;
-        }
-        .link-fallback p {
-            margin: 0;
-            font-size: 14px;
-            color: #4b5563;
-        }
-        .link-fallback code {
-            background-color: #e5e7eb;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
-            word-break: break-all;
-        }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background-color: #f8fafc;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      .header {
+        background: linear-gradient(135deg, #0e7490 0%, #0d9488 100%);
+        padding: 40px 20px;
+        text-align: center;
+        color: white;
+      }
+      .logo {
+        font-size: 32px;
+        font-weight: bold;
+        margin-bottom: 8px;
+      }
+      .tagline {
+        font-style: italic;
+        opacity: 0.9;
+        font-size: 16px;
+      }
+      .content {
+        padding: 40px 30px;
+      }
+      .welcome-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #1f2937;
+        margin-bottom: 16px;
+        text-align: center;
+      }
+      .message {
+        font-size: 16px;
+        color: #4b5563;
+        margin-bottom: 30px;
+        text-align: center;
+      }
+      .cta-button {
+        display: inline-block;
+        background: linear-gradient(135deg, #0e7490 0%, #0d9488 100%);
+        color: white !important;
+        text-decoration: none;
+        padding: 16px 32px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 16px;
+        text-align: center;
+        margin: 20px auto;
+        display: block;
+        max-width: 250px;
+        transition: all 0.3s ease;
+      }
+      .cta-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(14, 116, 144, 0.3);
+      }
+      .footer {
+        background-color: #f9fafb;
+        padding: 30px;
+        text-align: center;
+        border-top: 1px solid #e5e7eb;
+      }
+      .footer p {
+        margin: 8px 0;
+        font-size: 14px;
+        color: #6b7280;
+      }
+      .link-fallback {
+        background-color: #f3f4f6;
+        border-radius: 6px;
+        padding: 16px;
+        margin: 20px 0;
+        border-left: 4px solid #0e7490;
+      }
+      .link-fallback p {
+        margin: 0;
+        font-size: 14px;
+        color: #4b5563;
+      }
+      .link-fallback code {
+        background-color: #e5e7eb;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: "Courier New", monospace;
+        word-break: break-all;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <div class="header">
-            <div class="logo">📊 ContaTools</div>
-            <div class="tagline">Automatiza tu contabilidad sin complicaciones</div>
+      <div class="header">
+        <div class="logo">📊 ContaTools</div>
+        <div class="tagline">Automatiza tu contabilidad sin complicaciones</div>
+      </div>
+
+      <div class="content">
+        <h1 class="welcome-title">¡Bienvenido a ContaTools! 🎉</h1>
+
+        <p class="message">
+          Gracias por registrarte en ContaTools. Para completar tu registro y
+          comenzar a automatizar tu contabilidad, necesitas confirmar tu
+          dirección de correo electrónico.
+        </p>
+
+        <a href="{{ .ConfirmationURL }}" class="cta-button">
+          ✅ Confirmar mi cuenta
+        </a>
+
+        <div class="link-fallback">
+          <p><strong>¿Problemas con el botón?</strong></p>
+          <p>Copia y pega este enlace en tu navegador:</p>
+          <code>{{ .ConfirmationURL }}</code>
         </div>
-        
-        <div class="content">
-            <h1 class="welcome-title">¡Bienvenido a ContaTools! 🎉</h1>
-            
-            <p class="message">
-                Gracias por registrarte en ContaTools. Para completar tu registro y comenzar a automatizar tu contabilidad, 
-                necesitas confirmar tu dirección de correo electrónico.
-            </p>
-            
-            <a href="{{ .ConfirmationURL }}" class="cta-button">
-                ✅ Confirmar mi cuenta
-            </a>
-            
-            <div class="link-fallback">
-                <p><strong>¿Problemas con el botón?</strong></p>
-                <p>Copia y pega este enlace en tu navegador:</p>
-                <code>{{ .ConfirmationURL }}</code>
-            </div>
-            
-            <p class="message">
-                Una vez confirmada tu cuenta, podrás acceder a todas nuestras herramientas:
-                <br><br>
-                📈 <strong>Calculadora SDI</strong><br>
-                💰 <strong>Contador de Dinero</strong><br>
-                📋 <strong>Generador de Contratos</strong><br>
-                💸 <strong>Registro de Gastos</strong><br>
-                🧾 <strong>Generador de Cotizaciones</strong><br>
-                Y mucho más...
-            </p>
-        </div>
-        
-        <div class="footer">
-            <p><strong>ContaTools</strong></p>
-            <p>Tu solución integral para automatizar procesos contables</p>
-            <p style="font-size: 12px; margin-top: 20px;">
-                Este enlace expirará en 24 horas por seguridad.<br>
-                Si no solicitaste esta cuenta, puedes ignorar este correo.
-            </p>
-        </div>
+
+        <p class="message">
+          Una vez confirmada tu cuenta, podrás acceder a todas nuestras
+          herramientas:
+          <br /><br />
+          📈 <strong>Calculadora SDI</strong><br />
+          💰 <strong>Contador de Dinero</strong><br />
+          📋 <strong>Generador de Contratos</strong><br />
+          💸 <strong>Registro de Gastos</strong><br />
+          🧾 <strong>Generador de Cotizaciones</strong><br />
+          Y mucho más...
+        </p>
+      </div>
+
+      <div class="footer">
+        <p><strong>ContaTools</strong></p>
+        <p>Tu solución integral para automatizar procesos contables</p>
+        <p style="font-size: 12px; margin-top: 20px">
+          Este enlace expirará en 24 horas por seguridad.<br />
+          Si no solicitaste esta cuenta, puedes ignorar este correo.
+        </p>
+      </div>
     </div>
-</body>
+  </body>
 </html>

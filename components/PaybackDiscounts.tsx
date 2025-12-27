@@ -20,11 +20,17 @@ interface PaybackDiscountsProps {
  * Componente para manejar descuentos en cálculos de payback
  * Permite agregar, editar y eliminar descuentos
  */
-export default function PaybackDiscounts({ discount, setDiscount }: PaybackDiscountsProps) {
+export default function PaybackDiscounts({
+  discount,
+  setDiscount,
+}: PaybackDiscountsProps) {
   /**
    * Maneja los cambios en los inputs de descuento
    */
-  const handleDiscountChange = (e: ChangeEvent<HTMLInputElement>, index: number): void => {
+  const handleDiscountChange = (
+    e: ChangeEvent<HTMLInputElement>,
+    index: number
+  ): void => {
     const { value, name } = e.target;
     const newDiscount = [...discount];
     newDiscount[index] = {

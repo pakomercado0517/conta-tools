@@ -14,7 +14,7 @@ import type { QuotationFormProps } from "@/types/quotation";
 /**
  * Componente formulario para información del remitente en cotizaciones
  * Captura datos básicos de la empresa y representante
- * 
+ *
  * @param handleChange - Función para manejar cambios en inputs
  * @param datos - Datos actuales del formulario
  * @param agregarLogoEmpresa - Función para manejar carga de logo
@@ -40,7 +40,7 @@ export default function QuotationForm({
         <form className="mb-5 grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3">
           {/* Nombre de la Empresa */}
           <div>
-            <Label 
+            <Label
               htmlFor="empresa"
               className="mb-1 text-sm font-medium text-gray-300"
             >
@@ -59,7 +59,7 @@ export default function QuotationForm({
 
           {/* RFC */}
           <div>
-            <Label 
+            <Label
               htmlFor="rfc"
               className="mb-1 text-sm font-medium text-gray-300"
             >
@@ -79,7 +79,7 @@ export default function QuotationForm({
 
           {/* Teléfono */}
           <div>
-            <Label 
+            <Label
               htmlFor="telefono"
               className="mb-1 text-sm font-medium text-gray-300"
             >
@@ -99,7 +99,7 @@ export default function QuotationForm({
 
           {/* Email */}
           <div>
-            <Label 
+            <Label
               htmlFor="email"
               className="mb-1 text-sm font-medium text-gray-300"
             >
@@ -119,7 +119,7 @@ export default function QuotationForm({
 
           {/* Nombre del Representante */}
           <div>
-            <Label 
+            <Label
               htmlFor="firma"
               className="mb-1 text-sm font-medium text-gray-300"
             >
@@ -138,7 +138,7 @@ export default function QuotationForm({
 
           {/* Puesto */}
           <div>
-            <Label 
+            <Label
               htmlFor="cargo"
               className="mb-1 text-sm font-medium text-gray-300"
             >
@@ -157,7 +157,7 @@ export default function QuotationForm({
 
           {/* Fecha */}
           <div>
-            <Label 
+            <Label
               htmlFor="fecha"
               className="mb-1 text-sm font-medium text-gray-300"
             >
@@ -175,7 +175,7 @@ export default function QuotationForm({
 
           {/* Lugar de Remisión */}
           <div>
-            <Label 
+            <Label
               htmlFor="lugar"
               className="mb-1 text-sm font-medium text-gray-300"
             >
@@ -193,7 +193,7 @@ export default function QuotationForm({
 
           {/* Domicilio */}
           <div>
-            <Label 
+            <Label
               htmlFor="domicilio"
               className="mb-1 text-sm font-medium text-gray-300"
             >
@@ -212,7 +212,7 @@ export default function QuotationForm({
 
           {/* Logotipo (ocupa 2 columnas en md+) */}
           <div className="md:col-span-2">
-            <Label 
+            <Label
               htmlFor="logoCompany"
               className="mb-1 text-sm font-medium text-gray-300"
             >

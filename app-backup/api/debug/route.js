@@ -1,19 +1,19 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 
 export async function GET(request) {
   return NextResponse.json({
-    message: 'API Routes are working!',
+    message: "API Routes are working!",
     timestamp: new Date().toISOString(),
     url: request.url,
-    method: 'GET'
+    method: "GET",
   });
 }
 
 export async function POST(request) {
   return NextResponse.json({
-    message: 'API Routes are working!',
+    message: "API Routes are working!",
     timestamp: new Date().toISOString(),
     url: request.url,
-    method: 'POST'
+    method: "POST",
   });
 }

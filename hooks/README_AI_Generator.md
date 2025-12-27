@@ -5,12 +5,15 @@ Hook personalizado para generar contenido usando OpenAI GPT-3.5 Turbo, específi
 ## 🚀 Instalación y Configuración
 
 ### Variables de Entorno
+
 Asegúrate de tener configurado tu `.env.local`:
+
 ```bash
 OPENAI_API_KEY=sk-tu-api-key-aqui
 ```
 
 ### Dependencias
+
 ```bash
 pnpm add axios
 ```
@@ -18,8 +21,9 @@ pnpm add axios
 ## 📚 Uso del Hook
 
 ### Importación Básica
+
 ```javascript
-import useAIGenerator from '@/hooks/useAIGenerator';
+import useAIGenerator from "@/hooks/useAIGenerator";
 
 const MyComponent = () => {
   const {
@@ -27,23 +31,26 @@ const MyComponent = () => {
     error,
     generateQuotationConcept,
     generateContractConcept,
-    clearState
+    clearState,
   } = useAIGenerator();
-  
+
   // ... resto del componente
 };
 ```
 
 ### Estados Disponibles
+
 - `isLoading`: Boolean - Indica si hay una generación en proceso
-- `error`: String|null - Mensaje de error si algo sale mal  
+- `error`: String|null - Mensaje de error si algo sale mal
 - `lastGenerated`: String - Último contenido generado
 - `isAvailable`: Boolean - Indica si el servicio está disponible
 
 ### Funciones Principales
 
 #### `generateQuotationConcept(concept)`
+
 Genera un concepto profesional para cotizaciones.
+
 ```javascript
 const handleGenerate = async () => {
   const result = await generateQuotationConcept("instalación eléctrica");
@@ -54,7 +61,9 @@ const handleGenerate = async () => {
 ```
 
 #### `generateContractConcept(concept)`
+
 Genera descripción legal para contratos.
+
 ```javascript
 const handleGenerate = async () => {
   const result = await generateContractConcept("prestación de servicios");
@@ -65,7 +74,9 @@ const handleGenerate = async () => {
 ```
 
 #### `generateContent(prompt, userInput?)`
+
 Función genérica para prompts personalizados.
+
 ```javascript
 const result = await generateContent("Crea una descripción de:", "mi producto");
 ```
@@ -75,6 +86,7 @@ const result = await generateContent("Crea una descripción de:", "mi producto")
 Componente UI completo que incluye modal, estados de carga y manejo de errores.
 
 ### Props
+
 ```typescript
 {
   type: 'quotation' | 'contract' | 'custom'  // Tipo de generación
@@ -87,6 +99,7 @@ Componente UI completo que incluye modal, estados de carga y manejo de errores.
 ```
 
 ### Ejemplo de Uso
+
 ```jsx
 <AIGeneratorButton
   type="quotation"
@@ -99,13 +112,14 @@ Componente UI completo que incluye modal, estados de carga y manejo de errores.
 ## 🔧 Integración en Formularios
 
 ### Ejemplo con QuotationProducts
+
 ```jsx
 const handleAIGenerated = (generatedContent, index) => {
   const syntheticEvent = {
     target: {
-      name: 'descripcion',
-      value: generatedContent
-    }
+      name: "descripcion",
+      value: generatedContent,
+    },
   };
   handleProductoChange(syntheticEvent, index);
 };
@@ -122,12 +136,13 @@ const handleAIGenerated = (generatedContent, index) => {
     type="quotation"
     onGenerated={(content) => handleAIGenerated(content, index)}
   />
-</div>
+</div>;
 ```
 
 ## 🛠 API Route
 
 El hook utiliza la ruta `/api/ai/generate` que:
+
 - Valida el prompt
 - Se comunica con OpenAI
 - Maneja errores específicos
@@ -136,13 +151,16 @@ El hook utiliza la ruta `/api/ai/generate` que:
 ## 📈 Características Avanzadas
 
 ### Manejo de Errores
+
 El hook captura y maneja:
+
 - Errores de red
-- API key inválida  
+- API key inválida
 - Límite de rate excedido
 - Prompts vacíos
 
 ### Optimizaciones
+
 - Prompts optimizados para cada tipo de contenido
 - Límite de tokens para respuestas concisas
 - Temperature balanceada para creatividad/consistencia

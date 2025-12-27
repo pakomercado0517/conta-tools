@@ -1,19 +1,25 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { createClient } from '../lib/supabase/client';
-import type { 
-  User, 
-  Session, 
-  SupabaseClient, 
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
+import { createClient } from "../lib/supabase/client";
+import type {
+  User,
+  Session,
+  SupabaseClient,
   AuthError,
   AuthTokenResponse,
-  UserResponse
-} from '@supabase/supabase-js';
+  UserResponse,
+} from "@supabase/supabase-js";
 
 // Tipos para las respuestas de autenticación
 interface AuthResponse {
-  data: AuthTokenResponse['data'] | null;
+  data: AuthTokenResponse["data"] | null;
   error: AuthError | null;
 }
 
@@ -27,7 +33,7 @@ interface ResetPasswordResponse {
 }
 
 interface UpdatePasswordResponse {
-  data: UserResponse['data'];
+  data: UserResponse["data"];
   error: AuthError | null;
 }
 
@@ -43,7 +49,11 @@ interface AuthContextType {
   loading: boolean;
   supabase: SupabaseClient;
   signIn: (email: string, password: string) => Promise<AuthResponse>;
-  signUp: (email: string, password: string, options?: SignUpOptions) => Promise<AuthResponse>;
+  signUp: (
+    email: string,
+    password: string,
+    options?: SignUpOptions
+  ) => Promise<AuthResponse>;
   signOut: () => Promise<SignOutResponse>;
   resetPassword: (email: string) => Promise<ResetPasswordResponse>;
   updatePassword: (newPassword: string) => Promise<UpdatePasswordResponse>;
@@ -70,15 +80,18 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     // Obtener sesión inicial
     const getInitialSession = async (): Promise<void> => {
       try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        
+        const {
+          data: { session },
+          error,
+        } = await supabase.auth.getSession();
+
         if (error) {
-          console.error('Error getting initial session:', error);
+          console.error("Error getting initial session:", error);
         } else {
           setUser(session?.user ?? null);
         }
       } catch (error) {
-        console.error('Error in getInitialSession:', error);
+        console.error("Error in getInitialSession:", error);
         setUser(null);
       } finally {
         setLoading(false);
@@ -88,9 +101,11 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     getInitialSession();
 
     // Escuchar cambios de autenticación
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(
       async (event, session: Session | null) => {
-        console.log('Auth state changed:', event, session?.user?.email);
+        console.log("Auth state changed:", event, session?.user?.email);
         setUser(session?.user ?? null);
         setLoading(false);
       }
@@ -105,7 +120,10 @@ export default function AuthProvider({ children }: AuthProviderProps) {
    * @param password - Contraseña del usuario
    * @returns Respuesta de autenticación
    */
-  const signIn = async (email: string, password: string): Promise<AuthResponse> => {
+  const signIn = async (
+    email: string,
+    password: string
+  ): Promise<AuthResponse> => {
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -121,14 +139,14 @@ export default function AuthProvider({ children }: AuthProviderProps) {
    * @returns Respuesta de autenticación
    */
   const signUp = async (
-    email: string, 
-    password: string, 
+    email: string,
+    password: string,
     options: SignUpOptions = {}
   ): Promise<AuthResponse> => {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options
+      options,
     });
     return { data, error } as AuthResponse;
   };
@@ -142,30 +160,34 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     try {
       // 1. Limpiar estado del usuario inmediatamente para evitar acceso temporal
       setUser(null);
-      
+
       // 2. Cerrar sesión en Supabase (limpia cookies y tokens)
       const { error } = await supabase.auth.signOut({
-        scope: 'global' // Cerrar sesión en todas las pestañas/dispositivos
+        scope: "global", // Cerrar sesión en todas las pestañas/dispositivos
       });
-      
+
       // 3. Limpiar datos del localStorage por si acaso
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('sb-' + process.env.NEXT_PUBLIC_SUPABASE_URL?.split('//')[1] + '-auth-token');
+      if (typeof window !== "undefined") {
+        localStorage.removeItem(
+          "sb-" +
+            process.env.NEXT_PUBLIC_SUPABASE_URL?.split("//")[1] +
+            "-auth-token"
+        );
         sessionStorage.clear();
       }
-      
+
       // 4. Forzar recarga de la página para limpiar cualquier estado residual
-      if (typeof window !== 'undefined') {
-        window.location.href = '/auth/login';
+      if (typeof window !== "undefined") {
+        window.location.href = "/auth/login";
       }
-      
+
       return { error };
     } catch (err) {
-      console.error('Error during sign out:', err);
+      console.error("Error during sign out:", err);
       // Aún así, limpiar estado local
       setUser(null);
-      if (typeof window !== 'undefined') {
-        window.location.href = '/auth/login';
+      if (typeof window !== "undefined") {
+        window.location.href = "/auth/login";
       }
       return { error: err as AuthError };
     }
@@ -176,7 +198,9 @@ export default function AuthProvider({ children }: AuthProviderProps) {
    * @param email - Email del usuario
    * @returns Respuesta de reseteo
    */
-  const resetPassword = async (email: string): Promise<ResetPasswordResponse> => {
+  const resetPassword = async (
+    email: string
+  ): Promise<ResetPasswordResponse> => {
     const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/auth/reset-password`,
     });
@@ -188,9 +212,11 @@ export default function AuthProvider({ children }: AuthProviderProps) {
    * @param newPassword - Nueva contraseña
    * @returns Respuesta de actualización
    */
-  const updatePassword = async (newPassword: string): Promise<UpdatePasswordResponse> => {
+  const updatePassword = async (
+    newPassword: string
+  ): Promise<UpdatePasswordResponse> => {
     const { data, error } = await supabase.auth.updateUser({
-      password: newPassword
+      password: newPassword,
     });
     return { data, error };
   };
@@ -206,11 +232,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     updatePassword,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 /**
@@ -221,7 +243,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 export function useAuth(): AuthContextType {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 }

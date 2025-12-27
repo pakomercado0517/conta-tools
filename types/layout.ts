@@ -2,8 +2,8 @@
 // TIPOS PARA LAYOUTS DE NEXT.JS
 // =====================================
 
-import { Metadata } from 'next';
-import { ReactNode } from 'react';
+import { Metadata } from "next";
+import { ReactNode } from "react";
 
 // Props para RootLayout
 export interface RootLayoutProps {

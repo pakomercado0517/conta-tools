@@ -50,7 +50,7 @@ export default function GeneradorConceptosSATPage() {
   const totalPages = Math.ceil(resultado.length / pageSize);
   const currentResults = resultado.slice(
     (currentPage - 1) * pageSize,
-    currentPage * pageSize,
+    currentPage * pageSize
   );
 
   return (

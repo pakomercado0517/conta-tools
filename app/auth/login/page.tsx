@@ -1,13 +1,28 @@
 "use client";
 
-import { useState, useEffect, Suspense, FormEvent, ChangeEvent } from 'react';
-import { useAuth } from '@/components/AuthProvider';
-import { useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
-import { Card, Button, TextInput, Label, Alert } from 'flowbite-react';
-import { FaEye, FaEyeSlash, FaEnvelope, FaLock, FaSignInAlt, FaExclamationTriangle, FaInfoCircle } from 'react-icons/fa';
-import { getContextualError, isEmailNotConfirmedError } from '@/lib/supabase/errorTranslations';
-import type { LoginPageProps, LoginFormData, AuthFormState } from '@/types/pages';
+import { useState, useEffect, Suspense, FormEvent, ChangeEvent } from "react";
+import { useAuth } from "@/components/AuthProvider";
+import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { Card, Button, TextInput, Label, Alert } from "flowbite-react";
+import {
+  FaEye,
+  FaEyeSlash,
+  FaEnvelope,
+  FaLock,
+  FaSignInAlt,
+  FaExclamationTriangle,
+  FaInfoCircle,
+} from "react-icons/fa";
+import {
+  getContextualError,
+  isEmailNotConfirmedError,
+} from "@/lib/supabase/errorTranslations";
+import type {
+  LoginPageProps,
+  LoginFormData,
+  AuthFormState,
+} from "@/types/pages";
 
 /**
  * Contenido principal de la página de login
@@ -16,23 +31,23 @@ import type { LoginPageProps, LoginFormData, AuthFormState } from '@/types/pages
 function LoginContent() {
   // Estado del formulario
   const [formData, setFormData] = useState<LoginFormData>({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   });
-  
+
   // Estado de la UI
   const [formState, setFormState] = useState<AuthFormState>({
     loading: false,
-    error: '',
+    error: "",
     isEmailNotConfirmed: false,
-    showPassword: false
+    showPassword: false,
   });
-  
+
   // Hooks de autenticación y navegación
   const { signIn, user } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get('redirectTo') || '/dashboard';
+  const redirectTo = searchParams.get("redirectTo") || "/dashboard";
 
   // Si ya está autenticado, redirigir
   useEffect(() => {
@@ -46,9 +61,9 @@ function LoginContent() {
    */
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -56,9 +71,9 @@ function LoginContent() {
    * Alternar visibilidad de la contraseña
    */
   const togglePasswordVisibility = (): void => {
-    setFormState(prev => ({
+    setFormState((prev) => ({
       ...prev,
-      showPassword: !prev.showPassword
+      showPassword: !prev.showPassword,
     }));
   };
 
@@ -67,45 +82,48 @@ function LoginContent() {
    */
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
-    
-    setFormState(prev => ({
+
+    setFormState((prev) => ({
       ...prev,
       loading: true,
-      error: '',
-      isEmailNotConfirmed: false
+      error: "",
+      isEmailNotConfirmed: false,
     }));
 
     // Validación básica
     if (!formData.email || !formData.password) {
-      setFormState(prev => ({
+      setFormState((prev) => ({
         ...prev,
-        error: 'Por favor, completa todos los campos',
-        loading: false
+        error: "Por favor, completa todos los campos",
+        loading: false,
       }));
       return;
     }
 
     try {
-      const { data, error: signInError } = await signIn(formData.email, formData.password);
-      
+      const { data, error: signInError } = await signIn(
+        formData.email,
+        formData.password
+      );
+
       if (signInError) {
         const isEmailError = isEmailNotConfirmedError(signInError);
-        setFormState(prev => ({
+        setFormState((prev) => ({
           ...prev,
           isEmailNotConfirmed: isEmailError,
-          error: getContextualError(signInError, 'login'),
-          loading: false
+          error: getContextualError(signInError, "login"),
+          loading: false,
         }));
       } else if (data && data.user) {
         // Login exitoso, la redireccion se maneja via useEffect
-        console.log('Login successful');
+        console.log("Login successful");
       }
     } catch (error) {
-      console.error('Login error:', error);
-      setFormState(prev => ({
+      console.error("Login error:", error);
+      setFormState((prev) => ({
         ...prev,
-        error: getContextualError(error, 'login'),
-        loading: false
+        error: getContextualError(error, "login"),
+        loading: false,
       }));
     }
   };
@@ -122,22 +140,26 @@ function LoginContent() {
               Accede a tu cuenta de Conta Tools
             </p>
           </header>
-          
+
           {/* Alert de error */}
           {formState.error && (
-            <Alert 
-              color={formState.isEmailNotConfirmed ? "warning" : "failure"} 
+            <Alert
+              color={formState.isEmailNotConfirmed ? "warning" : "failure"}
               className="text-sm"
-              icon={formState.isEmailNotConfirmed ? FaExclamationTriangle : undefined}
+              icon={
+                formState.isEmailNotConfirmed
+                  ? FaExclamationTriangle
+                  : undefined
+              }
             >
               <div className="flex flex-col gap-2">
                 <span>{formState.error}</span>
                 {formState.isEmailNotConfirmed && (
                   <div className="text-xs">
-                    <FaInfoCircle className="inline mr-1" />
-                    <Link 
-                      href="/auth/resend-confirmation" 
-                      className="text-blue-600 hover:text-blue-800 underline"
+                    <FaInfoCircle className="mr-1 inline" />
+                    <Link
+                      href="/auth/resend-confirmation"
+                      className="text-blue-600 underline hover:text-blue-800"
                     >
                       Reenviar email de confirmación
                     </Link>
@@ -173,7 +195,7 @@ function LoginContent() {
                 <TextInput
                   id="password"
                   name="password"
-                  type={formState.showPassword ? 'text' : 'password'}
+                  type={formState.showPassword ? "text" : "password"}
                   icon={FaLock}
                   placeholder="••••••••"
                   value={formData.password}
@@ -187,7 +209,11 @@ function LoginContent() {
                   onClick={togglePasswordVisibility}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                   disabled={formState.loading}
-                  aria-label={formState.showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                  aria-label={
+                    formState.showPassword
+                      ? "Ocultar contraseña"
+                      : "Mostrar contraseña"
+                  }
                 >
                   {formState.showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
@@ -211,14 +237,14 @@ function LoginContent() {
               disabled={formState.loading}
             >
               <FaSignInAlt className="mr-2" />
-              {formState.loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+              {formState.loading ? "Iniciando sesión..." : "Iniciar Sesión"}
             </Button>
           </form>
 
           {/* Enlace de registro */}
           <footer className="text-center">
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              ¿No tienes una cuenta?{' '}
+              ¿No tienes una cuenta?{" "}
               <Link
                 href="/auth/register"
                 className="font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-200"
@@ -238,14 +264,16 @@ function LoginContent() {
  */
 export default function LoginPage(_props: LoginPageProps) {
   return (
-    <Suspense fallback={
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-400">Cargando...</p>
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center">
+          <div className="text-center">
+            <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
+            <p className="text-gray-600 dark:text-gray-400">Cargando...</p>
+          </div>
         </div>
-      </div>
-    }>
+      }
+    >
       <LoginContent />
     </Suspense>
   );

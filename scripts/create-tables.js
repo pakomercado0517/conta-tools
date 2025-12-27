@@ -1,22 +1,22 @@
-import { query } from '../lib/postgres.js';
-import dotenv from 'dotenv';
+import { query } from "../lib/postgres.js";
+import dotenv from "dotenv";
 
 // Cargar variables de entorno
-dotenv.config({ path: '.env.local' });
+dotenv.config({ path: ".env.local" });
 
 async function createTables() {
-  console.log('🏗️  Creando tablas en Supabase...');
+  console.log("🏗️  Creando tablas en Supabase...");
 
   try {
     // 1. Habilitar extensiones necesarias
-    console.log('📦 Habilitando extensiones...');
+    console.log("📦 Habilitando extensiones...");
     await query(`
       CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
       CREATE EXTENSION IF NOT EXISTS "pgcrypto";
     `);
 
     // 2. Crear tabla de usuarios
-    console.log('👥 Creando tabla users...');
+    console.log("👥 Creando tabla users...");
     await query(`
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
@@ -33,7 +33,7 @@ async function createTables() {
     `);
 
     // 3. Crear índices para optimización
-    console.log('🔍 Creando índices...');
+    console.log("🔍 Creando índices...");
     await query(`
       CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
       CREATE INDEX IF NOT EXISTS idx_users_email_verified ON users(email_verified);
@@ -43,7 +43,7 @@ async function createTables() {
     `);
 
     // 4. Crear función para limpiar tokens expirados
-    console.log('🧹 Creando función de limpieza...');
+    console.log("🧹 Creando función de limpieza...");
     await query(`
       CREATE OR REPLACE FUNCTION cleanup_expired_tokens()
       RETURNS void AS $$
@@ -60,8 +60,8 @@ async function createTables() {
     `);
 
     // 5. Crear tablas para NextAuth
-    console.log('🔐 Creando tablas NextAuth...');
-    
+    console.log("🔐 Creando tablas NextAuth...");
+
     // Tabla accounts (para OAuth providers si se usan en futuro)
     await query(`
       CREATE TABLE IF NOT EXISTS accounts (
@@ -107,7 +107,7 @@ async function createTables() {
     `);
 
     // 6. Crear índices para NextAuth
-    console.log('📊 Creando índices NextAuth...');
+    console.log("📊 Creando índices NextAuth...");
     await query(`
       CREATE INDEX IF NOT EXISTS idx_accounts_user_id ON accounts(user_id);
       CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions(user_id);
@@ -117,7 +117,7 @@ async function createTables() {
     `);
 
     // 7. Crear función trigger para updated_at
-    console.log('⏰ Creando triggers para updated_at...');
+    console.log("⏰ Creando triggers para updated_at...");
     await query(`
       CREATE OR REPLACE FUNCTION update_updated_at_column()
       RETURNS TRIGGER AS $$
@@ -150,7 +150,7 @@ async function createTables() {
     `);
 
     // 8. Verificar que todas las tablas se crearon correctamente
-    console.log('✅ Verificando tablas creadas...');
+    console.log("✅ Verificando tablas creadas...");
     const result = await query(`
       SELECT table_name 
       FROM information_schema.tables 
@@ -159,12 +159,12 @@ async function createTables() {
       ORDER BY table_name;
     `);
 
-    const tables = result.rows.map(row => row.table_name);
-    console.log('📋 Tablas creadas:', tables);
+    const tables = result.rows.map((row) => row.table_name);
+    console.log("📋 Tablas creadas:", tables);
 
     if (tables.length === 4) {
-      console.log('🎉 ¡Todas las tablas se crearon exitosamente!');
-      
+      console.log("🎉 ¡Todas las tablas se crearon exitosamente!");
+
       // Mostrar estadísticas
       const stats = await query(`
         SELECT 
@@ -176,17 +176,16 @@ async function createTables() {
         UNION ALL
         SELECT 'verification_tokens' as table_name, COUNT(*) as count FROM verification_tokens;
       `);
-      
-      console.log('📊 Estado inicial de las tablas:');
-      stats.rows.forEach(row => {
+
+      console.log("📊 Estado inicial de las tablas:");
+      stats.rows.forEach((row) => {
         console.log(`   ${row.table_name}: ${row.count} registros`);
       });
     } else {
-      console.log('⚠️  Algunas tablas no se crearon correctamente');
+      console.log("⚠️  Algunas tablas no se crearon correctamente");
     }
-
   } catch (error) {
-    console.error('❌ Error creando tablas:', error.message);
+    console.error("❌ Error creando tablas:", error.message);
     process.exit(1);
   }
 }

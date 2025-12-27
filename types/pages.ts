@@ -44,7 +44,7 @@ export interface ResetPasswordPageProps extends AuthPageProps {
   searchParams: {
     token?: string;
     email?: string;
-  } & AuthPageProps['searchParams'];
+  } & AuthPageProps["searchParams"];
 }
 
 // Props para verify email page
@@ -52,7 +52,7 @@ export interface VerifyEmailPageProps extends AuthPageProps {
   searchParams: {
     token?: string;
     email?: string;
-  } & AuthPageProps['searchParams'];
+  } & AuthPageProps["searchParams"];
 }
 
 // Props para generador de contratos

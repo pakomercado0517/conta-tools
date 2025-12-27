@@ -69,7 +69,7 @@ export default function DevToolsPage() {
       const response = await fetch("/api/auth/dev-list-users");
       // Como no hemos implementado esta API, mostramos información básica
       setMessage(
-        "Para ver usuarios registrados, revisa el archivo data/users.json",
+        "Para ver usuarios registrados, revisa el archivo data/users.json"
       );
       setMessageType("info");
     } catch (error) {

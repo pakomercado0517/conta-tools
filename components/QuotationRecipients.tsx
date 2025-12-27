@@ -7,21 +7,21 @@ import type { QuotationRecipientsProps } from "@/types/quotation";
 
 /**
  * Componente para capturar información del destinatario de la cotización
- * 
+ *
  * @param handleChange - Función para manejar cambios en los inputs
  */
-export default function QuotationRecipients({ 
-  handleChange 
+export default function QuotationRecipients({
+  handleChange,
 }: QuotationRecipientsProps) {
   return (
     <div className="my-8 rounded-xl bg-gray-900/60 p-6 shadow-md">
       <h2 className="my-4 text-center text-xl font-semibold text-gray-300">
         Destinatario
       </h2>
-      
+
       <section className="grid grid-cols-1 gap-5 md:grid-cols-2">
         <div>
-          <Label 
+          <Label
             htmlFor="destinatario"
             className="mb-1 text-sm font-medium text-gray-300"
           >
@@ -37,9 +37,9 @@ export default function QuotationRecipients({
             required
           />
         </div>
-        
+
         <div>
-          <Label 
+          <Label
             htmlFor="destinatarioEmpresa"
             className="mb-1 text-sm font-medium text-gray-300"
           >

@@ -1,4 +1,4 @@
-import { Pool, PoolClient, QueryResult, QueryResultRow, PoolConfig } from 'pg';
+import { Pool, PoolClient, QueryResult, QueryResultRow, PoolConfig } from "pg";
 
 // Tipos para la configuración del pool
 interface DatabaseConfig extends PoolConfig {
@@ -27,8 +27,8 @@ interface QueryLog {
 // Configuración del pool de conexiones PostgreSQL
 const poolConfig: DatabaseConfig = {
   connectionString: process.env.DATABASE_URL,
-  ssl: process.env.DATABASE_URL?.includes('supabase.co') 
-    ? { rejectUnauthorized: false } 
+  ssl: process.env.DATABASE_URL?.includes("supabase.co")
+    ? { rejectUnauthorized: false }
     : false,
   max: 5, // Reducir conexiones para Supabase (tienen límites)
   idleTimeoutMillis: 10000, // Cerrar conexiones inactivas más rápido
@@ -47,27 +47,27 @@ const pool = new Pool(poolConfig);
  */
 export const query = async <T extends QueryResultRow = QueryResultRow>(
   text: string,
-  params?: unknown[],
+  params?: unknown[]
 ): Promise<QueryResult<T>> => {
   const start = Date.now();
   const client = await pool.connect();
-  
+
   try {
     const res = await client.query<T>(text, params);
     const duration = Date.now() - start;
-    
-    if (process.env.NODE_ENV === 'development') {
+
+    if (process.env.NODE_ENV === "development") {
       const queryLog: QueryLog = {
         text,
         duration,
         rows: res.rowCount,
       };
-      console.log('Executed query:', queryLog);
+      console.log("Executed query:", queryLog);
     }
-    
+
     return res;
   } catch (error) {
-    console.error('Database query error:', error);
+    console.error("Database query error:", error);
     throw error;
   } finally {
     client.release();
@@ -88,15 +88,15 @@ export const transaction = async <T>(
   callback: TransactionCallback<T>
 ): Promise<T> => {
   const client = await pool.connect();
-  
+
   try {
-    await client.query('BEGIN');
+    await client.query("BEGIN");
     const result = await callback(client);
-    await client.query('COMMIT');
+    await client.query("COMMIT");
     return result;
   } catch (error) {
-    await client.query('ROLLBACK');
-    console.error('Transaction error:', error);
+    await client.query("ROLLBACK");
+    console.error("Transaction error:", error);
     throw error;
   } finally {
     client.release();
@@ -118,21 +118,22 @@ export const closePool = async (): Promise<void> => {
 export const testConnection = async (): Promise<boolean> => {
   try {
     const result = await query<ConnectionTestResult>(
-      'SELECT NOW() as current_time, version() as postgres_version'
+      "SELECT NOW() as current_time, version() as postgres_version"
     );
-    
+
     if (result.rows.length > 0) {
       const { current_time, postgres_version } = result.rows[0];
-      console.log('✅ PostgreSQL connected:', {
+      console.log("✅ PostgreSQL connected:", {
         time: current_time,
-        version: postgres_version.split(' ')[0]
+        version: postgres_version.split(" ")[0],
       });
     }
-    
+
     return true;
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.error('❌ PostgreSQL connection failed:', errorMessage);
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+    console.error("❌ PostgreSQL connection failed:", errorMessage);
     return false;
   }
 };
@@ -154,10 +155,10 @@ export const getPoolInfo = () => {
  */
 export const clearPreparedStatements = async (): Promise<void> => {
   try {
-    await query('DEALLOCATE ALL');
-    console.log('✅ Cleared all prepared statements');
+    await query("DEALLOCATE ALL");
+    console.log("✅ Cleared all prepared statements");
   } catch (error) {
-    console.warn('⚠️  Could not clear prepared statements:', error);
+    console.warn("⚠️  Could not clear prepared statements:", error);
   }
 };
 

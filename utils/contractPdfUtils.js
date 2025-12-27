@@ -9,7 +9,10 @@ pdfjsLib.GlobalWorkerOptions.workerSrc =
  * @returns {Promise<Object>} Datos extraídos de la factura
  */
 export async function extractInvoiceDataForContract(pdfData) {
-  console.log("extractInvoiceDataForContract called with data size:", pdfData.byteLength);
+  console.log(
+    "extractInvoiceDataForContract called with data size:",
+    pdfData.byteLength
+  );
   try {
     const pdf = await pdfjsLib.getDocument({ data: pdfData }).promise;
     console.log("PDF loaded, pages:", pdf.numPages);
@@ -27,7 +30,7 @@ export async function extractInvoiceDataForContract(pdfData) {
 
     console.log("Total text length:", allText.length);
     console.log("First 500 chars:", allText.substring(0, 500));
-    
+
     // Extraer datos específicos
     const invoiceData = {
       emisor: extractEmisor(allText),
@@ -59,7 +62,7 @@ export async function extractInvoiceDataForContract(pdfData) {
  */
 export async function extractMultipleInvoicesData(pdfFiles) {
   const invoicesData = [];
-  
+
   for (const file of pdfFiles) {
     const arrayBuffer = await file.arrayBuffer();
     const invoiceData = await extractInvoiceDataForContract(arrayBuffer);
@@ -92,11 +95,11 @@ function extractEmisor(text) {
     if (match) {
       // Si el patrón tiene 2 grupos, el nombre está en el segundo grupo
       let name = match[2] ? match[2].trim() : match[1].trim();
-      
+
       // Limpiar el nombre
-      name = name.replace(/\b(Régimen\s*fiscal|RFC|Emisor)\b/gi, '').trim();
-      name = name.replace(/\s+/g, ' ').trim();
-      
+      name = name.replace(/\b(Régimen\s*fiscal|RFC|Emisor)\b/gi, "").trim();
+      name = name.replace(/\s+/g, " ").trim();
+
       if (name.length > 3 && !name.match(/^\d+$/)) {
         return name;
       }
@@ -119,11 +122,13 @@ function extractReceptor(text) {
     if (match) {
       // Si hay dos grupos, el nombre está en el segundo grupo
       let name = match[2] ? match[2].trim() : match[1].trim();
-      
+
       // Limpiar el nombre
-      name = name.replace(/\b(Uso\s+del\s+CFDI|Información|Receptor)\b/gi, '').trim();
-      name = name.replace(/\s+/g, ' ').trim();
-      
+      name = name
+        .replace(/\b(Uso\s+del\s+CFDI|Información|Receptor)\b/gi, "")
+        .trim();
+      name = name.replace(/\s+/g, " ").trim();
+
       if (name.length > 3 && !name.match(/^[A-Z0-9]{12,13}$/)) {
         return name;
       }
@@ -168,14 +173,14 @@ function extractFormaPago(text) {
       return match[2] ? match[2].trim() : match[1].trim();
     }
   }
-  
+
   // Formas de pago comunes por código
   if (text.includes("01")) return "Efectivo";
   if (text.includes("02")) return "Cheque nominativo";
   if (text.includes("03")) return "Transferencia electrónica de fondos";
   if (text.includes("04")) return "Tarjeta de crédito";
   if (text.includes("28")) return "Tarjeta de débito";
-  
+
   return "No especificada";
 }
 
@@ -197,8 +202,8 @@ function extractFechaFactura(text) {
     if (match) {
       let fecha = match[1];
       // Convertir formato ISO a formato local
-      if (fecha.includes('-') && fecha.length === 10) {
-        const [year, month, day] = fecha.split('-');
+      if (fecha.includes("-") && fecha.length === 10) {
+        const [year, month, day] = fecha.split("-");
         fecha = `${day}/${month}/${year}`;
       }
       return fecha;
@@ -275,15 +280,22 @@ function extractConceptos(text) {
   ];
 
   const conceptos = [];
-  
+
   for (const pattern of patterns) {
-    const matches = [...text.matchAll(new RegExp(pattern.source, pattern.flags + 'g'))];
+    const matches = [
+      ...text.matchAll(new RegExp(pattern.source, pattern.flags + "g")),
+    ];
     for (const match of matches) {
       const concepto = match[1]?.trim();
       if (concepto && concepto.length > 5 && concepto.length < 200) {
         // Limpiar el concepto
-        let cleanConcepto = concepto.replace(/\b(Impuesto\s+trasladado|Precio\s+Unitario|Base\s+para).*$/gi, '').trim();
-        cleanConcepto = cleanConcepto.replace(/\.$/, ''); // Quitar punto final
+        let cleanConcepto = concepto
+          .replace(
+            /\b(Impuesto\s+trasladado|Precio\s+Unitario|Base\s+para).*$/gi,
+            ""
+          )
+          .trim();
+        cleanConcepto = cleanConcepto.replace(/\.$/, ""); // Quitar punto final
         if (cleanConcepto.length > 3) {
           conceptos.push(cleanConcepto);
         }
@@ -294,15 +306,15 @@ function extractConceptos(text) {
   // Si no encuentra conceptos específicos, buscar servicios comunes
   if (conceptos.length === 0) {
     const serviciosComunes = [
-      'servicios profesionales',
-      'consultoría',
-      'desarrollo de software',
-      'diseño web',
-      'mantenimiento de sistemas',
-      'asesoría técnica',
-      'suministros industriales'
+      "servicios profesionales",
+      "consultoría",
+      "desarrollo de software",
+      "diseño web",
+      "mantenimiento de sistemas",
+      "asesoría técnica",
+      "suministros industriales",
     ];
-    
+
     for (const servicio of serviciosComunes) {
       if (text.toLowerCase().includes(servicio.toLowerCase())) {
         conceptos.push(servicio);
@@ -311,7 +323,9 @@ function extractConceptos(text) {
     }
   }
 
-  return conceptos.length > 0 ? conceptos.slice(0, 3).join(', ') : 'Servicios profesionales';
+  return conceptos.length > 0
+    ? conceptos.slice(0, 3).join(", ")
+    : "Servicios profesionales";
 }
 
 function extractSubtotal(text) {
@@ -348,13 +362,13 @@ function extractIVA(text) {
 
 function extractMoneda(text) {
   // Buscar tipo de moneda
-  if (text.includes('USD') || text.includes('Dólares')) {
-    return 'USD';
+  if (text.includes("USD") || text.includes("Dólares")) {
+    return "USD";
   }
-  if (text.includes('EUR') || text.includes('Euros')) {
-    return 'EUR';
+  if (text.includes("EUR") || text.includes("Euros")) {
+    return "EUR";
   }
-  return 'MXN'; // Por defecto pesos mexicanos
+  return "MXN"; // Por defecto pesos mexicanos
 }
 
 /**
@@ -368,20 +382,28 @@ export function combineInvoicesDataForContract(invoicesData) {
   }
 
   const firstInvoice = invoicesData[0];
-  const totalAmount = invoicesData.reduce((sum, invoice) => sum + (invoice.monto || 0), 0);
-  
+  const totalAmount = invoicesData.reduce(
+    (sum, invoice) => sum + (invoice.monto || 0),
+    0
+  );
+
   // Combinar todos los conceptos
   const allConceptos = invoicesData
-    .map(invoice => invoice.conceptos)
-    .filter(concepto => concepto && concepto !== 'Servicios profesionales')
-    .join(', ');
+    .map((invoice) => invoice.conceptos)
+    .filter((concepto) => concepto && concepto !== "Servicios profesionales")
+    .join(", ");
 
   return {
-    prestador: firstInvoice.emisor || '',
-    cliente: firstInvoice.receptor || '',
-    montoTotal: totalAmount > 0 ? `$${totalAmount.toLocaleString('es-MX', { minimumFractionDigits: 2 })}` : '',
-    formaPago: firstInvoice.formaPago || 'Transferencia electrónica de fondos',
-    servicios: allConceptos || 'Servicios profesionales de acuerdo a las facturas anexas',
-    moneda: firstInvoice.moneda || 'MXN',
+    prestador: firstInvoice.emisor || "",
+    cliente: firstInvoice.receptor || "",
+    montoTotal:
+      totalAmount > 0
+        ? `$${totalAmount.toLocaleString("es-MX", { minimumFractionDigits: 2 })}`
+        : "",
+    formaPago: firstInvoice.formaPago || "Transferencia electrónica de fondos",
+    servicios:
+      allConceptos ||
+      "Servicios profesionales de acuerdo a las facturas anexas",
+    moneda: firstInvoice.moneda || "MXN",
   };
 }

@@ -9,10 +9,10 @@ import QuotationClauses from "@/components/QuotationClauses";
 import QuotationDataBank from "@/components/QuotationDataBank";
 import QuotationPDFButtons from "@/components/QuotationPDFButtons";
 import PDFPreviewer from "@/components/PDFPreviewer";
-import type { 
-  QuotationFormData, 
-  BankData, 
-  QuotationProduct 
+import type {
+  QuotationFormData,
+  BankData,
+  QuotationProduct,
 } from "@/types/quotation";
 
 /**
@@ -92,9 +92,9 @@ export default function QuotationLayout() {
     const reader = new FileReader();
 
     reader.onloadend = () => {
-      setDatos((prevDatos) => ({ 
-        ...prevDatos, 
-        logoEmpresa: reader.result as string 
+      setDatos((prevDatos) => ({
+        ...prevDatos,
+        logoEmpresa: reader.result as string,
       }));
     };
 
@@ -125,18 +125,18 @@ export default function QuotationLayout() {
    * Manejar cambios en productos específicos
    */
   const handleProductoChange = (
-    e: ChangeEvent<HTMLInputElement>, 
+    e: ChangeEvent<HTMLInputElement>,
     index: number
   ): void => {
     const { name, value } = e.target;
     const nuevosProductos = [...datos.productos];
-    
+
     // Type assertion segura ya que sabemos que name es una key válida
     (nuevosProductos[index] as any)[name] = value;
-    
-    setDatos((prevDatos) => ({ 
-      ...prevDatos, 
-      productos: nuevosProductos 
+
+    setDatos((prevDatos) => ({
+      ...prevDatos,
+      productos: nuevosProductos,
     }));
   };
 
@@ -144,16 +144,16 @@ export default function QuotationLayout() {
    * Manejar cambios en cláusulas específicas
    */
   const handleClausulaChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, 
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     index: number
   ): void => {
     const { value } = e.target;
     const nuevasClausulas = [...datos.clausulas];
     nuevasClausulas[index] = value;
-    
-    setDatos((prevDatos) => ({ 
-      ...prevDatos, 
-      clausulas: nuevasClausulas 
+
+    setDatos((prevDatos) => ({
+      ...prevDatos,
+      clausulas: nuevasClausulas,
     }));
   };
 
@@ -162,9 +162,9 @@ export default function QuotationLayout() {
    */
   const handleDataBankChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
-    setDataBank((prevDataBank) => ({ 
-      ...prevDataBank, 
-      [name]: value 
+    setDataBank((prevDataBank) => ({
+      ...prevDataBank,
+      [name]: value,
     }));
   };
 
@@ -172,9 +172,9 @@ export default function QuotationLayout() {
    * Alternar mostrar/ocultar formulario de datos bancarios
    */
   const showDataBank = (e: ChangeEvent<HTMLInputElement>): void => {
-    setDatos((prevDatos) => ({ 
-      ...prevDatos, 
-      bank: e.target.checked 
+    setDatos((prevDatos) => ({
+      ...prevDatos,
+      bank: e.target.checked,
     }));
   };
 

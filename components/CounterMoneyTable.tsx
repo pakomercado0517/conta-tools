@@ -31,7 +31,7 @@ export default function CounterMoneyTable() {
     const name = e.target.name;
     const value = parseInt(e.target.value) || 0;
     const denomination = parseInt(name) as BillDenomination;
-    
+
     setCounter({
       ...counter,
       [name]: value,
@@ -43,7 +43,9 @@ export default function CounterMoneyTable() {
   };
 
   const getResults = (): string => {
-    const totalValues = Object.values(total).filter((value): value is number => value !== undefined);
+    const totalValues = Object.values(total).filter(
+      (value): value is number => value !== undefined
+    );
     const sum = totalValues.reduce((a, b) => a + b, 0);
     return formatNumber.format(sum);
   };

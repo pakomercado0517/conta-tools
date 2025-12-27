@@ -1,15 +1,15 @@
-import NextAuth from 'next-auth';
+import NextAuth from "next-auth";
 
 // Configuración simple y robusta inline
 const authOptions = {
-  secret: process.env.NEXTAUTH_SECRET || 'fallback-secret',
+  secret: process.env.NEXTAUTH_SECRET || "fallback-secret",
   session: {
-    strategy: 'jwt',
+    strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60,
   },
   providers: [],
   trustHost: true,
-  debug: process.env.NODE_ENV === 'development',
+  debug: process.env.NODE_ENV === "development",
 };
 
 const handler = NextAuth(authOptions);

@@ -97,7 +97,7 @@ export default function PaybackForm() {
    * Maneja los cambios en los inputs del formulario
    */
   const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ): void => {
     const { name, value } = e.target;
     setData({
@@ -124,7 +124,7 @@ export default function PaybackForm() {
    * Convierte PaybackResult a PDFData
    */
   const paybackResultToPDFData = (
-    result: PaybackResult,
+    result: PaybackResult
   ): import("@/hooks/useCreatePDF").PDFData => {
     return {
       empresa: result.empresa,

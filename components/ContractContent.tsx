@@ -31,13 +31,16 @@ export function createLocalDate(dateString: string | undefined): Date | null {
  * @param tz - Zona horaria (default: America/Mexico_City)
  * @returns String con formato español
  */
-export function fechaEnLetras(fecha: Date | string | number, tz: string = "America/Mexico_City"): string {
+export function fechaEnLetras(
+  fecha: Date | string | number,
+  tz: string = "America/Mexico_City"
+): string {
   const d = new Date(fecha);
-  const opts: Intl.DateTimeFormatOptions = { 
-    timeZone: tz, 
-    year: "numeric", 
-    month: "long", 
-    day: "2-digit" 
+  const opts: Intl.DateTimeFormatOptions = {
+    timeZone: tz,
+    year: "numeric",
+    month: "long",
+    day: "2-digit",
   };
   // "01 de enero de 2025"
   const base = new Intl.DateTimeFormat("es-MX", opts).format(d);
@@ -55,7 +58,11 @@ export function fechaEnLetras(fecha: Date | string | number, tz: string = "Ameri
  * @param tz - Zona horaria
  * @returns String formateado
  */
-export function leyendaFechaLugar(ciudad: string, fecha: Date | string | number, tz: string = "America/Mexico_City"): string {
+export function leyendaFechaLugar(
+  ciudad: string,
+  fecha: Date | string | number,
+  tz: string = "America/Mexico_City"
+): string {
   return `${ciudad}, a ${fechaEnLetras(fecha, tz)}`;
 }
 
@@ -259,32 +266,33 @@ export function numeroALetras(monto: string | number): string | null {
 
 // ===== TIPOS PARA CONTENIDO PROCESADO DEL CONTRATO =====
 
-interface ProcessedContractData extends Omit<ContractData, 'regimenVendedor' | 'regimenComprador'> {
+interface ProcessedContractData
+  extends Omit<ContractData, "regimenVendedor" | "regimenComprador"> {
   // Datos procesados adicionales
   prestadorNombre: string;
   clienteNombre: string;
   representanteVendedor: string;
   representanteCliente: string;
-  
+
   // Términos dinámicos según tipo de contrato
   esServicio: boolean;
   terminoVendedor: string;
   terminoVendedorMin: string;
   terminoObjetivo: string;
   terminoTitulo: string;
-  
+
   // Regímenes procesados (pueden ser diferentes a los originales)
   regimenVendedor: string | undefined;
   regimenComprador: string | undefined;
   textoConstitucion: string;
-  
+
   // Fechas formateadas
   fechaInicioStr: string;
   fechaTerminoStr: string;
   fechaFirmaBase: Date;
   ciudadFirma: string;
   fechaFirmaCompleta: string;
-  
+
   // Montos formateados
   montoTotalText: string;
   montoTextoCompleto: string;
@@ -298,16 +306,20 @@ interface ProcessedContractData extends Omit<ContractData, 'regimenVendedor' | '
  * @param contractData - Datos del contrato base
  * @returns Datos del contrato procesados y listos para renderizar
  */
-export function generateContractContent(contractData: ContractData): ProcessedContractData {
+export function generateContractContent(
+  contractData: ContractData
+): ProcessedContractData {
   // Determinar tipo de contrato y términos apropiados
   const esServicio = contractData.tipoProducto === "servicio";
-  const terminoVendedor = esServicio ? "EL PRESTADOR DE SERVICIOS" : "EL VENDEDOR";
+  const terminoVendedor = esServicio
+    ? "EL PRESTADOR DE SERVICIOS"
+    : "EL VENDEDOR";
   const terminoVendedorMin = esServicio ? "prestador de servicios" : "vendedor";
   const terminoObjetivo = esServicio ? "prestar" : "vender y transferir";
-  const terminoTitulo = esServicio ? 
-    "CONTRATO DE PRESTACIÓN DE SERVICIOS" : 
-    "CONTRATO DE COMPRAVENTA DE MATERIALES Y/O SERVICIOS";
-  
+  const terminoTitulo = esServicio
+    ? "CONTRATO DE PRESTACIÓN DE SERVICIOS"
+    : "CONTRATO DE COMPRAVENTA DE MATERIALES Y/O SERVICIOS";
+
   // Nombres para usar en el contrato
   const prestadorNombre = (
     contractData.prestador || `[NOMBRE DEL ${terminoVendedorMin.toUpperCase()}]`
@@ -364,7 +376,7 @@ export function generateContractContent(contractData: ContractData): ProcessedCo
   const montoTotalRaw = contractData.montoTotal || "[CANTIDAD NUMÉRICA]";
   const montoTotalText = formatearMonedaMexicana(montoTotalRaw);
   let montoTextoCompleto = "";
-  if ('montoTexto' in contractData && contractData.montoTexto) {
+  if ("montoTexto" in contractData && contractData.montoTexto) {
     montoTextoCompleto = ` (${contractData.montoTexto})`;
   } else {
     const letras = numeroALetras(montoTotalRaw);
@@ -377,7 +389,7 @@ export function generateContractContent(contractData: ContractData): ProcessedCo
   return {
     // Datos originales para uso directo (primero)
     ...contractData,
-    
+
     // Datos procesados (estos sobrescriben los originales)
     prestadorNombre,
     clienteNombre,
@@ -401,7 +413,10 @@ export function generateContractContent(contractData: ContractData): ProcessedCo
     fechaTerminoStr,
     fechaFirmaBase: fechaFirmaBase || new Date(),
     ciudadFirma,
-    fechaFirmaCompleta: leyendaFechaLugar(ciudadFirma, fechaFirmaBase || new Date()),
+    fechaFirmaCompleta: leyendaFechaLugar(
+      ciudadFirma,
+      fechaFirmaBase || new Date()
+    ),
 
     // Montos
     montoTotalText,
@@ -422,7 +437,9 @@ interface ContractContentProps {
  * @param contractData - Datos del contrato
  * @param invoicesData - Datos opcionales de facturas (no utilizado actualmente)
  */
-export default function ContractContent({ contractData }: ContractContentProps) {
+export default function ContractContent({
+  contractData,
+}: ContractContentProps) {
   if (!contractData) return null;
 
   const content = generateContractContent(contractData);
@@ -441,8 +458,8 @@ export default function ContractContent({ contractData }: ContractContentProps) 
         <p className="text-justify">
           QUE CELEBRAN POR UNA PARTE <strong>{content.prestadorNombre}</strong>
           {content.representanteVendedor}, A QUIEN EN LO SUCESIVO SE LE
-          DENOMINARÁ COMO <strong>&quot;{content.terminoVendedor}&quot;</strong>, POR LA OTRA
-          PARTE <strong>{content.clienteNombre}</strong>
+          DENOMINARÁ COMO <strong>&quot;{content.terminoVendedor}&quot;</strong>
+          , POR LA OTRA PARTE <strong>{content.clienteNombre}</strong>
           {content.representanteCliente}, A QUIEN EN LO SUCESIVO SE LE
           DENOMINARÁ COMO <strong>&quot;EL CLIENTE&quot;</strong>, Y A QUIENES
           DE MANERA CONJUNTA SE LES DENOMINARÁN COMO{" "}
@@ -457,8 +474,8 @@ export default function ContractContent({ contractData }: ContractContentProps) 
           <div className="space-y-3">
             <div>
               <p className="font-semibold">
-                I. Declara <strong>{content.terminoVendedor}</strong>, por conducto de sus
-                representantes legales que:
+                I. Declara <strong>{content.terminoVendedor}</strong>, por
+                conducto de sus representantes legales que:
               </p>
               <div className="ml-4 mt-2 space-y-2">
                 <p>
@@ -488,10 +505,11 @@ export default function ContractContent({ contractData }: ContractContentProps) 
 
                 <p>
                   <strong>{content.representantePrestador ? "D" : "C"}.</strong>{" "}
-                  Es su deseo {content.terminoObjetivo}, sin reserva y limitación
-                  alguna y libre de cualquier gravamen u otra limitación de
-                  dominio al <strong>CLIENTE</strong> los materiales/servicios
-                  que se describen en la cláusula primera del presente Contrato.
+                  Es su deseo {content.terminoObjetivo}, sin reserva y
+                  limitación alguna y libre de cualquier gravamen u otra
+                  limitación de dominio al <strong>CLIENTE</strong> los
+                  materiales/servicios que se describen en la cláusula primera
+                  del presente Contrato.
                 </p>
               </div>
             </div>
@@ -560,15 +578,22 @@ export default function ContractContent({ contractData }: ContractContentProps) 
             <div>
               <p className="font-semibold">PRIMERA. OBJETO:</p>
               <p className="ml-4 text-justify">
-                <strong>{content.terminoVendedor}</strong> se obliga a {content.esServicio ? "prestar los servicios" : "transmitir la propiedad"}
-                {!content.esServicio && " sin reserva de dominio, libre de gravamen y limitación alguna"} de
-                los {content.esServicio ? "servicios" : "materiales/servicios"} consistentes en:{" "}
+                <strong>{content.terminoVendedor}</strong> se obliga a{" "}
+                {content.esServicio
+                  ? "prestar los servicios"
+                  : "transmitir la propiedad"}
+                {!content.esServicio &&
+                  " sin reserva de dominio, libre de gravamen y limitación alguna"}{" "}
+                de los{" "}
+                {content.esServicio ? "servicios" : "materiales/servicios"}{" "}
+                consistentes en:{" "}
                 <strong>
                   {content.servicios ||
                     "[DESCRIPCIÓN DETALLADA DE MATERIALES/SERVICIOS]"}
                 </strong>{" "}
-                al <strong>CLIENTE</strong>, quien sabe y conoce plenamente
-                las condiciones en que se encuentran los {content.esServicio ? "servicios" : "materiales/servicios"}, y
+                al <strong>CLIENTE</strong>, quien sabe y conoce plenamente las
+                condiciones en que se encuentran los{" "}
+                {content.esServicio ? "servicios" : "materiales/servicios"}, y
                 quien deberá pagar la contraprestación prevista en la cláusula
                 Segunda.
               </p>
@@ -593,7 +618,8 @@ export default function ContractContent({ contractData }: ContractContentProps) 
                 {content.tipoPago === "una_exhibicion" ? (
                   <>
                     <p>
-                      <strong>Forma de pago:</strong> Pago en una sola exhibición
+                      <strong>Forma de pago:</strong> Pago en una sola
+                      exhibición
                     </p>
                     <p>
                       <strong>Método de pago:</strong>{" "}
@@ -670,8 +696,10 @@ export default function ContractContent({ contractData }: ContractContentProps) 
                 )}
 
                 <p>
-                  <strong>RECIBOS Y FACTURACIÓN. {content.terminoVendedor}</strong> se
-                  compromete a emitir los{" "}
+                  <strong>
+                    RECIBOS Y FACTURACIÓN. {content.terminoVendedor}
+                  </strong>{" "}
+                  se compromete a emitir los{" "}
                   <strong>recibos o facturas fiscales</strong> correspondientes
                   por cada pago recibido, conforme a lo estipulado por las leyes
                   fiscales vigentes.
@@ -684,9 +712,11 @@ export default function ContractContent({ contractData }: ContractContentProps) 
               <p className="font-semibold">TERCERA. VIGENCIA:</p>
               <p className="ml-4 text-justify">
                 El presente Contrato tendrá vigencia necesaria y suficiente para
-                soportar la presente {content.esServicio ? "prestación de servicios" : "compraventa"}, misma que deberá realizarse en
-                el periodo que va del <strong>{content.fechaInicioStr}</strong>{" "}
-                al <strong>{content.fechaTerminoStr}</strong>.
+                soportar la presente{" "}
+                {content.esServicio ? "prestación de servicios" : "compraventa"}
+                , misma que deberá realizarse en el periodo que va del{" "}
+                <strong>{content.fechaInicioStr}</strong> al{" "}
+                <strong>{content.fechaTerminoStr}</strong>.
               </p>
             </div>
 
@@ -758,7 +788,9 @@ export default function ContractContent({ contractData }: ContractContentProps) 
 
             {/* VENDEDOR/PRESTADOR */}
             <div className="mt-16 text-center">
-              <p className="mb-2 text-lg font-semibold">{content.terminoVendedor}</p>
+              <p className="mb-2 text-lg font-semibold">
+                {content.terminoVendedor}
+              </p>
 
               {content.imagenFirmaVendedor && (
                 <div className="mb-2">

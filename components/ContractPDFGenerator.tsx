@@ -45,7 +45,7 @@ interface ContractPDFGeneratorProps {
  * @returns Documento PDF generado
  */
 export function generateContractPDF(
-  contractData: ContractData, 
+  contractData: ContractData,
   invoicesData?: any[]
 ): jsPDF {
   const doc = new jsPDF();
@@ -60,9 +60,9 @@ export function generateContractPDF(
 
   // ===== Helper: addText con soporte **negritas** dentro del mismo párrafo =====
   const addText = (
-    text: string, 
-    fontSize: number = 10, 
-    isBold: boolean = false, 
+    text: string,
+    fontSize: number = 10,
+    isBold: boolean = false,
     align: TextAlignment = "left"
   ): void => {
     const defaultStyle: FontStyle = isBold ? "bold" : "normal";
@@ -132,8 +132,8 @@ export function generateContractPDF(
      * Renderizar una línea de tokens con el estilo y alineación correspondiente
      */
     const renderLine = (
-      lineTokens: TextToken[], 
-      y: number, 
+      lineTokens: TextToken[],
+      y: number,
       alignMode: "left" | "center" | "justify" = "left",
       isLastLine: boolean = false
     ): void => {
@@ -144,7 +144,9 @@ export function generateContractPDF(
       });
 
       // Separar palabras de espacios para justificación
-      const wordTokens = lineTokens.filter(t => !/^\s+$/.test(t.text) && t.text !== " ");
+      const wordTokens = lineTokens.filter(
+        (t) => !/^\s+$/.test(t.text) && t.text !== " "
+      );
       const totalWords = wordTokens.length;
 
       let startX = margin;
@@ -154,7 +156,10 @@ export function generateContractPDF(
         startX = margin + (usableWidth - lineWidth) / 2;
       } else if (alignMode === "justify" && !isLastLine && totalWords > 1) {
         // Calcular ancho de solo las palabras
-        const wordsWidth = wordTokens.reduce((sum, t) => sum + measure(t.text, t.style), 0);
+        const wordsWidth = wordTokens.reduce(
+          (sum, t) => sum + measure(t.text, t.style),
+          0
+        );
         // Calcular espacio disponible para distribuir entre palabras
         const availableSpace = usableWidth - wordsWidth;
         const spaceCount = totalWords - 1;
@@ -163,20 +168,24 @@ export function generateContractPDF(
 
       let x = startX;
       let wordCount = 0;
-      
+
       lineTokens.forEach((t) => {
         const isSpace = /^\s+$/.test(t.text) || t.text === " ";
         const tokenWidth = measure(t.text, t.style);
-        
+
         if (!isSpace) {
           // Renderizar palabra
           doc.setFont("helvetica", t.style);
           doc.text(t.text, x, y);
           x += tokenWidth;
           wordCount++;
-          
+
           // Agregar espacio justificado después de cada palabra (excepto la última)
-          if (alignMode === "justify" && !isLastLine && wordCount < totalWords) {
+          if (
+            alignMode === "justify" &&
+            !isLastLine &&
+            wordCount < totalWords
+          ) {
             x += extraSpacePerGap;
           }
         } else if (alignMode !== "justify" || isLastLine) {
@@ -219,7 +228,12 @@ export function generateContractPDF(
 
       lines.forEach((line, lineIdx) => {
         ensurePageSpace();
-        const mode: "left" | "center" | "justify" = align === "center" ? "center" : (align === "justify" ? "justify" : "left");
+        const mode: "left" | "center" | "justify" =
+          align === "center"
+            ? "center"
+            : align === "justify"
+              ? "justify"
+              : "left";
         const isLastLine = lineIdx === lines.length - 1;
         renderLine(line, yPosition, mode, isLastLine);
         yPosition += lineHeight;
@@ -241,12 +255,7 @@ export function generateContractPDF(
   // ====== Contenido ======
 
   // Título
-  addText(
-    content.terminoTitulo,
-    16,
-    true,
-    "center",
-  );
+  addText(content.terminoTitulo, 16, true, "center");
   addSpace(10);
 
   // Introducción
@@ -263,7 +272,7 @@ export function generateContractPDF(
     `I. Declara **${content.terminoVendedor}**, por conducto de sus representantes legales que:`,
     10,
     false,
-    "justify",
+    "justify"
   );
   addSpace(3);
 
@@ -271,7 +280,7 @@ export function generateContractPDF(
     `**A.** Es una ${content.regimenVendedor?.toLowerCase() || "[régimen]"} debidamente constituida de conformidad con las leyes de los Estados Unidos Mexicanos.`,
     10,
     false,
-    "justify",
+    "justify"
   );
   addSpace(3);
 
@@ -280,7 +289,7 @@ export function generateContractPDF(
       `**B.** Sus representantes legales cuentan con las facultades necesarias para suscribir el presente Contrato.`,
       10,
       false,
-      "justify",
+      "justify"
     );
     addSpace(3);
   }
@@ -289,7 +298,7 @@ export function generateContractPDF(
     `**${content.representantePrestador ? "C" : "B"}.** Tiene su domicilio en **${content.domicilioPrestador || `[DOMICILIO COMPLETO DEL ${content.terminoVendedorMin.toUpperCase()}]`}**.`,
     10,
     false,
-    "justify",
+    "justify"
   );
   addSpace(3);
 
@@ -297,7 +306,7 @@ export function generateContractPDF(
     `**${content.representantePrestador ? "D" : "C"}.** Es su deseo ${content.terminoObjetivo}, sin reserva y limitación alguna y libre de cualquier gravamen u otra limitación de dominio al **CLIENTE** los materiales/servicios que se describen en la cláusula primera del presente Contrato.`,
     10,
     false,
-    "justify",
+    "justify"
   );
   addSpace();
 
@@ -306,7 +315,7 @@ export function generateContractPDF(
     "II. DECLARA **EL CLIENTE**, POR CONDUCTO DE SU REPRESENTANTE LEGAL:",
     10,
     false,
-    "justify",
+    "justify"
   );
   addSpace(3);
 
@@ -314,7 +323,7 @@ export function generateContractPDF(
     `**A.** Es una ${content.regimenComprador?.toLowerCase() || "[régimen]"}${content.textoConstitucion} de conformidad con las leyes de los Estados Unidos Mexicanos.`,
     10,
     false,
-    "justify",
+    "justify"
   );
   addSpace(3);
 
@@ -323,7 +332,7 @@ export function generateContractPDF(
       `**B.** Su representante legal cuenta con las facultades necesarias para suscribir el presente Contrato.`,
       10,
       false,
-      "justify",
+      "justify"
     );
     addSpace(3);
   }
@@ -332,7 +341,7 @@ export function generateContractPDF(
     `**${content.representanteCliente ? "C" : "B"}.** Tiene su domicilio en **${content.domicilioCliente || "[DOMICILIO COMPLETO DEL CLIENTE]"}**.`,
     10,
     false,
-    "justify",
+    "justify"
   );
   addSpace(3);
 
@@ -340,7 +349,7 @@ export function generateContractPDF(
     `**${content.representanteCliente ? "D" : "C"}.** Es su deseo adquirir la propiedad plena de los materiales/servicios en los términos y condiciones que se establecen en el presente Contrato.`,
     10,
     false,
-    "justify",
+    "justify"
   );
   addSpace(3);
 
@@ -348,7 +357,7 @@ export function generateContractPDF(
     `**${content.representanteCliente ? "E" : "D"}.** Que cumple con todas sus obligaciones de carácter laboral y de seguridad social, permisos y demás relativos aplicables de la Legislación vigente en los Estados Unidos Mexicanos.`,
     10,
     false,
-    "justify",
+    "justify"
   );
   addSpace();
 
@@ -356,7 +365,7 @@ export function generateContractPDF(
     "De conformidad con las Declaraciones anteriores, Las Partes convienen en otorgar las siguientes:",
     10,
     false,
-    "justify",
+    "justify"
   );
   addSpace();
 
@@ -370,7 +379,7 @@ export function generateContractPDF(
     `**${content.terminoVendedor}** se obliga a ${content.esServicio ? "prestar los servicios" : "transmitir la propiedad sin reserva de dominio, libre de gravamen y limitación alguna"} de los ${content.esServicio ? "servicios" : "materiales/servicios"} consistentes en: **${content.servicios || "[DESCRIPCIÓN DETALLADA DE MATERIALES/SERVICIOS]"}** al **CLIENTE**, quien sabe y conoce plenamente las condiciones en que se encuentran los ${content.esServicio ? "servicios" : "materiales/servicios"}, y quien deberá pagar la contraprestación prevista en la cláusula Segunda.`,
     10,
     false,
-    "justify",
+    "justify"
   );
   addSpace();
 
@@ -381,17 +390,22 @@ export function generateContractPDF(
     `Las Partes acuerdan que el precio total de los materiales/servicios será de **${content.montoTotalText}${content.montoTextoCompleto}**, del cual se incluye el **16% (dieciséis por ciento)** de **IVA**.`,
     10,
     false,
-    "justify",
+    "justify"
   );
   addSpace(3);
 
   // Condiciones de pago según el tipo seleccionado
   const tipoPago = content.tipoPago || "una_exhibicion";
   const metodoPagoText = content.formaPago || "[MÉTODO DE PAGO]";
-  
+
   if (tipoPago === "una_exhibicion") {
     // Pago en una sola exhibición - mostrar forma de pago y método de pago
-    addText(`**Forma de pago:** Pago en una sola exhibición`, 10, false, "justify");
+    addText(
+      `**Forma de pago:** Pago en una sola exhibición`,
+      10,
+      false,
+      "justify"
+    );
     addSpace(3);
     addText(`**Método de pago:** ${metodoPagoText}`, 10, false, "justify");
     addSpace(3);
@@ -399,30 +413,30 @@ export function generateContractPDF(
     // Pago en parcialidades - mostrar forma de pago, condiciones y método de pago
     addText(`**Forma de pago:** Pago en parcialidades`, 10, false, "justify");
     addSpace(3);
-    
+
     const condicionesPago = content.condicionesPago || "[CONDICIONES DE PAGO]";
     addText(
       `**Condiciones de pago:** ${condicionesPago}`,
       10,
       false,
-      "justify",
+      "justify"
     );
     addSpace(3);
-    
+
     addText(`**Método de pago:** ${metodoPagoText}`, 10, false, "justify");
     addSpace(3);
   } else if (tipoPago === "otro") {
     // Otro tipo de pago - solo condiciones de pago y método de pago (sin Forma de pago)
     const condicionesPago = content.condicionesPago || "[CONDICIONES DE PAGO]";
-    
+
     addText(
       `**Condiciones de pago:** ${condicionesPago}`,
       10,
       false,
-      "justify",
+      "justify"
     );
     addSpace(3);
-    
+
     addText(`**Método de pago:** ${metodoPagoText}`, 10, false, "justify");
     addSpace(3);
   }
@@ -438,7 +452,7 @@ export function generateContractPDF(
       `Las Partes acuerdan que previo al retiro de los materiales/servicios, **EL CLIENTE** deberá depositar el pago a la siguiente cuenta:`,
       10,
       false,
-      "justify",
+      "justify"
     );
     addSpace(3);
 
@@ -449,7 +463,7 @@ export function generateContractPDF(
       addText(
         `- **Titular de la cuenta:**  ${content.titularCuenta}`,
         10,
-        false,
+        false
       );
     }
     if (content.numeroCuenta) {
@@ -459,7 +473,7 @@ export function generateContractPDF(
       addText(
         `- **CLABE interbancaria:**  ${content.clabeInterbancaria}`,
         10,
-        false,
+        false
       );
     }
   }
@@ -469,7 +483,7 @@ export function generateContractPDF(
     `**RECIBOS Y FACTURACION. ${content.terminoVendedor}**  se compromete a emitir los  **recibos o facturas fiscales**  correspondientes por cada pago recibido, conforme a lo estipulado por las leyes fiscales vigentes.`,
     10,
     false,
-    "justify",
+    "justify"
   );
   addSpace();
 
@@ -552,7 +566,7 @@ export function generateContractPDF(
         centerX - 12,
         yPosition,
         24,
-        15,
+        15
       );
       yPosition += 18;
     } catch (error) {
@@ -585,7 +599,7 @@ export function generateContractPDF(
       contractData.representanteCliente.toUpperCase(),
       centerX,
       yPosition,
-      { align: "center" },
+      { align: "center" }
     );
     yPosition += 4;
     doc.setFont("helvetica", "italic");
@@ -594,7 +608,7 @@ export function generateContractPDF(
   }
 
   yPosition += 20;
-  
+
   // Verificar si hay espacio para EL VENDEDOR, si no, nueva página
   if (yPosition > pageHeight - 50) {
     doc.addPage();
@@ -617,7 +631,7 @@ export function generateContractPDF(
         centerX - 12,
         yPosition,
         24,
-        15,
+        15
       );
       yPosition += 18;
     } catch (error) {
@@ -647,7 +661,7 @@ export function generateContractPDF(
       contractData.representantePrestador.toUpperCase(),
       centerX,
       yPosition,
-      { align: "center" },
+      { align: "center" }
     );
     yPosition += 4;
     doc.setFont("helvetica", "italic");
@@ -667,7 +681,6 @@ export default function ContractPDFGenerator({
   invoicesData,
   fileName = "contrato_compraventa_materiales_servicios.pdf",
 }: ContractPDFGeneratorProps) {
-  
   /**
    * Maneja la descarga del PDF del contrato
    */

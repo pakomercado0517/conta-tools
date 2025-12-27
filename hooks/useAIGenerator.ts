@@ -1,6 +1,6 @@
-import { useState, useCallback } from 'react';
-import axios, { AxiosError } from 'axios';
-import { AIGeneratorResponse } from '@/schemas/api';
+import { useState, useCallback } from "react";
+import axios, { AxiosError } from "axios";
+import { AIGeneratorResponse } from "@/schemas/api";
 
 // Tipos para el hook
 interface AIGeneratorResult {
@@ -20,7 +20,7 @@ interface AIGeneratorSuccess {
 }
 
 // Tipos para el producto del contrato
-type TipoProducto = 'venta' | 'servicio';
+type TipoProducto = "venta" | "servicio";
 
 // Interface para el valor de retorno del hook
 interface UseAIGeneratorReturn {
@@ -28,17 +28,23 @@ interface UseAIGeneratorReturn {
   isLoading: boolean;
   error: string | null;
   lastGenerated: string;
-  
+
   // Funciones generales
-  generateContent: (basePrompt: string, userInput?: string) => Promise<AIGeneratorResult>;
+  generateContent: (
+    basePrompt: string,
+    userInput?: string
+  ) => Promise<AIGeneratorResult>;
   clearState: () => void;
   regenerateLastContent: () => Promise<AIGeneratorResult>;
-  
+
   // Funciones específicas
   generateQuotationConcept: (concept: string) => Promise<AIGeneratorResult>;
   generateContractConcept: (concept: string) => Promise<AIGeneratorResult>;
-  generateContractObject: (concept: string, tipoProducto?: TipoProducto) => Promise<AIGeneratorResult>;
-  
+  generateContractObject: (
+    concept: string,
+    tipoProducto?: TipoProducto
+  ) => Promise<AIGeneratorResult>;
+
   // Estado de disponibilidad
   isAvailable: boolean;
 }
@@ -50,7 +56,7 @@ interface UseAIGeneratorReturn {
 export default function useAIGenerator(): UseAIGeneratorReturn {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [lastGenerated, setLastGenerated] = useState<string>('');
+  const [lastGenerated, setLastGenerated] = useState<string>("");
 
   /**
    * Función principal para generar contenido con IA
@@ -58,55 +64,62 @@ export default function useAIGenerator(): UseAIGeneratorReturn {
    * @param userInput - Input adicional del usuario (opcional)
    * @returns Resultado de la generación
    */
-  const generateContent = useCallback(async (
-    basePrompt: string, 
-    userInput: string = ''
-  ): Promise<AIGeneratorResult> => {
-    setIsLoading(true);
-    setError(null);
+  const generateContent = useCallback(
+    async (
+      basePrompt: string,
+      userInput: string = ""
+    ): Promise<AIGeneratorResult> => {
+      setIsLoading(true);
+      setError(null);
 
-    try {
-      // Construir el prompt completo
-      const fullPrompt = userInput.trim()
-        ? `${basePrompt} ${userInput}`
-        : basePrompt;
+      try {
+        // Construir el prompt completo
+        const fullPrompt = userInput.trim()
+          ? `${basePrompt} ${userInput}`
+          : basePrompt;
 
-      const response = await axios.post<AIGeneratorResponse>('/api/ai/generate', {
-        prompt: fullPrompt,
-      });
+        const response = await axios.post<AIGeneratorResponse>(
+          "/api/ai/generate",
+          {
+            prompt: fullPrompt,
+          }
+        );
 
-      if (response.data.success) {
-        const generatedText = response.data.data || '';
-        setLastGenerated(generatedText);
+        if (response.data.success) {
+          const generatedText = response.data.data || "";
+          setLastGenerated(generatedText);
+          return {
+            success: true,
+            data: generatedText,
+          } as AIGeneratorSuccess;
+        } else {
+          throw new Error(response.data.error || "Error desconocido");
+        }
+      } catch (err) {
+        let errorMessage: string;
+
+        if (err instanceof AxiosError) {
+          errorMessage =
+            err.response?.data?.error ||
+            err.message ||
+            "Error de conexión con la API";
+        } else if (err instanceof Error) {
+          errorMessage = err.message;
+        } else {
+          errorMessage = "Error desconocido al generar contenido";
+        }
+
+        setError(errorMessage);
         return {
-          success: true,
-          data: generatedText,
-        } as AIGeneratorSuccess;
-      } else {
-        throw new Error(response.data.error || 'Error desconocido');
+          success: false,
+          error: errorMessage,
+        } as AIGeneratorError;
+      } finally {
+        setIsLoading(false);
       }
-    } catch (err) {
-      let errorMessage: string;
-
-      if (err instanceof AxiosError) {
-        errorMessage = err.response?.data?.error || 
-                      err.message || 
-                      'Error de conexión con la API';
-      } else if (err instanceof Error) {
-        errorMessage = err.message;
-      } else {
-        errorMessage = 'Error desconocido al generar contenido';
-      }
-
-      setError(errorMessage);
-      return {
-        success: false,
-        error: errorMessage,
-      } as AIGeneratorError;
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+    },
+    []
+  );
 
   /**
    * Función específica para conceptos de cotización
@@ -118,7 +131,7 @@ export default function useAIGenerator(): UseAIGeneratorReturn {
       if (!concept.trim()) {
         return {
           success: false,
-          error: 'El concepto no puede estar vacío'
+          error: "El concepto no puede estar vacío",
         };
       }
 
@@ -127,7 +140,7 @@ export default function useAIGenerator(): UseAIGeneratorReturn {
 
       return await generateContent(prompt);
     },
-    [generateContent],
+    [generateContent]
   );
 
   /**
@@ -140,7 +153,7 @@ export default function useAIGenerator(): UseAIGeneratorReturn {
       if (!concept.trim()) {
         return {
           success: false,
-          error: 'El concepto no puede estar vacío'
+          error: "El concepto no puede estar vacío",
         };
       }
 
@@ -150,7 +163,7 @@ export default function useAIGenerator(): UseAIGeneratorReturn {
 
       return await generateContent(prompt);
     },
-    [generateContent],
+    [generateContent]
   );
 
   /**
@@ -161,19 +174,20 @@ export default function useAIGenerator(): UseAIGeneratorReturn {
    */
   const generateContractObject = useCallback(
     async (
-      concept: string, 
-      tipoProducto: TipoProducto = 'venta'
+      concept: string,
+      tipoProducto: TipoProducto = "venta"
     ): Promise<AIGeneratorResult> => {
       if (!concept.trim()) {
         return {
           success: false,
-          error: 'El concepto no puede estar vacío'
+          error: "El concepto no puede estar vacío",
         };
       }
 
-      const tipoTexto = tipoProducto === 'venta'
-        ? 'venta de productos'
-        : 'prestación de servicios';
+      const tipoTexto =
+        tipoProducto === "venta"
+          ? "venta de productos"
+          : "prestación de servicios";
 
       const prompt = `Redacta un objeto de contrato legal para ${tipoTexto} de: ${concept}. 
       Debe ser una descripción clara y precisa que se usará en la cláusula PRIMERA del contrato. 
@@ -182,7 +196,7 @@ export default function useAIGenerator(): UseAIGeneratorReturn {
 
       return await generateContent(prompt);
     },
-    [generateContent],
+    [generateContent]
   );
 
   /**
@@ -190,30 +204,31 @@ export default function useAIGenerator(): UseAIGeneratorReturn {
    */
   const clearState = useCallback((): void => {
     setError(null);
-    setLastGenerated('');
+    setLastGenerated("");
   }, []);
 
   /**
    * Función para regenerar el último contenido (simulada)
    * @returns Resultado de la regeneración
    */
-  const regenerateLastContent = useCallback(async (): Promise<AIGeneratorResult> => {
-    if (!lastGenerated) {
-      const errorMsg = 'No hay contenido previo para regenerar';
-      setError(errorMsg);
-      return { 
-        success: false, 
-        error: errorMsg 
-      };
-    }
+  const regenerateLastContent =
+    useCallback(async (): Promise<AIGeneratorResult> => {
+      if (!lastGenerated) {
+        const errorMsg = "No hay contenido previo para regenerar";
+        setError(errorMsg);
+        return {
+          success: false,
+          error: errorMsg,
+        };
+      }
 
-    // Por simplicidad, retornamos el último resultado
-    // En el futuro se podría implementar lógica para recordar el último prompt
-    return { 
-      success: true, 
-      data: lastGenerated 
-    };
-  }, [lastGenerated]);
+      // Por simplicidad, retornamos el último resultado
+      // En el futuro se podría implementar lógica para recordar el último prompt
+      return {
+        success: true,
+        data: lastGenerated,
+      };
+    }, [lastGenerated]);
 
   return {
     // Estados

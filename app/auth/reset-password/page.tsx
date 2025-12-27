@@ -1,12 +1,18 @@
 "use client";
 
-import { useState, useEffect, Suspense, FormEvent, ChangeEvent } from 'react';
-import { useAuth } from '../../../components/AuthProvider';
-import { useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
-import { Card, Button, TextInput, Label, Alert } from 'flowbite-react';
-import { FaLock, FaEye, FaEyeSlash, FaCheck, FaCheckCircle } from 'react-icons/fa';
-import { getContextualError } from '../../../lib/supabase/errorTranslations';
+import { useState, useEffect, Suspense, FormEvent, ChangeEvent } from "react";
+import { useAuth } from "../../../components/AuthProvider";
+import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { Card, Button, TextInput, Label, Alert } from "flowbite-react";
+import {
+  FaLock,
+  FaEye,
+  FaEyeSlash,
+  FaCheck,
+  FaCheckCircle,
+} from "react-icons/fa";
+import { getContextualError } from "../../../lib/supabase/errorTranslations";
 
 // Tipos para el formulario
 interface ResetPasswordFormData {
@@ -19,26 +25,29 @@ interface ResetPasswordFormData {
  */
 function ResetPasswordContent() {
   const [formData, setFormData] = useState<ResetPasswordFormData>({
-    password: '',
-    confirmPassword: ''
+    password: "",
+    confirmPassword: "",
   });
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
+  const [showConfirmPassword, setShowConfirmPassword] =
+    useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>('');
-  const [success, setSuccess] = useState<string>('');
-  
+  const [error, setError] = useState<string>("");
+  const [success, setSuccess] = useState<string>("");
+
   const { updatePassword, user } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
 
   useEffect(() => {
     // Verificar si tenemos los parámetros necesarios en la URL
-    const access_token = searchParams.get('access_token');
-    const refresh_token = searchParams.get('refresh_token');
-    
+    const access_token = searchParams.get("access_token");
+    const refresh_token = searchParams.get("refresh_token");
+
     if (!access_token && !user) {
-      setError('Enlace de recuperación inválido o expirado. Por favor, solicita un nuevo enlace.');
+      setError(
+        "Enlace de recuperación inválido o expirado. Por favor, solicita un nuevo enlace."
+      );
     }
   }, [searchParams, user]);
 
@@ -48,9 +57,9 @@ function ResetPasswordContent() {
    */
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -60,17 +69,17 @@ function ResetPasswordContent() {
    */
   const validateForm = (): boolean => {
     if (!formData.password || !formData.confirmPassword) {
-      setError('Por favor, completa todos los campos');
+      setError("Por favor, completa todos los campos");
       return false;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      setError('Las contraseñas no coinciden');
+      setError("Las contraseñas no coinciden");
       return false;
     }
 
     if (formData.password.length < 6) {
-      setError('La contraseña debe tener al menos 6 caracteres');
+      setError("La contraseña debe tener al menos 6 caracteres");
       return false;
     }
 
@@ -84,8 +93,8 @@ function ResetPasswordContent() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setLoading(true);
-    setError('');
-    setSuccess('');
+    setError("");
+    setSuccess("");
 
     if (!validateForm()) {
       setLoading(false);
@@ -94,25 +103,27 @@ function ResetPasswordContent() {
 
     try {
       const { error: updateError } = await updatePassword(formData.password);
-      
+
       if (updateError) {
-        setError(getContextualError(updateError, 'reset'));
+        setError(getContextualError(updateError, "reset"));
       } else {
-        setSuccess('¡Contraseña actualizada exitosamente! Serás redirigido a ContaTools...');
+        setSuccess(
+          "¡Contraseña actualizada exitosamente! Serás redirigido a ContaTools..."
+        );
         // Limpiar el formulario
         setFormData({
-          password: '',
-          confirmPassword: ''
+          password: "",
+          confirmPassword: "",
         });
-        
+
         // Redirigir después de 2 segundos
         setTimeout(() => {
-          router.push('/dashboard');
+          router.push("/dashboard");
         }, 2000);
       }
     } catch (error) {
-      console.error('Password update error:', error);
-      setError(getContextualError(error, 'reset'));
+      console.error("Password update error:", error);
+      setError(getContextualError(error, "reset"));
     } finally {
       setLoading(false);
     }
@@ -130,7 +141,7 @@ function ResetPasswordContent() {
               Ingresa tu nueva contraseña para tu cuenta
             </p>
           </div>
-          
+
           {error && (
             <Alert color="failure" className="text-sm">
               {error}
@@ -141,7 +152,7 @@ function ResetPasswordContent() {
             <Alert color="success" className="text-sm" icon={FaCheckCircle}>
               <div>
                 <p className="font-medium">{success}</p>
-                <p className="text-xs mt-1">
+                <p className="mt-1 text-xs">
                   🔐 Tu cuenta de ContaTools ahora está más segura.
                 </p>
               </div>
@@ -155,7 +166,7 @@ function ResetPasswordContent() {
                 <TextInput
                   id="password"
                   name="password"
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   icon={FaLock}
                   placeholder="••••••••"
                   value={formData.password}
@@ -175,12 +186,15 @@ function ResetPasswordContent() {
             </div>
 
             <div>
-              <Label htmlFor="confirmPassword" value="Confirmar Nueva Contraseña" />
+              <Label
+                htmlFor="confirmPassword"
+                value="Confirmar Nueva Contraseña"
+              />
               <div className="relative">
                 <TextInput
                   id="confirmPassword"
                   name="confirmPassword"
-                  type={showConfirmPassword ? 'text' : 'password'}
+                  type={showConfirmPassword ? "text" : "password"}
                   icon={FaLock}
                   placeholder="••••••••"
                   value={formData.confirmPassword}
@@ -199,19 +213,15 @@ function ResetPasswordContent() {
               </div>
             </div>
 
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={loading}
-            >
+            <Button type="submit" className="w-full" disabled={loading}>
               <FaCheck className="mr-2" />
-              {loading ? 'Actualizando...' : 'Actualizar Contraseña'}
+              {loading ? "Actualizando..." : "Actualizar Contraseña"}
             </Button>
           </form>
 
           <div className="text-center">
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              ¿Problemas con el enlace?{' '}
+              ¿Problemas con el enlace?{" "}
               <Link
                 href="/auth/forgot-password"
                 className="font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-200"
@@ -231,14 +241,16 @@ function ResetPasswordContent() {
  */
 export default function ResetPasswordPage() {
   return (
-    <Suspense fallback={
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-400">Cargando...</p>
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center">
+          <div className="text-center">
+            <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
+            <p className="text-gray-600 dark:text-gray-400">Cargando...</p>
+          </div>
         </div>
-      </div>
-    }>
+      }
+    >
       <ResetPasswordContent />
     </Suspense>
   );

@@ -1,8 +1,8 @@
-import { jsPDF } from 'jspdf';
-import autoTable, { UserOptions } from 'jspdf-autotable';
+import { jsPDF } from "jspdf";
+import autoTable, { UserOptions } from "jspdf-autotable";
 
 // Extender el tipo jsPDF para incluir autoTable
-declare module 'jspdf' {
+declare module "jspdf" {
   interface jsPDF {
     previousAutoTable: {
       finalY: number;
@@ -21,16 +21,16 @@ export interface PDFOptions {
   filename?: string;
   showTotal?: boolean;
   tableOptions?: Partial<UserOptions>;
-  pageFormat?: 'a4' | 'letter' | 'legal';
-  orientation?: 'portrait' | 'landscape';
+  pageFormat?: "a4" | "letter" | "legal";
+  orientation?: "portrait" | "landscape";
 }
 
 // Configuración por defecto
 const DEFAULT_OPTIONS: PDFOptions = {
-  filename: 'resultado.pdf',
+  filename: "resultado.pdf",
   showTotal: false,
-  pageFormat: 'a4',
-  orientation: 'portrait',
+  pageFormat: "a4",
+  orientation: "portrait",
 };
 
 // Tipos para el valor de retorno del hook
@@ -54,20 +54,20 @@ export default function useCreatePDF(): UseCreatePDFReturn {
     const finalOptions = { ...DEFAULT_OPTIONS, ...options };
     const doc = new jsPDF({
       orientation: finalOptions.orientation,
-      format: finalOptions.pageFormat
+      format: finalOptions.pageFormat,
     });
 
     // Convertir datos a formato de tabla
     const header: string[] = [];
     const tableResults: (string | number)[] = [];
-    
+
     Object.keys(data).forEach((key) => {
       // Excluir la clave 'total' si no se debe mostrar
-      if (key === 'total' && !finalOptions.showTotal) return;
-      
+      if (key === "total" && !finalOptions.showTotal) return;
+
       header.push(key.toUpperCase());
       const value = data[key];
-      tableResults.push(value !== undefined ? value : '');
+      tableResults.push(value !== undefined ? value : "");
     });
 
     // Configuración por defecto de la tabla
@@ -75,7 +75,7 @@ export default function useCreatePDF(): UseCreatePDFReturn {
       head: [header],
       body: [tableResults],
       startY: 20,
-      theme: 'grid',
+      theme: "grid",
       styles: {
         fontSize: 10,
         cellPadding: 5,
@@ -83,7 +83,7 @@ export default function useCreatePDF(): UseCreatePDFReturn {
       headStyles: {
         fillColor: [63, 136, 197],
         textColor: [255, 255, 255],
-        fontStyle: 'bold',
+        fontStyle: "bold",
       },
       ...finalOptions.tableOptions,
     };
@@ -98,12 +98,12 @@ export default function useCreatePDF(): UseCreatePDFReturn {
       const totalY = Math.ceil(tableHeight) + 20;
 
       doc.setFontSize(12);
-      doc.setFont('helvetica', 'bold');
+      doc.setFont("helvetica", "bold");
       doc.text(`Total: ${data.total}`, totalX, totalY);
     }
 
     // Guardar el documento
-    const filename = finalOptions.filename || 'documento.pdf';
+    const filename = finalOptions.filename || "documento.pdf";
     doc.save(filename);
   };
 
@@ -112,11 +112,14 @@ export default function useCreatePDF(): UseCreatePDFReturn {
    * @param dataArray - Array de datos a incluir en el PDF
    * @param options - Opciones de configuración (opcional)
    */
-  const createAdvancedDocument = (dataArray: PDFData[], options: PDFOptions = {}): void => {
+  const createAdvancedDocument = (
+    dataArray: PDFData[],
+    options: PDFOptions = {}
+  ): void => {
     const finalOptions = { ...DEFAULT_OPTIONS, ...options };
     const doc = new jsPDF({
       orientation: finalOptions.orientation,
-      format: finalOptions.pageFormat
+      format: finalOptions.pageFormat,
     });
 
     let currentY = 20;
@@ -124,27 +127,27 @@ export default function useCreatePDF(): UseCreatePDFReturn {
     dataArray.forEach((data, index) => {
       // Agregar título para cada sección
       doc.setFontSize(14);
-      doc.setFont('helvetica', 'bold');
+      doc.setFont("helvetica", "bold");
       doc.text(`Sección ${index + 1}`, 20, currentY);
       currentY += 15;
 
       // Convertir datos a formato de tabla
       const header: string[] = [];
       const tableResults: (string | number)[] = [];
-      
+
       Object.keys(data).forEach((key) => {
-        if (key === 'total' && !finalOptions.showTotal) return;
-        
+        if (key === "total" && !finalOptions.showTotal) return;
+
         header.push(key.toUpperCase());
         const value = data[key];
-        tableResults.push(value !== undefined ? value : '');
+        tableResults.push(value !== undefined ? value : "");
       });
 
       const tableOptions: UserOptions = {
         head: [header],
         body: [tableResults],
         startY: currentY,
-        theme: 'grid',
+        theme: "grid",
         styles: {
           fontSize: 9,
           cellPadding: 3,
@@ -152,18 +155,20 @@ export default function useCreatePDF(): UseCreatePDFReturn {
         headStyles: {
           fillColor: [63, 136, 197],
           textColor: [255, 255, 255],
-          fontStyle: 'bold',
+          fontStyle: "bold",
         },
         ...finalOptions.tableOptions,
       };
 
       autoTable(doc, tableOptions);
-      currentY = doc.previousAutoTable?.finalY ? doc.previousAutoTable.finalY + 20 : currentY + 50;
+      currentY = doc.previousAutoTable?.finalY
+        ? doc.previousAutoTable.finalY + 20
+        : currentY + 50;
 
       // Agregar total si está especificado
       if (finalOptions.showTotal && data.total !== undefined) {
         doc.setFontSize(10);
-        doc.setFont('helvetica', 'bold');
+        doc.setFont("helvetica", "bold");
         doc.text(`Total: ${data.total}`, 150, currentY - 10);
       }
 
@@ -174,7 +179,7 @@ export default function useCreatePDF(): UseCreatePDFReturn {
       }
     });
 
-    const filename = finalOptions.filename || 'documento-avanzado.pdf';
+    const filename = finalOptions.filename || "documento-avanzado.pdf";
     doc.save(filename);
   };
 
@@ -199,28 +204,31 @@ export default function useCreatePDF(): UseCreatePDFReturn {
  * @param data - Datos para el PDF
  * @param filename - Nombre del archivo (opcional)
  */
-export const createSimplePDF = (data: PDFData, filename: string = 'documento.pdf'): void => {
+export const createSimplePDF = (
+  data: PDFData,
+  filename: string = "documento.pdf"
+): void => {
   const finalOptions = { ...DEFAULT_OPTIONS, filename };
   const doc = new jsPDF({
     orientation: finalOptions.orientation,
-    format: finalOptions.pageFormat
+    format: finalOptions.pageFormat,
   });
 
   // Convertir datos a formato de tabla
   const header: string[] = [];
   const tableResults: (string | number)[] = [];
-  
+
   Object.keys(data).forEach((key) => {
     header.push(key.toUpperCase());
     const value = data[key];
-    tableResults.push(value !== undefined ? value : '');
+    tableResults.push(value !== undefined ? value : "");
   });
 
   const tableOptions: UserOptions = {
     head: [header],
     body: [tableResults],
     startY: 20,
-    theme: 'grid',
+    theme: "grid",
     styles: {
       fontSize: 10,
       cellPadding: 3,
@@ -228,12 +236,12 @@ export const createSimplePDF = (data: PDFData, filename: string = 'documento.pdf
     headStyles: {
       fillColor: [63, 136, 197],
       textColor: [255, 255, 255],
-      fontStyle: 'bold',
+      fontStyle: "bold",
     },
   };
 
   autoTable(doc, tableOptions);
-  const saveFilename = finalOptions.filename || 'documento.pdf';
+  const saveFilename = finalOptions.filename || "documento.pdf";
   doc.save(saveFilename);
 };
 
@@ -242,30 +250,33 @@ export const createSimplePDF = (data: PDFData, filename: string = 'documento.pdf
  * @param data - Datos para el PDF (debe incluir campo 'total')
  * @param filename - Nombre del archivo (opcional)
  */
-export const createPDFWithTotal = (data: PDFData, filename: string = 'reporte.pdf'): void => {
+export const createPDFWithTotal = (
+  data: PDFData,
+  filename: string = "reporte.pdf"
+): void => {
   const finalOptions = { ...DEFAULT_OPTIONS, filename, showTotal: true };
   const doc = new jsPDF({
     orientation: finalOptions.orientation,
-    format: finalOptions.pageFormat
+    format: finalOptions.pageFormat,
   });
 
   // Convertir datos a formato de tabla
   const header: string[] = [];
   const tableResults: (string | number)[] = [];
-  
+
   Object.keys(data).forEach((key) => {
-    if (key === 'total' && !finalOptions.showTotal) return;
-    
+    if (key === "total" && !finalOptions.showTotal) return;
+
     header.push(key.toUpperCase());
     const value = data[key];
-    tableResults.push(value !== undefined ? value : '');
+    tableResults.push(value !== undefined ? value : "");
   });
 
   const tableOptions: UserOptions = {
     head: [header],
     body: [tableResults],
     startY: 20,
-    theme: 'grid',
+    theme: "grid",
     styles: {
       fontSize: 10,
       cellPadding: 3,
@@ -273,20 +284,20 @@ export const createPDFWithTotal = (data: PDFData, filename: string = 'reporte.pd
     headStyles: {
       fillColor: [63, 136, 197],
       textColor: [255, 255, 255],
-      fontStyle: 'bold',
+      fontStyle: "bold",
     },
   };
 
   autoTable(doc, tableOptions);
-  
+
   // Agregar total si está especificado
   if (finalOptions.showTotal && data.total !== undefined) {
     const finalY = doc.previousAutoTable?.finalY || 60;
     doc.setFontSize(12);
-    doc.setFont('helvetica', 'bold');
+    doc.setFont("helvetica", "bold");
     doc.text(`Total: ${data.total}`, 150, finalY + 10);
   }
-  
-  const saveFilename = finalOptions.filename || 'reporte.pdf';
+
+  const saveFilename = finalOptions.filename || "reporte.pdf";
   doc.save(saveFilename);
 };

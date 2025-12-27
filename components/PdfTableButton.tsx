@@ -26,7 +26,11 @@ interface PDFButtonProps {
   isChecked: boolean;
 }
 
-export default function PDFButton({ data, discount, isChecked }: PDFButtonProps) {
+export default function PDFButton({
+  data,
+  discount,
+  isChecked,
+}: PDFButtonProps) {
   const formatNumber = new Intl.NumberFormat("es-MX", {
     style: "currency",
     currency: "MXN",

@@ -1,5 +1,5 @@
-import { createBrowserClient } from '@supabase/ssr';
-import type { SupabaseClient } from '@supabase/supabase-js';
+import { createBrowserClient } from "@supabase/ssr";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 // Tipos para las variables de entorno
 interface SupabaseConfig {
@@ -19,7 +19,7 @@ export function createClient(): SupabaseClient {
   // Validar que las variables de entorno estén definidas
   if (!url || !anonKey) {
     throw new Error(
-      'Missing Supabase environment variables. Please check NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY'
+      "Missing Supabase environment variables. Please check NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY"
     );
   }
 

@@ -1,10 +1,11 @@
 import PaybackForm from "@/components/PaybackForm";
-import type { Metadata } from 'next';
+import type { Metadata } from "next";
 
 // Metadatos de la página
 export const metadata: Metadata = {
   title: "Registro de devolución",
-  description: "Calcula el monto a devolver con información detallada del payback"
+  description:
+    "Calcula el monto a devolver con información detallada del payback",
 };
 
 /**

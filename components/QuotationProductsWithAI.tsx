@@ -3,7 +3,10 @@ import { TextInput, Button } from "flowbite-react";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { ChangeEvent, MouseEvent } from "react";
 import AIGeneratorButton from "@/components/AIGeneratorButton";
-import type { QuotationFormData, QuotationProductChangeHandler } from "@/types/quotation";
+import type {
+  QuotationFormData,
+  QuotationProductChangeHandler,
+} from "@/types/quotation";
 
 // Tipos para las props del componente
 interface QuotationProductsWithAIProps {
@@ -35,7 +38,7 @@ export default function QuotationProductsWithAI({
         value: generatedContent,
       } as HTMLInputElement,
     } as ChangeEvent<HTMLInputElement>;
-    
+
     handleProductoChange(syntheticEvent, index);
   };
 

@@ -8,26 +8,28 @@ import type { HomePageProps } from "@/types/pages";
 // Metadatos específicos para la página principal
 export const metadata: Metadata = {
   title: "ContaTools - Herramientas Contables",
-  description: "Desde cotizaciones hasta el control de efectivo, con facilidad. Herramientas contables para simplificar tu día a día.",
+  description:
+    "Desde cotizaciones hasta el control de efectivo, con facilidad. Herramientas contables para simplificar tu día a día.",
   keywords: [
     "contabilidad",
     "cotizaciones",
     "contratos",
     "control de efectivo",
     "herramientas financieras",
-    "facturación"
+    "facturación",
   ],
   openGraph: {
     title: "ContaTools - Herramientas Contables",
-    description: "Desde cotizaciones hasta el control de efectivo, con facilidad.",
-    type: "website"
-  }
+    description:
+      "Desde cotizaciones hasta el control de efectivo, con facilidad.",
+    type: "website",
+  },
 };
 
 /**
  * Página principal de ContaTools
  * Presenta la aplicación y proporciona acceso al dashboard
- * 
+ *
  * @param params - Parámetros de la URL (no utilizados en esta página)
  * @param searchParams - Parámetros de búsqueda de la URL (no utilizados en esta página)
  */

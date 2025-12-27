@@ -19,7 +19,7 @@ export default function GetCostForm() {
   const styleInput = `border border-slate-600 rounded-md my-2`;
 
   const handleChange = async (
-    e: ChangeEvent<HTMLInputElement>,
+    e: ChangeEvent<HTMLInputElement>
   ): Promise<void> => {
     const file = e.target.files?.[0];
     if (file) {
@@ -42,7 +42,7 @@ export default function GetCostForm() {
         // calculamos el total de todos los montos obtenidos.
         const total = result.data.reduce(
           (sum: number, entry: CostoItem) => sum + entry.monto,
-          0,
+          0
         );
         setTotalMonto(total);
       } catch (error) {

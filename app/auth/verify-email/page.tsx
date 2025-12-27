@@ -1,8 +1,8 @@
 "use client";
 
-import { Card, Alert } from 'flowbite-react';
-import { FaEnvelopeOpenText, FaArrowLeft } from 'react-icons/fa';
-import Link from 'next/link';
+import { Card, Alert } from "flowbite-react";
+import { FaEnvelopeOpenText, FaArrowLeft } from "react-icons/fa";
+import Link from "next/link";
 
 /**
  * Página de verificación de email
@@ -19,7 +19,7 @@ export default function VerifyEmailPage() {
               <FaEnvelopeOpenText className="h-8 w-8 text-blue-600 dark:text-blue-400" />
             </div>
           </div>
-          
+
           {/* Título y descripción */}
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -29,31 +29,34 @@ export default function VerifyEmailPage() {
               Te hemos enviado un correo de verificación
             </p>
           </div>
-          
+
           {/* Alerta informativa */}
           <Alert color="info" className="text-left">
             <div className="space-y-2">
               <p className="font-medium">📧 Revisa tu bandeja de entrada</p>
               <p className="text-sm">
-                Hemos enviado un enlace de verificación a tu correo electrónico. 
-                Por favor, haz clic en el enlace para activar tu cuenta de ContaTools.
+                Hemos enviado un enlace de verificación a tu correo electrónico.
+                Por favor, haz clic en el enlace para activar tu cuenta de
+                ContaTools.
               </p>
               <p className="text-xs text-amber-600">
                 ⚠️ No olvides revisar tu carpeta de spam si no lo encuentras.
               </p>
             </div>
           </Alert>
-          
+
           {/* Instrucciones */}
           <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
             <p>
-              Una vez que verifiques tu email, podrás acceder a todas las herramientas de ContaTools.
+              Una vez que verifiques tu email, podrás acceder a todas las
+              herramientas de ContaTools.
             </p>
             <p>
-              Si no recibes el correo en unos minutos, puedes solicitar otro enlace.
+              Si no recibes el correo en unos minutos, puedes solicitar otro
+              enlace.
             </p>
           </div>
-          
+
           {/* Botones de acción */}
           <div className="space-y-3">
             <Link
@@ -62,7 +65,7 @@ export default function VerifyEmailPage() {
             >
               Reenviar correo de verificación
             </Link>
-            
+
             <Link
               href="/"
               className="inline-flex w-full items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
@@ -71,13 +74,13 @@ export default function VerifyEmailPage() {
               Volver al inicio
             </Link>
           </div>
-          
+
           {/* Información de soporte */}
           <div className="border-t border-gray-200 pt-4 dark:border-gray-700">
             <p className="text-xs text-gray-500 dark:text-gray-400">
-              ¿Tienes problemas? Contáctanos en{' '}
-              <a 
-                href="mailto:support@conta-tools.com" 
+              ¿Tienes problemas? Contáctanos en{" "}
+              <a
+                href="mailto:support@conta-tools.com"
                 className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-200"
               >
                 support@conta-tools.com

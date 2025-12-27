@@ -2,12 +2,7 @@
   "compilerOptions": {
     // Target y librerías
     "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "es6",
-      "es2017"
-    ],
+    "lib": ["dom", "dom.iterable", "es6", "es2017"],
     // Configuración de módulos
     "module": "esnext",
     "moduleResolution": "node",
@@ -40,9 +35,7 @@
     // Paths para imports absolutos
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "@/*": ["./*"]
     },
     // Configuración para plugins de Next.js
     "plugins": [
@@ -60,13 +53,7 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
   ],
-  "exclude": [
-    "node_modules",
-    ".next",
-    "out",
-    "build",
-    "dist"
-  ],
+  "exclude": ["node_modules", ".next", "out", "build", "dist"],
   "ts-node": {
     "compilerOptions": {
       "module": "commonjs"

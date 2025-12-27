@@ -12,16 +12,12 @@ interface ContractPreviewProps {
 /**
  * Componente de vista previa de contratos
  * Actúa como fachada simple que utiliza ContractContent para renderizar el contrato
- * 
+ *
  * @param contractData - Datos del contrato a mostrar
  * @param invoicesData - Datos opcionales de facturas relacionadas
  */
-export default function ContractPreview({ 
-  contractData 
+export default function ContractPreview({
+  contractData,
 }: ContractPreviewProps) {
-  return (
-    <ContractContent 
-      contractData={contractData} 
-    />
-  );
+  return <ContractContent contractData={contractData} />;
 }

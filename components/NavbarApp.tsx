@@ -9,26 +9,26 @@ import {
   DropdownDivider,
   Button,
 } from "flowbite-react";
-import { useAuth } from './AuthProvider';
+import { useAuth } from "./AuthProvider";
 import logo from "@/public/logo_white.svg";
 import { IoIosArrowDown } from "react-icons/io";
-import { 
-  FaSignInAlt, 
-  FaSignOutAlt, 
-  FaUser, 
-  FaSearch, 
-  FaFileContract, 
+import {
+  FaSignInAlt,
+  FaSignOutAlt,
+  FaUser,
+  FaSearch,
+  FaFileContract,
   FaFileInvoiceDollar,
   FaUndo,
   FaCalculator,
   FaReceipt,
   FaCoins,
   FaTachometerAlt,
-  FaBars
+  FaBars,
 } from "react-icons/fa";
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import type { IconType } from 'react-icons';
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import type { IconType } from "react-icons";
 
 // Interfaz para definir las herramientas de navegación
 interface NavigationTool {
@@ -58,9 +58,9 @@ export default function NavbarApp({}: NavbarAppProps) {
       await signOut();
       // La redirección es manejada por el AuthProvider
     } catch (error) {
-      console.error('Error signing out:', error);
+      console.error("Error signing out:", error);
       // En caso de error, forzar redirección manual
-      router.push('/auth/login');
+      router.push("/auth/login");
     }
   };
 
@@ -90,51 +90,57 @@ export default function NavbarApp({}: NavbarAppProps) {
   ];
 
   return (
-    <nav className="bg-gradient-to-r from-cyan-700 to-teal-600 text-white shadow-lg sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          
+    <nav className="sticky top-0 z-50 bg-gradient-to-r from-cyan-700 to-teal-600 text-white shadow-lg">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between">
           {/* Logo y Brand */}
-          <Link href="/" className="flex items-center space-x-3 hover:opacity-90 transition-opacity">
+          <Link
+            href="/"
+            className="flex items-center space-x-3 transition-opacity hover:opacity-90"
+          >
             <Image
               src={logo}
               alt="ContaTools Logo"
               width={40}
               height={40}
               priority={true}
-              className="w-10 h-10"
+              className="h-10 w-10"
             />
             <div className="flex flex-col">
-              <span className="text-xl font-bold tracking-tight">ContaTools</span>
-              <span className="text-xs text-cyan-200 hidden sm:block">Automatiza tu contabilidad</span>
+              <span className="text-xl font-bold tracking-tight">
+                ContaTools
+              </span>
+              <span className="hidden text-xs text-cyan-200 sm:block">
+                Automatiza tu contabilidad
+              </span>
             </div>
           </Link>
 
           {/* Navigation Links - Desktop */}
-          <div className="hidden lg:flex items-center space-x-1">
-            <Link 
-              href="/" 
-              className="px-3 py-2 text-sm font-medium text-white hover:bg-cyan-600 rounded-md transition-colors duration-200"
+          <div className="hidden items-center space-x-1 lg:flex">
+            <Link
+              href="/"
+              className="rounded-md px-3 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-cyan-600"
             >
               Inicio
             </Link>
             {tools.map((tool: NavigationTool) => {
               const IconComponent = tool.icon;
               return (
-                <div key={tool.href} className="relative group">
+                <div key={tool.href} className="group relative">
                   <Link
                     href={tool.href}
-                    className="flex items-center px-3 py-2 text-sm font-medium text-white hover:bg-cyan-600 rounded-md transition-all duration-200 group"
+                    className="group flex items-center rounded-md px-3 py-2 text-sm font-medium text-white transition-all duration-200 hover:bg-cyan-600"
                   >
-                    <IconComponent className="w-4 h-4 mr-1.5 group-hover:scale-125 transition-transform duration-200" />
+                    <IconComponent className="mr-1.5 h-4 w-4 transition-transform duration-200 group-hover:scale-125" />
                     <span className="hidden xl:inline">{tool.label}</span>
                   </Link>
-                  
+
                   {/* Tooltip - solo visible cuando no se muestra el texto */}
-                  <div className="xl:hidden absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-2 bg-gray-800 text-white text-sm font-medium rounded-lg shadow-xl border border-gray-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap z-50">
+                  <div className="pointer-events-none absolute left-1/2 top-full z-50 mt-2 -translate-x-1/2 transform whitespace-nowrap rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-sm font-medium text-white opacity-0 shadow-xl transition-opacity duration-300 group-hover:opacity-100 xl:hidden">
                     {tool.label}
                     {/* Arrow */}
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-800"></div>
+                    <div className="absolute bottom-full left-1/2 h-0 w-0 -translate-x-1/2 transform border-b-4 border-l-4 border-r-4 border-transparent border-b-gray-800"></div>
                   </div>
                 </div>
               );
@@ -142,45 +148,51 @@ export default function NavbarApp({}: NavbarAppProps) {
           </div>
 
           {/* User Menu - Desktop */}
-          <div className="hidden lg:flex items-center space-x-4">
+          <div className="hidden items-center space-x-4 lg:flex">
             {loading ? (
               <span className="text-sm text-cyan-200">Cargando...</span>
             ) : user ? (
               <div className="flex items-center space-x-2">
                 <Link
                   href="/dashboard"
-                  className="flex items-center px-3 py-2 text-sm font-medium text-white hover:bg-cyan-600 rounded-md transition-colors duration-200"
+                  className="flex items-center rounded-md px-3 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-cyan-600"
                 >
-                  <FaTachometerAlt className="w-4 h-4 mr-1.5" />
+                  <FaTachometerAlt className="mr-1.5 h-4 w-4" />
                   Dashboard
                 </Link>
-                
+
                 <Dropdown
                   arrowIcon={false}
                   inline
                   label={
-                    <div className="flex items-center px-3 py-2 text-sm font-medium text-white hover:bg-cyan-600 rounded-md transition-colors duration-200">
-                      <FaUser className="w-4 h-4 mr-1.5" />
-                      <span className="hidden xl:inline mr-1">Mi Cuenta</span>
-                      <IoIosArrowDown className="w-3 h-3" />
+                    <div className="flex items-center rounded-md px-3 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-cyan-600">
+                      <FaUser className="mr-1.5 h-4 w-4" />
+                      <span className="mr-1 hidden xl:inline">Mi Cuenta</span>
+                      <IoIosArrowDown className="h-3 w-3" />
                     </div>
                   }
                 >
-                  <div className="bg-gray-800 text-white rounded-lg shadow-lg border border-gray-700 min-w-48">
+                  <div className="min-w-48 rounded-lg border border-gray-700 bg-gray-800 text-white shadow-lg">
                     <DropdownItem>
-                      <Link href="/profile/edit" className="flex items-center w-full">
-                        <FaUser className="w-4 h-4 mr-2" />
+                      <Link
+                        href="/profile/edit"
+                        className="flex w-full items-center"
+                      >
+                        <FaUser className="mr-2 h-4 w-4" />
                         Mi Perfil
                       </Link>
                     </DropdownItem>
                     <DropdownItem>
-                      <span className="text-xs text-gray-300 block px-1">
+                      <span className="block px-1 text-xs text-gray-300">
                         {user.email}
                       </span>
                     </DropdownItem>
                     <DropdownDivider />
-                    <DropdownItem onClick={handleSignOut} className="cursor-pointer">
-                      <FaSignOutAlt className="w-4 h-4 mr-2" />
+                    <DropdownItem
+                      onClick={handleSignOut}
+                      className="cursor-pointer"
+                    >
+                      <FaSignOutAlt className="mr-2 h-4 w-4" />
                       Cerrar Sesión
                     </DropdownItem>
                   </div>
@@ -189,9 +201,9 @@ export default function NavbarApp({}: NavbarAppProps) {
             ) : (
               <Link
                 href="/auth/login"
-                className="flex items-center px-4 py-2 text-sm font-medium text-white bg-cyan-600 hover:bg-cyan-700 rounded-md transition-colors duration-200"
+                className="flex items-center rounded-md bg-cyan-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-cyan-700"
               >
-                <FaSignInAlt className="w-4 h-4 mr-1.5" />
+                <FaSignInAlt className="mr-1.5 h-4 w-4" />
                 Iniciar Sesión
               </Link>
             )}
@@ -200,84 +212,88 @@ export default function NavbarApp({}: NavbarAppProps) {
           {/* Mobile Menu Button */}
           <button
             onClick={toggleMobileMenu}
-            className="lg:hidden p-2 rounded-md text-white hover:bg-cyan-600 transition-colors duration-200"
+            className="rounded-md p-2 text-white transition-colors duration-200 hover:bg-cyan-600 lg:hidden"
             aria-label="Abrir menú de navegación"
             type="button"
           >
-            <FaBars className="w-5 h-5" />
+            <FaBars className="h-5 w-5" />
           </button>
         </div>
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-cyan-600">
+          <div className="border-t border-cyan-600 py-4 lg:hidden">
             <div className="flex flex-col space-y-2">
-              <Link 
-                href="/" 
-                className="px-3 py-2 text-sm font-medium text-white hover:bg-cyan-600 rounded-md transition-colors duration-200"
+              <Link
+                href="/"
+                className="rounded-md px-3 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-cyan-600"
                 onClick={closeMobileMenu}
               >
                 Inicio
               </Link>
-              
+
               {tools.map((tool: NavigationTool) => {
                 const IconComponent = tool.icon;
                 return (
                   <Link
                     key={tool.href}
                     href={tool.href}
-                    className="flex items-center px-3 py-2 text-sm font-medium text-white hover:bg-cyan-600 rounded-md transition-colors duration-200"
+                    className="flex items-center rounded-md px-3 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-cyan-600"
                     onClick={closeMobileMenu}
                   >
-                    <IconComponent className="w-4 h-4 mr-2" />
+                    <IconComponent className="mr-2 h-4 w-4" />
                     {tool.label}
                   </Link>
                 );
               })}
-              
-              <div className="border-t border-cyan-600 pt-2 mt-2">
+
+              <div className="mt-2 border-t border-cyan-600 pt-2">
                 {loading ? (
-                  <span className="px-3 py-2 text-sm text-cyan-200">Cargando...</span>
+                  <span className="px-3 py-2 text-sm text-cyan-200">
+                    Cargando...
+                  </span>
                 ) : user ? (
                   <div className="space-y-2">
                     <Link
                       href="/dashboard"
-                      className="flex items-center px-3 py-2 text-sm font-medium text-white hover:bg-cyan-600 rounded-md transition-colors duration-200"
+                      className="flex items-center rounded-md px-3 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-cyan-600"
                       onClick={closeMobileMenu}
                     >
-                      <FaTachometerAlt className="w-4 h-4 mr-2" />
+                      <FaTachometerAlt className="mr-2 h-4 w-4" />
                       Dashboard
                     </Link>
                     <Link
                       href="/profile/edit"
-                      className="flex items-center px-3 py-2 text-sm font-medium text-white hover:bg-cyan-600 rounded-md transition-colors duration-200"
+                      className="flex items-center rounded-md px-3 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-cyan-600"
                       onClick={closeMobileMenu}
                     >
-                      <FaUser className="w-4 h-4 mr-2" />
+                      <FaUser className="mr-2 h-4 w-4" />
                       Mi Perfil
                     </Link>
                     <div className="px-3 py-1">
-                      <span className="text-xs text-cyan-200">{user.email}</span>
+                      <span className="text-xs text-cyan-200">
+                        {user.email}
+                      </span>
                     </div>
                     <button
                       onClick={() => {
                         handleSignOut();
                         closeMobileMenu();
                       }}
-                      className="flex items-center w-full px-3 py-2 text-sm font-medium text-white hover:bg-cyan-600 rounded-md transition-colors duration-200"
+                      className="flex w-full items-center rounded-md px-3 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-cyan-600"
                       type="button"
                     >
-                      <FaSignOutAlt className="w-4 h-4 mr-2" />
+                      <FaSignOutAlt className="mr-2 h-4 w-4" />
                       Cerrar Sesión
                     </button>
                   </div>
                 ) : (
                   <Link
                     href="/auth/login"
-                    className="flex items-center px-3 py-2 text-sm font-medium text-white hover:bg-cyan-600 rounded-md transition-colors duration-200"
+                    className="flex items-center rounded-md px-3 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-cyan-600"
                     onClick={closeMobileMenu}
                   >
-                    <FaSignInAlt className="w-4 h-4 mr-2" />
+                    <FaSignInAlt className="mr-2 h-4 w-4" />
                     Iniciar Sesión
                   </Link>
                 )}

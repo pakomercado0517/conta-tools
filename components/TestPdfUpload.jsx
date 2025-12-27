@@ -20,7 +20,7 @@ export default function TestPdfUpload() {
     try {
       const arrayBuffer = await file.arrayBuffer();
       console.log("ArrayBuffer created, size:", arrayBuffer.byteLength);
-      
+
       const data = await extractInvoiceDataForContract(arrayBuffer);
       console.log("Data extracted:", data);
       setResult(data);
@@ -33,28 +33,28 @@ export default function TestPdfUpload() {
   };
 
   return (
-    <div className="p-4 border-2 border-dashed border-gray-300 rounded-lg">
-      <h3 className="text-lg font-bold mb-4">Test PDF Upload</h3>
-      
+    <div className="rounded-lg border-2 border-dashed border-gray-300 p-4">
+      <h3 className="mb-4 text-lg font-bold">Test PDF Upload</h3>
+
       <input
         type="file"
         accept=".pdf"
         onChange={handleFileUpload}
-        className="mb-4 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+        className="mb-4 block w-full text-sm text-gray-500 file:mr-4 file:rounded-full file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-blue-700 hover:file:bg-blue-100"
       />
-      
+
       {loading && <p className="text-blue-600">Procesando...</p>}
-      
+
       {error && (
-        <div className="text-red-600 bg-red-50 p-3 rounded mb-4">
+        <div className="mb-4 rounded bg-red-50 p-3 text-red-600">
           Error: {error}
         </div>
       )}
-      
+
       {result && (
-        <div className="bg-green-50 p-3 rounded">
+        <div className="rounded bg-green-50 p-3">
           <h4 className="font-bold text-green-800">Datos extraídos:</h4>
-          <pre className="text-sm mt-2 text-green-700 overflow-auto">
+          <pre className="mt-2 overflow-auto text-sm text-green-700">
             {JSON.stringify(result, null, 2)}
           </pre>
         </div>

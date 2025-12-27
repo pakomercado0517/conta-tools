@@ -20,7 +20,7 @@ function buscarClaves(descripcion) {
 
   // Búsqueda por coincidencia directa (respaldo)
   const exactMatches = catalogo.filter((item) =>
-    item.descripcion?.toLowerCase().includes(texto),
+    item.descripcion?.toLowerCase().includes(texto)
   );
 
   // Combinar ambos resultados sin duplicados
@@ -49,7 +49,7 @@ export async function POST(request) {
   if (!descripcion || descripcion.trim().length < 2) {
     return NextResponse.json(
       { claves: ["00000000 - Descripción muy corta"] },
-      { status: 400 },
+      { status: 400 }
     );
   }
 

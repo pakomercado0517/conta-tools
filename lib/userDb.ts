@@ -1,7 +1,7 @@
-import fs from 'fs';
-import path from 'path';
-import bcrypt from 'bcryptjs';
-import { v4 as uuidv4 } from 'uuid';
+import fs from "fs";
+import path from "path";
+import bcrypt from "bcryptjs";
+import { v4 as uuidv4 } from "uuid";
 
 // Tipos para los usuarios
 export interface User {
@@ -18,7 +18,7 @@ export interface User {
 }
 
 // Usuario sin contraseña (para respuestas)
-export interface SafeUser extends Omit<User, 'password'> {}
+export interface SafeUser extends Omit<User, "password"> {}
 
 // Datos para crear usuario
 export interface CreateUserData {
@@ -28,7 +28,7 @@ export interface CreateUserData {
 }
 
 // Configuración de la base de datos
-const USERS_DB_PATH: string = process.env.USERS_DB_PATH || './data/users.json';
+const USERS_DB_PATH: string = process.env.USERS_DB_PATH || "./data/users.json";
 
 /**
  * Asegurar que el directorio y archivo de base de datos existe
@@ -50,10 +50,10 @@ function ensureDbExists(): void {
 function readUsers(): User[] {
   try {
     ensureDbExists();
-    const data = fs.readFileSync(USERS_DB_PATH, 'utf8');
+    const data = fs.readFileSync(USERS_DB_PATH, "utf8");
     return JSON.parse(data) as User[];
   } catch (error) {
-    console.error('Error reading users:', error);
+    console.error("Error reading users:", error);
     return [];
   }
 }
@@ -69,7 +69,7 @@ function writeUsers(users: User[]): boolean {
     fs.writeFileSync(USERS_DB_PATH, JSON.stringify(users, null, 2));
     return true;
   } catch (error) {
-    console.error('Error writing users:', error);
+    console.error("Error writing users:", error);
     return false;
   }
 }
@@ -96,11 +96,11 @@ export const userDb = {
    */
   async createUser(userData: CreateUserData): Promise<SafeUser> {
     const users = readUsers();
-    
+
     // Verificar si el email ya existe
-    const existingUser = users.find(user => user.email === userData.email);
+    const existingUser = users.find((user) => user.email === userData.email);
     if (existingUser) {
-      throw new Error('El email ya está registrado');
+      throw new Error("El email ya está registrado");
     }
 
     // Hash de la contraseña
@@ -116,14 +116,14 @@ export const userDb = {
       passwordResetToken: null,
       passwordResetExpires: null,
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
     users.push(newUser);
     const writeSuccess = writeUsers(users);
-    
+
     if (!writeSuccess) {
-      throw new Error('Error al crear el usuario');
+      throw new Error("Error al crear el usuario");
     }
 
     return removePassword(newUser);
@@ -136,7 +136,7 @@ export const userDb = {
    */
   async findByEmail(email: string): Promise<User | null> {
     const users = readUsers();
-    return users.find(user => user.email === email) || null;
+    return users.find((user) => user.email === email) || null;
   },
 
   /**
@@ -146,7 +146,7 @@ export const userDb = {
    */
   async findById(id: string): Promise<User | null> {
     const users = readUsers();
-    return users.find(user => user.id === id) || null;
+    return users.find((user) => user.id === id) || null;
   },
 
   /**
@@ -165,7 +165,10 @@ export const userDb = {
    * @param password - Contraseña a verificar
    * @returns Usuario sin contraseña si es válida, null en caso contrario
    */
-  async verifyPassword(email: string, password: string): Promise<SafeUser | null> {
+  async verifyPassword(
+    email: string,
+    password: string
+  ): Promise<SafeUser | null> {
     const user = await this.findByEmail(email);
     if (!user) return null;
 
@@ -184,8 +187,10 @@ export const userDb = {
     if (!token.trim()) return null;
 
     const users = readUsers();
-    const userIndex = users.findIndex(user => user.emailVerificationToken === token);
-    
+    const userIndex = users.findIndex(
+      (user) => user.emailVerificationToken === token
+    );
+
     if (userIndex === -1) return null;
 
     users[userIndex].emailVerified = true;
@@ -194,7 +199,7 @@ export const userDb = {
 
     const writeSuccess = writeUsers(users);
     if (!writeSuccess) return null;
-    
+
     return removePassword(users[userIndex]);
   },
 
@@ -205,8 +210,8 @@ export const userDb = {
    */
   async generatePasswordResetToken(email: string): Promise<string | null> {
     const users = readUsers();
-    const userIndex = users.findIndex(user => user.email === email);
-    
+    const userIndex = users.findIndex((user) => user.email === email);
+
     if (userIndex === -1) return null;
 
     const resetToken = uuidv4();
@@ -226,20 +231,24 @@ export const userDb = {
    * @param newPassword - Nueva contraseña
    * @returns Usuario sin contraseña si fue exitoso, null en caso contrario
    */
-  async resetPassword(token: string, newPassword: string): Promise<SafeUser | null> {
+  async resetPassword(
+    token: string,
+    newPassword: string
+  ): Promise<SafeUser | null> {
     if (!token.trim() || !newPassword.trim()) return null;
 
     const users = readUsers();
-    const userIndex = users.findIndex(user => 
-      user.passwordResetToken === token && 
-      user.passwordResetExpires &&
-      new Date(user.passwordResetExpires) > new Date()
+    const userIndex = users.findIndex(
+      (user) =>
+        user.passwordResetToken === token &&
+        user.passwordResetExpires &&
+        new Date(user.passwordResetExpires) > new Date()
     );
-    
+
     if (userIndex === -1) return null;
 
     const hashedPassword = await bcrypt.hash(newPassword, 12);
-    
+
     users[userIndex].password = hashedPassword;
     users[userIndex].passwordResetToken = null;
     users[userIndex].passwordResetExpires = null;
@@ -247,7 +256,7 @@ export const userDb = {
 
     const writeSuccess = writeUsers(users);
     if (!writeSuccess) return null;
-    
+
     return removePassword(users[userIndex]);
   },
 
@@ -257,24 +266,27 @@ export const userDb = {
    * @param updateData - Datos a actualizar
    * @returns Usuario actualizado sin contraseña o null
    */
-  async updateUser(id: string, updateData: Partial<Pick<User, 'name' | 'email'>>): Promise<SafeUser | null> {
+  async updateUser(
+    id: string,
+    updateData: Partial<Pick<User, "name" | "email">>
+  ): Promise<SafeUser | null> {
     const users = readUsers();
-    const userIndex = users.findIndex(user => user.id === id);
-    
+    const userIndex = users.findIndex((user) => user.id === id);
+
     if (userIndex === -1) return null;
 
     // Verificar si el nuevo email ya existe (si se está cambiando)
     if (updateData.email && updateData.email !== users[userIndex].email) {
-      const emailExists = users.some(user => user.email === updateData.email);
+      const emailExists = users.some((user) => user.email === updateData.email);
       if (emailExists) {
-        throw new Error('El email ya está en uso');
+        throw new Error("El email ya está en uso");
       }
     }
 
     users[userIndex] = {
       ...users[userIndex],
       ...updateData,
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
     const writeSuccess = writeUsers(users);
@@ -290,19 +302,26 @@ export const userDb = {
    * @param newPassword - Nueva contraseña
    * @returns Usuario sin contraseña si fue exitoso, null en caso contrario
    */
-  async changePassword(id: string, currentPassword: string, newPassword: string): Promise<SafeUser | null> {
+  async changePassword(
+    id: string,
+    currentPassword: string,
+    newPassword: string
+  ): Promise<SafeUser | null> {
     const users = readUsers();
-    const userIndex = users.findIndex(user => user.id === id);
-    
+    const userIndex = users.findIndex((user) => user.id === id);
+
     if (userIndex === -1) return null;
 
     // Verificar contraseña actual
-    const isCurrentPasswordValid = await bcrypt.compare(currentPassword, users[userIndex].password);
+    const isCurrentPasswordValid = await bcrypt.compare(
+      currentPassword,
+      users[userIndex].password
+    );
     if (!isCurrentPasswordValid) return null;
 
     // Hash de la nueva contraseña
     const hashedNewPassword = await bcrypt.hash(newPassword, 12);
-    
+
     users[userIndex].password = hashedNewPassword;
     users[userIndex].updatedAt = new Date().toISOString();
 
@@ -322,11 +341,11 @@ export const userDb = {
     unverified: number;
   }> {
     const users = readUsers();
-    
+
     return {
       total: users.length,
-      verified: users.filter(user => user.emailVerified).length,
-      unverified: users.filter(user => !user.emailVerified).length,
+      verified: users.filter((user) => user.emailVerified).length,
+      unverified: users.filter((user) => !user.emailVerified).length,
     };
-  }
+  },
 };

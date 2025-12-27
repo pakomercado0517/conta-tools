@@ -17,12 +17,14 @@ interface ConditionalLayoutProps {
  * - Página principal ('/'): Solo botón flotante
  * - Otras rutas: Layout completo con navbar, footer y botón flotante
  */
-export default function ConditionalLayout({ children }: ConditionalLayoutProps) {
+export default function ConditionalLayout({
+  children,
+}: ConditionalLayoutProps) {
   const pathname = usePathname();
-  
+
   // Si está en la página principal ('/'), no mostrar navbar ni footer
-  const isHomePage: boolean = pathname === '/';
-  
+  const isHomePage: boolean = pathname === "/";
+
   if (isHomePage) {
     return (
       <>
@@ -32,7 +34,7 @@ export default function ConditionalLayout({ children }: ConditionalLayoutProps) 
       </>
     );
   }
-  
+
   // Para todas las demás rutas, mostrar el layout completo
   return (
     <>

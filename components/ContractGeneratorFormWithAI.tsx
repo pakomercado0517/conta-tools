@@ -106,7 +106,7 @@ export default function ContractGeneratorFormWithAI({}: ContractGeneratorFormWit
   const handleInputChange = (
     event: ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
+    >
   ): void => {
     const { name, value } = event.target;
     setContractData((prev) => {
@@ -129,7 +129,7 @@ export default function ContractGeneratorFormWithAI({}: ContractGeneratorFormWit
    * @param event - Evento de cambio del radio button
    */
   const handleFechaTerminoChange = (
-    event: ChangeEvent<HTMLInputElement>,
+    event: ChangeEvent<HTMLInputElement>
   ): void => {
     const value = event.target.value as TipoFechaTermino;
     if (value === "otro") {
@@ -152,7 +152,7 @@ export default function ContractGeneratorFormWithAI({}: ContractGeneratorFormWit
    * @param event - Evento de cambio del checkbox
    */
   const handleTitularCheckboxChange = (
-    event: ChangeEvent<HTMLInputElement>,
+    event: ChangeEvent<HTMLInputElement>
   ): void => {
     const isChecked = event.target.checked;
     setContractData((prev) => ({
@@ -169,7 +169,7 @@ export default function ContractGeneratorFormWithAI({}: ContractGeneratorFormWit
    */
   const handleImagenFirmaChange = (
     event: ChangeEvent<HTMLInputElement>,
-    tipo: TipoImagenFirma,
+    tipo: TipoImagenFirma
   ): void => {
     const file = event.target.files?.[0];
     if (file && file.type.startsWith("image/")) {

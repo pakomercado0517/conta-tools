@@ -7,7 +7,13 @@ interface SupabaseError {
 }
 
 // Tipos para los contextos de error
-type ErrorContext = 'login' | 'signup' | 'recovery' | 'reset' | 'confirm' | 'update';
+type ErrorContext =
+  | "login"
+  | "signup"
+  | "recovery"
+  | "reset"
+  | "confirm"
+  | "update";
 
 // Tipo para los patrones de error
 interface ErrorPattern {
@@ -22,152 +28,181 @@ interface ErrorPattern {
  * @returns Mensaje de error traducido y contextualizado
  */
 export function translateSupabaseError(
-  errorMessage: string, 
+  errorMessage: string,
   errorCode: string | null = null
 ): string {
   // Normalizar el mensaje para comparación
   const normalizedMessage = errorMessage.toLowerCase().trim();
-  
+
   // Mapeo de errores comunes de Supabase
   const errorTranslations: Record<string, string> = {
     // Errores de autenticación
-    'invalid login credentials': 'Credenciales inválidas. Verifica tu email y contraseña.',
-    'email not confirmed': 'Tu email aún no ha sido verificado. Revisa tu bandeja de entrada y confirma tu cuenta.',
-    'invalid credentials': 'Credenciales inválidas. Verifica tu email y contraseña.',
-    'user not found': 'No se encontró una cuenta con ese email.',
-    'wrong password': 'La contraseña es incorrecta.',
-    'too many requests': 'Demasiados intentos. Espera un momento antes de volver a intentar.',
-    'weak password': 'La contraseña debe tener al menos 6 caracteres.',
-    'password too short': 'La contraseña debe tener al menos 6 caracteres.',
-    
+    "invalid login credentials":
+      "Credenciales inválidas. Verifica tu email y contraseña.",
+    "email not confirmed":
+      "Tu email aún no ha sido verificado. Revisa tu bandeja de entrada y confirma tu cuenta.",
+    "invalid credentials":
+      "Credenciales inválidas. Verifica tu email y contraseña.",
+    "user not found": "No se encontró una cuenta con ese email.",
+    "wrong password": "La contraseña es incorrecta.",
+    "too many requests":
+      "Demasiados intentos. Espera un momento antes de volver a intentar.",
+    "weak password": "La contraseña debe tener al menos 6 caracteres.",
+    "password too short": "La contraseña debe tener al menos 6 caracteres.",
+
     // Errores de registro
-    'user already registered': 'Ya existe una cuenta con este email.',
-    'email already exists': 'Ya existe una cuenta con este email.',
-    'signup disabled': 'El registro está temporalmente deshabilitado.',
-    'email rate limit exceeded': 'Se han enviado demasiados emails. Espera antes de solicitar otro.',
-    
+    "user already registered": "Ya existe una cuenta con este email.",
+    "email already exists": "Ya existe una cuenta con este email.",
+    "signup disabled": "El registro está temporalmente deshabilitado.",
+    "email rate limit exceeded":
+      "Se han enviado demasiados emails. Espera antes de solicitar otro.",
+
     // Errores de email
-    'email not found': 'No se encontró una cuenta con ese email.',
-    'invalid email': 'El formato del email no es válido.',
-    'email address not confirmed': 'Tu email aún no ha sido verificado. Revisa tu bandeja de entrada y confirma tu cuenta.',
-    'email confirmation expired': 'El enlace de confirmación ha expirado. Solicita un nuevo email de verificación.',
-    
+    "email not found": "No se encontró una cuenta con ese email.",
+    "invalid email": "El formato del email no es válido.",
+    "email address not confirmed":
+      "Tu email aún no ha sido verificado. Revisa tu bandeja de entrada y confirma tu cuenta.",
+    "email confirmation expired":
+      "El enlace de confirmación ha expirado. Solicita un nuevo email de verificación.",
+
     // Errores de contraseña
-    'password recovery disabled': 'La recuperación de contraseña está temporalmente deshabilitada.',
-    'password reset token expired': 'El enlace de recuperación ha expirado. Solicita un nuevo enlace.',
-    'invalid recovery token': 'El enlace de recuperación no es válido o ha expirado.',
-    'same password': 'La nueva contraseña debe ser diferente a la actual.',
-    
+    "password recovery disabled":
+      "La recuperación de contraseña está temporalmente deshabilitada.",
+    "password reset token expired":
+      "El enlace de recuperación ha expirado. Solicita un nuevo enlace.",
+    "invalid recovery token":
+      "El enlace de recuperación no es válido o ha expirado.",
+    "same password": "La nueva contraseña debe ser diferente a la actual.",
+
     // Errores de sesión
-    'session expired': 'Tu sesión ha expirado. Inicia sesión nuevamente.',
-    'invalid session': 'Sesión inválida. Inicia sesión nuevamente.',
-    'session not found': 'No se encontró una sesión válida. Inicia sesión nuevamente.',
-    'unauthorized': 'No tienes autorización para realizar esta acción.',
-    
+    "session expired": "Tu sesión ha expirado. Inicia sesión nuevamente.",
+    "invalid session": "Sesión inválida. Inicia sesión nuevamente.",
+    "session not found":
+      "No se encontró una sesión válida. Inicia sesión nuevamente.",
+    unauthorized: "No tienes autorización para realizar esta acción.",
+
     // Errores de red/servidor
-    'network error': 'Error de conexión. Verifica tu conexión a internet.',
-    'service unavailable': 'El servicio no está disponible temporalmente. Inténtalo más tarde.',
-    'internal server error': 'Error interno del servidor. Inténtalo más tarde.',
-    'timeout': 'La operación tardó demasiado. Inténtalo nuevamente.',
-    
+    "network error": "Error de conexión. Verifica tu conexión a internet.",
+    "service unavailable":
+      "El servicio no está disponible temporalmente. Inténtalo más tarde.",
+    "internal server error": "Error interno del servidor. Inténtalo más tarde.",
+    timeout: "La operación tardó demasiado. Inténtalo nuevamente.",
+
     // Errores de validación
-    'invalid input': 'Los datos ingresados no son válidos.',
-    'missing required fields': 'Faltan campos obligatorios.',
-    'invalid format': 'El formato de los datos no es válido.',
-    
+    "invalid input": "Los datos ingresados no son válidos.",
+    "missing required fields": "Faltan campos obligatorios.",
+    "invalid format": "El formato de los datos no es válido.",
+
     // Errores específicos de ContaTools
-    'account locked': 'Tu cuenta ha sido bloqueada por seguridad. Contacta al soporte.',
-    'verification required': 'Necesitas verificar tu cuenta antes de continuar.',
+    "account locked":
+      "Tu cuenta ha sido bloqueada por seguridad. Contacta al soporte.",
+    "verification required":
+      "Necesitas verificar tu cuenta antes de continuar.",
   };
-  
+
   // Buscar traducción exacta
-  for (const [englishError, spanishError] of Object.entries(errorTranslations)) {
+  for (const [englishError, spanishError] of Object.entries(
+    errorTranslations
+  )) {
     if (normalizedMessage.includes(englishError)) {
       return spanishError;
     }
   }
-  
+
   // Errores específicos por código
   if (errorCode) {
     const codeTranslations: Record<string, string> = {
-      'email_not_confirmed': 'Tu email aún no ha sido verificado. Revisa tu bandeja de entrada y confirma tu cuenta.',
-      'invalid_credentials': 'Credenciales inválidas. Verifica tu email y contraseña.',
-      'signup_disabled': 'El registro está temporalmente deshabilitado.',
-      'email_rate_limit_exceeded': 'Se han enviado demasiados emails. Espera antes de solicitar otro.',
-      'weak_password': 'La contraseña debe tener al menos 6 caracteres y ser más segura.',
-      'user_already_registered': 'Ya existe una cuenta con este email.',
+      email_not_confirmed:
+        "Tu email aún no ha sido verificado. Revisa tu bandeja de entrada y confirma tu cuenta.",
+      invalid_credentials:
+        "Credenciales inválidas. Verifica tu email y contraseña.",
+      signup_disabled: "El registro está temporalmente deshabilitado.",
+      email_rate_limit_exceeded:
+        "Se han enviado demasiados emails. Espera antes de solicitar otro.",
+      weak_password:
+        "La contraseña debe tener al menos 6 caracteres y ser más segura.",
+      user_already_registered: "Ya existe una cuenta con este email.",
     };
-    
+
     if (codeTranslations[errorCode]) {
       return codeTranslations[errorCode];
     }
   }
-  
+
   // Patrones comunes que pueden aparecer en los mensajes
   const patterns: ErrorPattern[] = [
     {
       pattern: /email.*not.*confirm/i,
-      translation: 'Tu email aún no ha sido verificado. Revisa tu bandeja de entrada y confirma tu cuenta.'
+      translation:
+        "Tu email aún no ha sido verificado. Revisa tu bandeja de entrada y confirma tu cuenta.",
     },
     {
       pattern: /invalid.*login/i,
-      translation: 'Credenciales inválidas. Verifica tu email y contraseña.'
+      translation: "Credenciales inválidas. Verifica tu email y contraseña.",
     },
     {
       pattern: /user.*not.*found/i,
-      translation: 'No se encontró una cuenta con ese email.'
+      translation: "No se encontró una cuenta con ese email.",
     },
     {
       pattern: /email.*already.*exist/i,
-      translation: 'Ya existe una cuenta con este email.'
+      translation: "Ya existe una cuenta con este email.",
     },
     {
       pattern: /password.*weak|weak.*password/i,
-      translation: 'La contraseña debe ser más segura. Usa al menos 8 caracteres con mayúsculas, minúsculas y números.'
+      translation:
+        "La contraseña debe ser más segura. Usa al menos 8 caracteres con mayúsculas, minúsculas y números.",
     },
     {
       pattern: /rate.*limit.*exceed/i,
-      translation: 'Demasiados intentos. Espera un momento antes de volver a intentar.'
+      translation:
+        "Demasiados intentos. Espera un momento antes de volver a intentar.",
     },
     {
       pattern: /network.*error|connection.*error/i,
-      translation: 'Error de conexión. Verifica tu conexión a internet.'
+      translation: "Error de conexión. Verifica tu conexión a internet.",
     },
     {
       pattern: /timeout|timed.*out/i,
-      translation: 'La operación tardó demasiado. Inténtalo nuevamente.'
-    }
+      translation: "La operación tardó demasiado. Inténtalo nuevamente.",
+    },
   ];
-  
+
   // Verificar patrones
   for (const { pattern, translation } of patterns) {
     if (pattern.test(normalizedMessage)) {
       return translation;
     }
   }
-  
+
   // Si no se encuentra una traducción específica, devolver un mensaje genérico amigable
-  console.warn('Untranslated Supabase error:', errorMessage, errorCode);
-  
+  console.warn("Untranslated Supabase error:", errorMessage, errorCode);
+
   // Mensajes genéricos según el contexto
-  if (normalizedMessage.includes('email')) {
-    return 'Hubo un problema con el email. Verifica que sea válido y vuelve a intentar.';
+  if (normalizedMessage.includes("email")) {
+    return "Hubo un problema con el email. Verifica que sea válido y vuelve a intentar.";
   }
-  
-  if (normalizedMessage.includes('password')) {
-    return 'Hubo un problema con la contraseña. Verifica que cumple con los requisitos de seguridad.';
+
+  if (normalizedMessage.includes("password")) {
+    return "Hubo un problema con la contraseña. Verifica que cumple con los requisitos de seguridad.";
   }
-  
-  if (normalizedMessage.includes('login') || normalizedMessage.includes('signin')) {
-    return 'Error al iniciar sesión. Verifica tus credenciales e inténtalo nuevamente.';
+
+  if (
+    normalizedMessage.includes("login") ||
+    normalizedMessage.includes("signin")
+  ) {
+    return "Error al iniciar sesión. Verifica tus credenciales e inténtalo nuevamente.";
   }
-  
-  if (normalizedMessage.includes('signup') || normalizedMessage.includes('register')) {
-    return 'Error al registrar la cuenta. Verifica los datos e inténtalo nuevamente.';
+
+  if (
+    normalizedMessage.includes("signup") ||
+    normalizedMessage.includes("register")
+  ) {
+    return "Error al registrar la cuenta. Verifica los datos e inténtalo nuevamente.";
   }
-  
+
   // Mensaje genérico final
-  return 'Ocurrió un error inesperado. Si el problema persiste, contacta al soporte técnico.';
+  return "Ocurrió un error inesperado. Si el problema persiste, contacta al soporte técnico.";
 }
 
 /**
@@ -177,34 +212,38 @@ export function translateSupabaseError(
  * @returns Mensaje de error contextualizado
  */
 export function getContextualError(
-  error: SupabaseError | string | null, 
-  context: ErrorContext | string = ''
+  error: SupabaseError | string | null,
+  context: ErrorContext | string = ""
 ): string {
-  if (!error) return 'Ocurrió un error inesperado.';
-  
-  const message = typeof error === 'string' 
-    ? error 
-    : (error as SupabaseError).message || (error as SupabaseError).error_description || String(error);
-  const code = typeof error === 'object' && error !== null 
-    ? (error as SupabaseError).error_code || (error as SupabaseError).code 
-    : undefined;
-  
+  if (!error) return "Ocurrió un error inesperado.";
+
+  const message =
+    typeof error === "string"
+      ? error
+      : (error as SupabaseError).message ||
+        (error as SupabaseError).error_description ||
+        String(error);
+  const code =
+    typeof error === "object" && error !== null
+      ? (error as SupabaseError).error_code || (error as SupabaseError).code
+      : undefined;
+
   const translatedMessage = translateSupabaseError(message, code);
-  
+
   // Agregar contexto específico si es necesario
   const contextMessages: Record<string, string> = {
-    login: 'Error al iniciar sesión: ',
-    signup: 'Error al crear la cuenta: ',
-    recovery: 'Error al recuperar contraseña: ',
-    reset: 'Error al restablecer contraseña: ',
-    confirm: 'Error al confirmar cuenta: ',
-    update: 'Error al actualizar perfil: ',
+    login: "Error al iniciar sesión: ",
+    signup: "Error al crear la cuenta: ",
+    recovery: "Error al recuperar contraseña: ",
+    reset: "Error al restablecer contraseña: ",
+    confirm: "Error al confirmar cuenta: ",
+    update: "Error al actualizar perfil: ",
   };
-  
+
   if (context && contextMessages[context]) {
     return contextMessages[context] + translatedMessage;
   }
-  
+
   return translatedMessage;
 }
 
@@ -215,15 +254,15 @@ export function getContextualError(
  */
 export function isEmailNotConfirmedError(error: SupabaseError | null): boolean {
   if (!error) return false;
-  
-  const message = (error.message || '').toLowerCase();
+
+  const message = (error.message || "").toLowerCase();
   const code = error.error_code || error.code;
-  
+
   return (
-    message.includes('email not confirmed') ||
-    message.includes('email address not confirmed') ||
-    message.includes('email not verified') ||
-    code === 'email_not_confirmed'
+    message.includes("email not confirmed") ||
+    message.includes("email address not confirmed") ||
+    message.includes("email not verified") ||
+    code === "email_not_confirmed"
   );
 }
 
@@ -232,16 +271,18 @@ export function isEmailNotConfirmedError(error: SupabaseError | null): boolean {
  * @param error - Error object de Supabase
  * @returns true si el error es por credenciales inválidas
  */
-export function isInvalidCredentialsError(error: SupabaseError | null): boolean {
+export function isInvalidCredentialsError(
+  error: SupabaseError | null
+): boolean {
   if (!error) return false;
-  
-  const message = (error.message || '').toLowerCase();
+
+  const message = (error.message || "").toLowerCase();
   const code = error.error_code || error.code;
-  
+
   return (
-    message.includes('invalid login credentials') ||
-    message.includes('invalid credentials') ||
-    message.includes('wrong password') ||
-    code === 'invalid_credentials'
+    message.includes("invalid login credentials") ||
+    message.includes("invalid credentials") ||
+    message.includes("wrong password") ||
+    code === "invalid_credentials"
   );
 }

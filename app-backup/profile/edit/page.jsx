@@ -24,12 +24,12 @@ export default function EditProfilePage() {
 
   // Estados para el perfil
   const [profileData, setProfileData] = useState({
-    name: '',
-    email: ''
+    name: "",
+    email: "",
   });
   const [profileLoading, setProfileLoading] = useState(false);
   const [profileUpdating, setProfileUpdating] = useState(false);
-  const [profileMessage, setProfileMessage] = useState({ type: '', text: '' });
+  const [profileMessage, setProfileMessage] = useState({ type: "", text: "" });
 
   // Estados para cambio de contraseña
   const [passwordData, setPasswordData] = useState({
@@ -128,44 +128,45 @@ export default function EditProfilePage() {
         }
 
         // Para cambios que no involucran email
-        setProfileMessage({ 
-          type: 'success', 
-          text: data.message + ' La información se ha actualizado correctamente.' 
+        setProfileMessage({
+          type: "success",
+          text:
+            data.message + " La información se ha actualizado correctamente.",
         });
-        
+
         // Actualizar inmediatamente el estado local con los nuevos datos
         setProfileData({
           name: data.user.name,
-          email: data.user.email
+          email: data.user.email,
         });
-        
+
         // Mostrar indicador de actualización
         setProfileUpdating(true);
-        
+
         try {
           // Actualizar la sesión con la nueva información
-          console.log('🔄 Updating NextAuth session with new data...');
+          console.log("🔄 Updating NextAuth session with new data...");
           const updateResult = await update({
             ...session,
             user: {
               ...session.user,
               name: data.user.name,
               email: data.user.email,
-              emailVerified: data.user.emailVerified
-            }
+              emailVerified: data.user.emailVerified,
+            },
           });
-          console.log('✅ Session updated:', updateResult);
-          
+          console.log("✅ Session updated:", updateResult);
+
           // Esperar un poco para que la sesión se propague
-          await new Promise(resolve => setTimeout(resolve, 100));
-          
+          await new Promise((resolve) => setTimeout(resolve, 100));
+
           // Refrescar la página para obtener los datos actualizados del servidor
-          console.log('🔄 Refreshing router...');
+          console.log("🔄 Refreshing router...");
           router.refresh();
-          
-          console.log('✨ Profile data refreshed successfully');
+
+          console.log("✨ Profile data refreshed successfully");
         } catch (refreshError) {
-          console.error('Error refreshing profile data:', refreshError);
+          console.error("Error refreshing profile data:", refreshError);
         } finally {
           // Pequeño delay antes de quitar el indicador de actualización
           setTimeout(() => {
@@ -336,16 +337,20 @@ export default function EditProfilePage() {
               </div>
             </div>
             <div className="flex-1">
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center">
+              <h3 className="flex items-center text-xl font-semibold text-gray-900 dark:text-white">
                 {profileData.name || session.user?.name}
                 {profileUpdating && (
                   <div className="ml-2 flex items-center">
-                    <div className="animate-spin h-4 w-4 border-2 border-blue-600 border-t-transparent rounded-full"></div>
-                    <span className="ml-1 text-sm text-blue-600 dark:text-blue-400">Actualizando...</span>
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-600 border-t-transparent"></div>
+                    <span className="ml-1 text-sm text-blue-600 dark:text-blue-400">
+                      Actualizando...
+                    </span>
                   </div>
                 )}
               </h3>
-              <p className="text-gray-600 dark:text-gray-400">{profileData.email || session.user?.email}</p>
+              <p className="text-gray-600 dark:text-gray-400">
+                {profileData.email || session.user?.email}
+              </p>
               <div className="mt-2">
                 {session.user?.emailVerified ? (
                   <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-200">

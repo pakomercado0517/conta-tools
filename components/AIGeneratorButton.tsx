@@ -1,15 +1,15 @@
 "use client";
 
-import { useState, useEffect, ChangeEvent, MouseEvent } from 'react';
-import { Button, Spinner, Alert } from 'flowbite-react';
-import { BsStars, BsX } from 'react-icons/bs';
-import useAIGenerator from '@/hooks/useAIGenerator';
+import { useState, useEffect, ChangeEvent, MouseEvent } from "react";
+import { Button, Spinner, Alert } from "flowbite-react";
+import { BsStars, BsX } from "react-icons/bs";
+import useAIGenerator from "@/hooks/useAIGenerator";
 
 // Tipos para los diferentes modos de generación de IA
-type AIGeneratorType = 'quotation' | 'contract' | 'contract-object' | 'custom';
+type AIGeneratorType = "quotation" | "contract" | "contract-object" | "custom";
 
 // Tipos para tipo de producto en contratos
-type TipoProducto = 'venta' | 'servicio';
+type TipoProducto = "venta" | "servicio";
 
 // Interface para las props del componente
 interface AIGeneratorButtonProps {
@@ -25,7 +25,7 @@ interface AIGeneratorButtonProps {
 /**
  * Componente botón generador de contenido con IA
  * Proporciona una interfaz modal para generar contenido usando diferentes tipos de IA
- * 
+ *
  * @param type - Tipo de generación: 'quotation', 'contract', 'contract-object', 'custom'
  * @param concept - Concepto base del usuario
  * @param tipoProducto - Tipo de producto para contratos: 'venta' o 'servicio'
@@ -35,17 +35,17 @@ interface AIGeneratorButtonProps {
  * @param className - Clases CSS adicionales
  */
 export default function AIGeneratorButton({
-  type = 'quotation',
-  concept = '',
-  tipoProducto = 'venta',
+  type = "quotation",
+  concept = "",
+  tipoProducto = "venta",
   onGenerated = () => {},
-  placeholder = 'Ingrese un concepto...',
+  placeholder = "Ingrese un concepto...",
   disabled = false,
-  className = ''
+  className = "",
 }: AIGeneratorButtonProps) {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [tempConcept, setTempConcept] = useState<string>(concept);
-  const [generatedResult, setGeneratedResult] = useState<string>('');
+  const [generatedResult, setGeneratedResult] = useState<string>("");
 
   const {
     isLoading,
@@ -53,7 +53,7 @@ export default function AIGeneratorButton({
     generateQuotationConcept,
     generateContractConcept,
     generateContractObject,
-    clearState
+    clearState,
   } = useAIGenerator();
 
   /**
@@ -69,28 +69,28 @@ export default function AIGeneratorButton({
   useEffect(() => {
     if (showModal) {
       // Prevenir scroll del body
-      document.body.style.overflow = 'hidden';
-      document.body.style.position = 'fixed';
-      document.body.style.width = '100%';
-      document.body.style.height = '100%';
-      
+      document.body.style.overflow = "hidden";
+      document.body.style.position = "fixed";
+      document.body.style.width = "100%";
+      document.body.style.height = "100%";
+
       // Para iOS: también prevenir touch events en el body
-      document.body.style.touchAction = 'none';
+      document.body.style.touchAction = "none";
     } else {
       // Restaurar scroll
-      document.body.style.overflow = '';
-      document.body.style.position = '';
-      document.body.style.width = '';
-      document.body.style.height = '';
-      document.body.style.touchAction = '';
+      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.width = "";
+      document.body.style.height = "";
+      document.body.style.touchAction = "";
     }
 
     return () => {
-      document.body.style.overflow = '';
-      document.body.style.position = '';
-      document.body.style.width = '';
-      document.body.style.height = '';
-      document.body.style.touchAction = '';
+      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.width = "";
+      document.body.style.height = "";
+      document.body.style.touchAction = "";
     };
   }, [showModal]);
 
@@ -105,11 +105,11 @@ export default function AIGeneratorButton({
     clearState();
     let result;
 
-    if (type === 'quotation') {
+    if (type === "quotation") {
       result = await generateQuotationConcept(tempConcept);
-    } else if (type === 'contract') {
+    } else if (type === "contract") {
       result = await generateContractConcept(tempConcept);
-    } else if (type === 'contract-object') {
+    } else if (type === "contract-object") {
       result = await generateContractObject(tempConcept, tipoProducto);
     }
 
@@ -124,7 +124,7 @@ export default function AIGeneratorButton({
   const handleApply = (): void => {
     onGenerated(generatedResult);
     setShowModal(false);
-    setGeneratedResult('');
+    setGeneratedResult("");
   };
 
   /**
@@ -132,7 +132,7 @@ export default function AIGeneratorButton({
    */
   const handleCancel = (): void => {
     setShowModal(false);
-    setGeneratedResult('');
+    setGeneratedResult("");
     clearState();
   };
 
@@ -175,27 +175,27 @@ export default function AIGeneratorButton({
 
       {/* Modal personalizado para iOS */}
       {showModal && (
-        <div 
-          className="fixed inset-0 z-[10000] bg-black bg-opacity-50 min-h-screen"
+        <div
+          className="fixed inset-0 z-[10000] min-h-screen bg-black bg-opacity-50"
           style={{
             // Importante para iOS: usar viewport units
-            minHeight: '-webkit-fill-available'
+            minHeight: "-webkit-fill-available",
           }}
           onClick={handleModalClick}
         >
-          <div className="flex items-start justify-center min-h-full px-4 pt-4 pb-20">
-            <div 
-              className="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg mt-8"
+          <div className="flex min-h-full items-start justify-center px-4 pb-20 pt-4">
+            <div
+              className="relative mt-8 w-full max-w-lg rounded-lg bg-white shadow-xl dark:bg-gray-800"
               onClick={handleContentClick}
               style={{
                 // Para iOS: asegurar que el modal sea scrolleable si es necesario
-                maxHeight: 'calc(100vh - 64px)',
-                overflowY: 'auto',
-                WebkitOverflowScrolling: 'touch'
+                maxHeight: "calc(100vh - 64px)",
+                overflowY: "auto",
+                WebkitOverflowScrolling: "touch",
               }}
             >
               {/* Header */}
-              <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-600">
+              <div className="flex items-center justify-between border-b border-gray-200 p-4 dark:border-gray-600">
                 <div className="flex items-center gap-2">
                   <BsStars className="text-purple-500" />
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -205,7 +205,7 @@ export default function AIGeneratorButton({
                 <button
                   type="button"
                   onClick={handleCancel}
-                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 p-1"
+                  className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                   aria-label="Cerrar modal"
                 >
                   <BsX className="text-2xl" />
@@ -213,12 +213,12 @@ export default function AIGeneratorButton({
               </div>
 
               {/* Body */}
-              <div className="p-4 space-y-4">
+              <div className="space-y-4 p-4">
                 {/* Input para el concepto */}
                 <div>
-                  <label 
+                  <label
                     htmlFor="ai-concept-input"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                    className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
                   >
                     Concepto base:
                   </label>
@@ -228,14 +228,14 @@ export default function AIGeneratorButton({
                     value={tempConcept}
                     onChange={handleConceptChange}
                     placeholder={placeholder}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-base bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                    className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 placeholder-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-purple-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
                     disabled={isLoading}
                     autoComplete="off"
                     autoCorrect="off"
                     autoCapitalize="off"
                     spellCheck="false"
                     // iOS specific: prevent zoom on focus
-                    style={{ fontSize: '16px' }}
+                    style={{ fontSize: "16px" }}
                   />
                 </div>
 
@@ -273,8 +273,8 @@ export default function AIGeneratorButton({
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Contenido generado:
                     </label>
-                    <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-md border border-gray-300 dark:border-gray-600 max-h-40 overflow-y-auto">
-                      <p className="text-gray-800 dark:text-gray-200 leading-relaxed text-sm">
+                    <div className="max-h-40 overflow-y-auto rounded-md border border-gray-300 bg-gray-50 p-4 dark:border-gray-600 dark:bg-gray-900">
+                      <p className="text-sm leading-relaxed text-gray-800 dark:text-gray-200">
                         {generatedResult}
                       </p>
                     </div>
@@ -283,9 +283,9 @@ export default function AIGeneratorButton({
               </div>
 
               {/* Footer */}
-              <div className="flex flex-col gap-3 p-4 border-t border-gray-200 dark:border-gray-600 sm:flex-row sm:justify-end">
-                <Button 
-                  color="gray" 
+              <div className="flex flex-col gap-3 border-t border-gray-200 p-4 sm:flex-row sm:justify-end dark:border-gray-600">
+                <Button
+                  color="gray"
                   onClick={handleCancel}
                   className="w-full sm:w-auto"
                   size="lg"
@@ -293,8 +293,8 @@ export default function AIGeneratorButton({
                   Cancelar
                 </Button>
                 {generatedResult && (
-                  <Button 
-                    onClick={handleApply} 
+                  <Button
+                    onClick={handleApply}
                     color="purple"
                     className="w-full sm:w-auto"
                     size="lg"

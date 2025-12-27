@@ -1,30 +1,36 @@
 "use client";
 
-import { useState, useEffect, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
-import { Card, Button, TextInput, Label, Alert } from 'flowbite-react';
-import { FaEye, FaEyeSlash, FaLock, FaCheck, FaArrowLeft } from 'react-icons/fa';
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { Card, Button, TextInput, Label, Alert } from "flowbite-react";
+import {
+  FaEye,
+  FaEyeSlash,
+  FaLock,
+  FaCheck,
+  FaArrowLeft,
+} from "react-icons/fa";
 
 function ResetPasswordForm() {
   const [formData, setFormData] = useState({
-    password: '',
-    confirmPassword: ''
+    password: "",
+    confirmPassword: "",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-  const [token, setToken] = useState('');
+  const [token, setToken] = useState("");
 
   const router = useRouter();
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    const tokenParam = searchParams.get('token');
+    const tokenParam = searchParams.get("token");
     if (!tokenParam) {
-      setError('Token de reseteo no válido o faltante');
+      setError("Token de reseteo no válido o faltante");
       return;
     }
     setToken(tokenParam);
@@ -32,19 +38,19 @@ function ResetPasswordForm() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const validateForm = () => {
     if (formData.password.length < 6) {
-      setError('La contraseña debe tener al menos 6 caracteres');
+      setError("La contraseña debe tener al menos 6 caracteres");
       return false;
     }
     if (formData.password !== formData.confirmPassword) {
-      setError('Las contraseñas no coinciden');
+      setError("Las contraseñas no coinciden");
       return false;
     }
     return true;
@@ -53,7 +59,7 @@ function ResetPasswordForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
+    setError("");
 
     if (!validateForm()) {
       setLoading(false);
@@ -61,33 +67,32 @@ function ResetPasswordForm() {
     }
 
     try {
-      const response = await fetch('/api/auth/reset-password', {
-        method: 'POST',
+      const response = await fetch("/api/auth/reset-password", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           token,
-          password: formData.password
+          password: formData.password,
         }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.message || 'Error al resetear la contraseña');
+        setError(data.message || "Error al resetear la contraseña");
         return;
       }
 
       setSuccess(true);
       // Redirigir a login después de 3 segundos
       setTimeout(() => {
-        router.push('/auth/login');
+        router.push("/auth/login");
       }, 3000);
-
     } catch (error) {
-      console.error('Reset password error:', error);
-      setError('Error al conectar con el servidor');
+      console.error("Reset password error:", error);
+      setError("Error al conectar con el servidor");
     } finally {
       setLoading(false);
     }
@@ -97,13 +102,14 @@ function ResetPasswordForm() {
     return (
       <div className="flex min-h-[calc(100vh-200px)] items-center justify-center px-4 py-8">
         <Card className="w-full max-w-md">
-          <div className="text-center space-y-4">
-            <div className="text-6xl text-green-500 mb-4">✅</div>
+          <div className="space-y-4 text-center">
+            <div className="mb-4 text-6xl text-green-500">✅</div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
               ¡Contraseña actualizada!
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
-              Tu contraseña ha sido cambiada exitosamente. Ya puedes iniciar sesión con tu nueva contraseña.
+              Tu contraseña ha sido cambiada exitosamente. Ya puedes iniciar
+              sesión con tu nueva contraseña.
             </p>
             <div className="pt-4">
               <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -126,8 +132,8 @@ function ResetPasswordForm() {
     return (
       <div className="flex min-h-[calc(100vh-200px)] items-center justify-center px-4 py-8">
         <Card className="w-full max-w-md">
-          <div className="text-center space-y-4">
-            <div className="text-6xl text-red-500 mb-4">❌</div>
+          <div className="space-y-4 text-center">
+            <div className="mb-4 text-6xl text-red-500">❌</div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
               Enlace no válido
             </h1>
@@ -178,7 +184,7 @@ function ResetPasswordForm() {
                 <TextInput
                   id="password"
                   name="password"
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   icon={FaLock}
                   placeholder="••••••••"
                   value={formData.password}
@@ -201,12 +207,15 @@ function ResetPasswordForm() {
             </div>
 
             <div>
-              <Label htmlFor="confirmPassword" value="Confirmar Nueva Contraseña" />
+              <Label
+                htmlFor="confirmPassword"
+                value="Confirmar Nueva Contraseña"
+              />
               <div className="relative">
                 <TextInput
                   id="confirmPassword"
                   name="confirmPassword"
-                  type={showConfirmPassword ? 'text' : 'password'}
+                  type={showConfirmPassword ? "text" : "password"}
                   icon={FaLock}
                   placeholder="••••••••"
                   value={formData.confirmPassword}
@@ -225,13 +234,9 @@ function ResetPasswordForm() {
               </div>
             </div>
 
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={loading}
-            >
+            <Button type="submit" className="w-full" disabled={loading}>
               <FaCheck className="mr-2" />
-              {loading ? 'Actualizando...' : 'Actualizar Contraseña'}
+              {loading ? "Actualizando..." : "Actualizar Contraseña"}
             </Button>
           </form>
 
@@ -247,9 +252,11 @@ function ResetPasswordForm() {
           </div>
 
           {/* Security Note */}
-          <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+          <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4 dark:border-yellow-800 dark:bg-yellow-900/20">
             <p className="text-xs text-yellow-800 dark:text-yellow-200">
-              <strong>Consejo de seguridad:</strong> Usa una contraseña única que no uses en otros sitios. Considera incluir letras, números y símbolos.
+              <strong>Consejo de seguridad:</strong> Usa una contraseña única
+              que no uses en otros sitios. Considera incluir letras, números y
+              símbolos.
             </p>
           </div>
         </div>
@@ -260,14 +267,16 @@ function ResetPasswordForm() {
 
 export default function ResetPasswordPage() {
   return (
-    <Suspense fallback={
-      <div className="flex min-h-[calc(100vh-200px)] items-center justify-center px-4 py-8">
-        <div className="text-center">
-          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">Cargando...</p>
+    <Suspense
+      fallback={
+        <div className="flex min-h-[calc(100vh-200px)] items-center justify-center px-4 py-8">
+          <div className="text-center">
+            <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600"></div>
+            <p className="mt-4 text-gray-600 dark:text-gray-400">Cargando...</p>
+          </div>
         </div>
-      </div>
-    }>
+      }
+    >
       <ResetPasswordForm />
     </Suspense>
   );

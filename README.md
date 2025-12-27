@@ -7,6 +7,7 @@ ContaTools es una plataforma web integral y moderna diseñada para profesionales
 ## 🔐 Sistema de Autenticación y Usuarios
 
 ### 👤 Gestión de Cuentas
+
 - **Registro seguro** con verificación de email obligatoria
 - **Login protegido** con NextAuth.js y credenciales
 - **Verificación de email** con tokens seguros y tiempo limitado
@@ -14,6 +15,7 @@ ContaTools es una plataforma web integral y moderna diseñada para profesionales
 - **Middleware de seguridad** que protege rutas sensibles
 
 ### ⚙️ Gestión de Perfil
+
 - **Edición de perfil** en tiempo real sin recarga manual
 - **Cambio de nombre** con actualización inmediata de la interfaz
 - **Cambio de email** con re-verificación automática y logout por seguridad
@@ -24,6 +26,7 @@ ContaTools es una plataforma web integral y moderna diseñada para profesionales
 ## ✨ Herramientas Contables y Empresariales
 
 ### 📄 Generador de Contratos
+
 - **Contratos de compraventa** profesionales y personalizables
 - **Datos de vendedor y comprador** con validación completa
 - **Descripción detallada** del bien o servicio
@@ -34,6 +37,7 @@ ContaTools es una plataforma web integral y moderna diseñada para profesionales
 - **Guardado local** automático del documento
 
 ### 📋 Generador de Cotizaciones
+
 - **Cotizaciones profesionales** en formato PDF
 - **Gestión de productos/servicios** con precios unitarios
 - **Cálculo automático** de subtotales, impuestos y totales
@@ -45,6 +49,7 @@ ContaTools es una plataforma web integral y moderna diseñada para profesionales
 - **Descuentos y recargos** flexibles
 
 ### 🔍 Buscador de Claves SAT
+
 - **Búsqueda inteligente** de productos y servicios SAT
 - **Algoritmo difuso** (Fuse.js) para mejores coincidencias
 - **Búsqueda por código** o descripción
@@ -53,6 +58,7 @@ ContaTools es una plataforma web integral y moderna diseñada para profesionales
 - **Base de datos actualizada** con claves oficiales SAT
 
 ### 💰 Calculadora de SDI (Salario Diario Integrado)
+
 - **Cálculo preciso** según normativa mexicana
 - **Variables completas**: salario base, prestaciones, aguinaldo
 - **Factor de integración** automático
@@ -61,6 +67,7 @@ ContaTools es una plataforma web integral y moderna diseñada para profesionales
 - **Historial de cálculos** para referencia
 
 ### 💸 Control de Efectivo
+
 - **Conteo de denominaciones** (billetes y monedas)
 - **Cálculo automático** de totales por denominación
 - **Registro de movimientos** de entrada y salida
@@ -69,6 +76,7 @@ ContaTools es una plataforma web integral y moderna diseñada para profesionales
 - **Historial completo** de transacciones
 
 ### 📊 Gestión Financiera Avanzada
+
 - **Registro de devoluciones** con seguimiento de estados
 - **Control de gastos** por categorías
 - **Análisis de flujo** de efectivo
@@ -76,6 +84,7 @@ ContaTools es una plataforma web integral y moderna diseñada para profesionales
 - **Dashboard financiero** con métricas clave
 
 ### 📈 Calculadora de Información de Payback
+
 - **Análisis de retorno de inversión** detallado
 - **Cálculos de recuperación** de capital
 - **Proyecciones financieras** a diferentes plazos
@@ -85,6 +94,7 @@ ContaTools es una plataforma web integral y moderna diseñada para profesionales
 ## 🚀 Tecnologías y Arquitectura
 
 ### Frontend
+
 - **Next.js 14+** con App Router para rendimiento óptimo
 - **React 18+** con hooks modernos y optimizaciones
 - **Tailwind CSS** para diseño responsive y moderno
@@ -92,6 +102,7 @@ ContaTools es una plataforma web integral y moderna diseñada para profesionales
 - **TypeScript/JavaScript** híbrido para desarrollo robusto
 
 ### Backend y Base de Datos
+
 - **NextAuth.js** para autenticación segura y moderna
 - **PostgreSQL** como base de datos principal
 - **Supabase** para hosting de base de datos en la nube
@@ -99,6 +110,7 @@ ContaTools es una plataforma web integral y moderna diseñada para profesionales
 - **Middleware personalizado** para protección de rutas
 
 ### Servicios y Integraciones
+
 - **Nodemailer** para envío de emails transaccionales
 - **bcryptjs** para hashing seguro de contraseñas
 - **jsPDF** para generación de documentos PDF
@@ -107,6 +119,7 @@ ContaTools es una plataforma web integral y moderna diseñada para profesionales
 - **UUID** para generación de tokens seguros
 
 ### DevOps y Deployment
+
 - **Vercel** para deployment automático y CDN global
 - **Git** con flujo de trabajo por branches
 - **Environment variables** para configuración segura
@@ -116,6 +129,7 @@ ContaTools es una plataforma web integral y moderna diseñada para profesionales
 ## 🚀 Instalación y Configuración
 
 ### Prerrequisitos
+
 ```bash
 # Node.js 18+ y pnpm
 node --version  # >= 18.0.0
@@ -123,6 +137,7 @@ pnpm --version  # >= 8.0.0
 ```
 
 ### Variables de Entorno
+
 Copia `.env.local.example` a `.env.local` y configura:
 
 ```bash
@@ -144,6 +159,7 @@ EMAIL_FROM=tu-email@gmail.com
 ```
 
 ### Instalación Local
+
 ```bash
 # Clonar repositorio
 git clone https://github.com/pakomercado0517/conta-tools.git
@@ -160,6 +176,7 @@ pnpm run dev
 ```
 
 ### Configuración de Base de Datos
+
 ```bash
 # Crear tablas necesarias
 node scripts/create-tables.js
@@ -174,6 +191,7 @@ node scripts/test-db-connection.js
 ## 🔐 Seguridad y Privacidad
 
 ### Características de Seguridad
+
 - **Hashing de contraseñas** con bcrypt (cost factor 12)
 - **Tokens seguros** con UUID v4 para verificaciones
 - **Expiración automática** de tokens de verificación
@@ -183,6 +201,7 @@ node scripts/test-db-connection.js
 - **Sesión segura** con NextAuth.js y JWT
 
 ### Protección de Datos
+
 - **Encriptación en tránsito** con HTTPS/TLS
 - **Almacenamiento seguro** en PostgreSQL
 - **Limpieza automática** de tokens expirados
@@ -192,17 +211,20 @@ node scripts/test-db-connection.js
 ## 🎯 Flujos de Usuario Principales
 
 ### 👤 Registro y Autenticación
+
 1. **Registro** → Verificación de email → Activación de cuenta
 2. **Login** → Validación de credenciales → Acceso al dashboard
 3. **Recuperación** → Email de reset → Nueva contraseña
 
 ### 📄 Generación de Documentos
+
 1. **Selección** de tipo de documento (contrato/cotización)
 2. **Captura** de información (partes, productos, condiciones)
 3. **Vista previa** con validación en tiempo real
 4. **Generación** y descarga automática del PDF
 
 ### 📊 Herramientas de Cálculo
+
 1. **Selección** de herramienta (SDI, Payback, etc.)
 2. **Ingreso** de parámetros con validación
 3. **Cálculo instantáneo** con resultados detallados
@@ -211,6 +233,7 @@ node scripts/test-db-connection.js
 ## 📱 Diseño Responsive
 
 La aplicación está completamente optimizada para:
+
 - **Desktop** (1024px+): Interfaz completa con paneles laterales
 - **Tablet** (768px-1023px): Interfaz adaptada con menús colapsables
 - **Móvil** (320px-767px): Interfaz simplificada y táctil
@@ -220,6 +243,7 @@ La aplicación está completamente optimizada para:
 ## 🛠️ API Endpoints
 
 ### Autenticación
+
 ```
 POST /api/auth/register          # Registro de usuario
 POST /api/auth/verify-email      # Verificación de email
@@ -228,6 +252,7 @@ POST /api/auth/[...nextauth]     # Login/logout NextAuth
 ```
 
 ### Gestión de Usuario
+
 ```
 GET  /api/user/profile           # Obtener perfil
 PUT  /api/user/profile           # Actualizar perfil
@@ -236,6 +261,7 @@ POST /api/user/resend-verification # Reenviar verificación
 ```
 
 ### Herramientas
+
 ```
 GET  /api/generador_conceptos     # Búsqueda de conceptos SAT
 ```
@@ -253,6 +279,7 @@ ContaTools nace con el propósito de democratizar el acceso a herramientas conta
 ## 🚧 Roadmap y Mejoras Futuras
 
 ### 🔄 Próximamente
+
 - **Dashboard analítico** con métricas empresariales
 - **Plantillas personalizables** para documentos
 - **Integración SAT** para facturación electrónica
@@ -263,6 +290,7 @@ ContaTools nace con el propósito de democratizar el acceso a herramientas conta
 - **Reportes avanzados** con gráficas interactivas
 
 ### 🆕 En Desarrollo
+
 - **Sistema de notificaciones** push y email
 - **Calculadora de nómina** completa
 - **Generador de estados financieros**
@@ -271,7 +299,7 @@ ContaTools nace con el propósito de democratizar el acceso a herramientas conta
 
 ## 🔒 Licencia y Uso
 
-Este proyecto utiliza una **licencia de uso comercial restringido**. 
+Este proyecto utiliza una **licencia de uso comercial restringido**.
 
 - **Uso personal y educativo**: Libre y gratuito
 - **Uso comercial**: Requiere licencia comercial
@@ -282,11 +310,12 @@ Para detalles completos, consulta nuestra [página de licencia](https://conta-to
 
 ## 👨‍💻 Desarrollo y Contribuciones
 
-**Desarrollado por**: [Francisco Pako Mercado](https://pako-mercado.vercel.app/)
+**Desarrollado por**: [TresA Design](https://tresa-design.vercel.app/) - [Francisco Pako Mercado](https://tresa-design.vercel.app/)
 **Versión actual**: 2.0.0
 **Última actualización**: Enero 2025
 
 ### Contribuir al Proyecto
+
 1. Fork el repositorio
 2. Crea una rama para tu feature (`git checkout -b feature/nueva-funcionalidad`)
 3. Commit tus cambios (`git commit -am 'Add: nueva funcionalidad'`)
@@ -294,7 +323,9 @@ Para detalles completos, consulta nuestra [página de licencia](https://conta-to
 5. Abre un Pull Request
 
 ### Reporte de Bugs
+
 ¿Encontraste un problema? [Abre un issue](https://github.com/pakomercado0517/conta-tools/issues) con:
+
 - Descripción detallada del problema
 - Pasos para reproducirlo
 - Capturas de pantalla (si es necesario)
@@ -303,13 +334,15 @@ Para detalles completos, consulta nuestra [página de licencia](https://conta-to
 ## 🔗 Enlaces y Recursos
 
 - **🌐 Aplicación en Producción**: [https://conta-tools.vercel.app](https://conta-tools.vercel.app)
-- **👨‍💻 Portfolio del Desarrollador**: [https://pako-mercado.vercel.app](https://pako-mercado.vercel.app)
+- **👨‍💻 Portfolio de TresA Design**: [https://tresa-design.vercel.app](https://tresa-design.vercel.app)
 - **📚 Documentación Técnica**: [GitHub Wiki](https://github.com/pakomercado0517/conta-tools/wiki)
 - **🐛 Issues y Sugerencias**: [GitHub Issues](https://github.com/pakomercado0517/conta-tools/issues)
 - **💬 Comunidad**: [Discussions](https://github.com/pakomercado0517/conta-tools/discussions)
 
 ---
 
-**© 2025 ContaTools - Herramientas Contables Profesionales**
+**© 2025 TresA Design - Todos los derechos reservados**
 
-*Desarrollado con ❤️ para la comunidad contable mexicana*
+_ContaTools - Herramientas Contables Profesionales_
+
+_Desarrollado con ❤️ para la comunidad contable mexicana_

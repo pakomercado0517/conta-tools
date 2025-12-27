@@ -26,17 +26,17 @@ export default function FooterComponent({}: FooterComponentProps) {
       className="dark:to-zinc-00 dark:bg-gradient-to-r dark:from-zinc-900"
     >
       <Footer.Copyright
-        href="https://pako-mercado.vercel.app"
-        by="Pako Mercado"
+        href="https://tresa-design.vercel.app"
+        by="TresA Design"
         year={year}
       />
       <Footer.LinkGroup>
-        <Footer.Link href="https://pako-mercado.vercel.app">
+        <Footer.Link href="https://tresa-design.vercel.app">
           <p className="flex items-center">
             <span className="mr-2">
               <IoMdBriefcase />
             </span>
-            Portfolio del Desarrollador
+            TresA Design
           </p>
         </Footer.Link>
         {/* <Footer.Link href="#" >Privacy Policy</Footer.Link> */}

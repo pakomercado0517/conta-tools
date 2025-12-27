@@ -81,9 +81,9 @@ export default function LicesingComponent() {
         <h2 className="font-semibold">6. Propiedad Intelectual</h2>
         <p>
           Todos los derechos de propiedad intelectual sobre este componente
-          React y su código fuente pertenecen al autor original. Esta licencia
-          no te otorga ningún derecho sobre las marcas, logotipos o nombres
-          asociados con este componente.
+          React y su código fuente pertenecen a <strong>TresA Design</strong>.
+          Esta licencia no te otorga ningún derecho sobre las marcas, logotipos
+          o nombres asociados con este componente.
         </p>
       </section>
 
@@ -103,8 +103,16 @@ export default function LicesingComponent() {
         <p>
           Si tienes preguntas sobre esta licencia, deseas obtener una licencia
           comercial o necesitas soporte adicional, puedes{" "}
-          <strong>contactar al desarrollador</strong> a través de [correo
-          electrónico de contacto].
+          <strong>contactar a TresA Design</strong> a través de{" "}
+          <a
+            href="https://tresa-design.vercel.app"
+            className="text-blue-600 hover:underline dark:text-blue-400"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            nuestro sitio web
+          </a>
+          .
         </p>
       </section>
 
@@ -118,6 +126,16 @@ export default function LicesingComponent() {
           actualizados.
         </p>
       </section>
+
+      <footer className="mt-8 border-t border-gray-300 pt-4 text-center text-sm text-gray-600 dark:border-gray-700 dark:text-gray-400">
+        <p>
+          © {new Date().getFullYear()} <strong>TresA Design</strong> - Todos
+          los derechos reservados.
+        </p>
+        <p className="mt-1">
+          ContaTools - Herramientas Contables Profesionales
+        </p>
+      </footer>
     </div>
   );
 }

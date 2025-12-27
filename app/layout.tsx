@@ -25,11 +25,11 @@ export const metadata: Metadata = {
   ],
   authors: [
     {
-      name: "ContaTools Team",
+      name: "TresA Design",
     },
   ],
-  creator: "ContaTools",
-  publisher: "ContaTools",
+  creator: "TresA Design",
+  publisher: "TresA Design",
   robots: {
     index: true,
     follow: true,

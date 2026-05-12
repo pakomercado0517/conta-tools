@@ -1,4 +1,4 @@
-import { createServerClient, type CookieOptions } from "@supabase/ssr";
+import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
@@ -13,7 +13,7 @@ interface SupabaseConfig {
  * @returns Cliente de Supabase configurado para el servidor
  * @throws Error si las variables de entorno no están definidas
  */
-export function createClient(): SupabaseClient {
+export async function createClient(): Promise<SupabaseClient> {
   // Validar que las variables de entorno estén definidas
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -29,7 +29,7 @@ export function createClient(): SupabaseClient {
     anonKey,
   };
 
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
 
   return createServerClient(config.url, config.anonKey, {
     cookies: {

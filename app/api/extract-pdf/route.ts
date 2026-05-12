@@ -8,13 +8,13 @@ pdfjsLib.GlobalWorkerOptions.workerSrc =
 // Funciones auxiliares para extraer datos
 function findMontos(text: string): string[] {
   const montoRegex = /Total:\s*\$?([\d,]+\.\d{2})/g;
-  const matches = [...text.matchAll(montoRegex)];
+  const matches = Array.from(text.matchAll(montoRegex));
   return matches.map((match) => match[1].replace(/,/g, ""));
 }
 
 function findRFCs(text: string): string[] {
   const rfcRegex = /RFC Emisor:\s*([A-Z0-9]{12,13})/g;
-  const matches = [...text.matchAll(rfcRegex)];
+  const matches = Array.from(text.matchAll(rfcRegex));
   return matches.map((match) => match[1]);
 }
 
@@ -42,7 +42,9 @@ export async function POST(request: NextRequest) {
     for (let i = 1; i <= numPages; i++) {
       const page = await pdf.getPage(i);
       const textContent = await page.getTextContent();
-      const pageText = textContent.items.map((item) => item.str).join(" ");
+      const pageText = textContent.items
+        .map((item) => item.str ?? "")
+        .join(" ");
 
       const montos = findMontos(pageText);
       const rfcs = findRFCs(pageText);

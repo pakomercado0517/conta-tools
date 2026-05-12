@@ -1,14 +1,15 @@
-import { Oswald } from "next/font/google";
+import localFont from "next/font/local";
 import type { Metadata } from "next";
 import "./globals.css";
 import AuthProvider from "@/components/AuthProvider";
 import ConditionalLayout from "@/components/ConditionalLayout";
 import type { RootLayoutProps } from "@/types/layout";
 
-// Configuración de la fuente Oswald
-const oswald = Oswald({
-  subsets: ["latin"],
+const oswald = localFont({
+  src: "./fonts/oswald-latin-400-normal.woff2",
   weight: "400",
+  style: "normal",
+  display: "swap",
 });
 
 // Metadatos estáticos de la aplicación

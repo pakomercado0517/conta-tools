@@ -1,5 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 
+function getClientIp(request: NextRequest): string | undefined {
+  const forwarded = request.headers.get("x-forwarded-for");
+  if (forwarded) {
+    return forwarded.split(",")[0]?.trim();
+  }
+  return request.headers.get("x-real-ip") ?? undefined;
+}
+
 // Interfaz para la respuesta de debug
 interface DebugResponse {
   message: string;
@@ -22,7 +30,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     url: request.url,
     method: "GET",
     userAgent: request.headers.get("user-agent") || undefined,
-    ip: request.ip || request.headers.get("x-forwarded-for") || undefined,
+    ip: getClientIp(request),
     headers: Object.fromEntries(request.headers.entries()),
   };
 
@@ -61,7 +69,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     url: request.url,
     method: "POST",
     userAgent: request.headers.get("user-agent") || undefined,
-    ip: request.ip || request.headers.get("x-forwarded-for") || undefined,
+    ip: getClientIp(request),
     headers: Object.fromEntries(request.headers.entries()),
     body,
   };

@@ -1,6 +1,7 @@
 import React from "react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import type { CellInput } from "jspdf-autotable";
 import { Button } from "flowbite-react";
 
 // Tipo para el elemento de datos
@@ -52,7 +53,7 @@ export default function PDFButton({
       ...(isChecked ? ["Fecha", "Concepto"] : []),
     ];
 
-    const body: any[][] = data.map((el) => [
+    const body: CellInput[][] = data.map((el) => [
       el.empresa,
       formatNumber.format(el.monto),
       `-${formatNumber.format(el.comision)}`,

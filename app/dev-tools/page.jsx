@@ -9,7 +9,6 @@ export default function DevToolsPage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
-  const [users, setUsers] = useState([]);
 
   // Solo mostrar en desarrollo
   if (process.env.NODE_ENV !== "development") {
@@ -60,20 +59,6 @@ export default function DevToolsPage() {
       setMessageType("failure");
     } finally {
       setLoading(false);
-    }
-  };
-
-  const loadUsers = async () => {
-    try {
-      // Leer directamente el archivo de usuarios para mostrar el estado
-      const response = await fetch("/api/auth/dev-list-users");
-      // Como no hemos implementado esta API, mostramos información básica
-      setMessage(
-        "Para ver usuarios registrados, revisa el archivo data/users.json"
-      );
-      setMessageType("info");
-    } catch (error) {
-      console.error("Error loading users:", error);
     }
   };
 

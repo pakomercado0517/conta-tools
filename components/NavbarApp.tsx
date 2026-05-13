@@ -3,11 +3,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import {
-  Navbar,
   Dropdown,
   DropdownItem,
   DropdownDivider,
-  Button,
 } from "flowbite-react";
 import { useAuth } from "./AuthProvider";
 import logo from "@/public/logo_white.svg";

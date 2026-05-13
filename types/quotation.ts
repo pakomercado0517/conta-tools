@@ -4,6 +4,19 @@
 
 import { ChangeEvent } from "react";
 
+/** Impuesto o retención aplicado a una línea de producto (base = cantidad × precio). */
+export type QuotationTaxTipo = "impuesto" | "retencion";
+
+export type QuotationTaxModo = "porcentaje" | "cuota_fija";
+
+export interface QuotationTaxLine {
+  etiqueta: string;
+  tipo: QuotationTaxTipo;
+  modo: QuotationTaxModo;
+  /** Porcentaje (ej. 16) o monto fijo en pesos según `modo`. */
+  valor: string;
+}
+
 // Interfaz para productos en cotización
 export interface QuotationProduct {
   cantidad: string | number;
@@ -11,6 +24,8 @@ export interface QuotationProduct {
   descripcion: string;
   precioUnitario: string | number;
   total: string | number;
+  /** Conceptos fiscales opcionales calculados sobre el importe de esta línea. */
+  impuestosLinea: QuotationTaxLine[];
 }
 
 // Interfaz para datos bancarios
@@ -47,10 +62,21 @@ export interface QuotationFormData {
   // Textos predefinidos
   despedida: string;
   saludo: string;
+  /** Texto opcional tras el saludo en el PDF (multilínea). */
+  descripcionServicio: string;
+  /** Si es true y hay texto, se incluye en el PDF; si es false, no (el texto puede quedar como borrador). */
+  incluirDescripcionServicio: boolean;
 
   // Información de firma
   firma: string;
   cargo: string;
+
+  /** Etiqueta PDF para la fila de subtotal (editable). */
+  etiquetaSubtotal: string;
+  /** Etiqueta PDF para la fila de total (editable). */
+  etiquetaTotal: string;
+  /** Texto previo a la cantidad con letra en el PDF (editable), ej. "Son:" o "Cantidad con letra:". */
+  textoCantidadLetra: string;
 
   // Datos bancarios
   bank: boolean;
@@ -79,6 +105,14 @@ export interface QuotationProductsProps {
   ) => void;
   agregarProducto: () => void;
   eliminarProducto: (index: number) => void;
+  agregarImpuestoProducto: (productIndex: number) => void;
+  eliminarImpuestoProducto: (productIndex: number, taxIndex: number) => void;
+  handleImpuestoProductoChange: (
+    productIndex: number,
+    taxIndex: number,
+    field: keyof QuotationTaxLine,
+    value: string
+  ) => void;
 }
 
 export interface QuotationClausesProps {
@@ -95,6 +129,22 @@ export interface QuotationDataBankProps {
   handleDataBankChange: (e: ChangeEvent<HTMLInputElement>) => void;
   showDataBank: (e: ChangeEvent<HTMLInputElement>) => void;
   datos: QuotationFormData;
+}
+
+export interface QuotationServiceDescriptionProps {
+  datos: QuotationFormData;
+  handleChange: (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
+  toggleIncluirDescripcion: (e: ChangeEvent<HTMLInputElement>) => void;
+}
+
+export interface QuotationSummaryLabelsProps {
+  datos: QuotationFormData;
+  onChangeField: (
+    field: "etiquetaSubtotal" | "etiquetaTotal" | "textoCantidadLetra",
+    value: string
+  ) => void;
 }
 
 export interface QuotationPDFButtonsProps {

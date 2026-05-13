@@ -14,7 +14,7 @@ export default function QuotationRecipients({
   handleChange,
 }: QuotationRecipientsProps) {
   return (
-    <div className="my-8 rounded-xl bg-gray-900/60 p-6 shadow-md">
+    <div className="mt-8 mb-2 rounded-xl bg-gray-900/60 p-6 shadow-md">
       <h2 className="my-4 text-center text-xl font-semibold text-gray-300">
         Destinatario
       </h2>

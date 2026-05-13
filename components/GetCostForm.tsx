@@ -2,7 +2,7 @@
 
 import { useState, ChangeEvent } from "react";
 import CreatePDF from "./CreatePDF";
-import { Label, Button, TextInput, Table, FileInput } from "flowbite-react";
+import { Table, FileInput } from "flowbite-react";
 import useFormatNumber from "@/hooks/useFormatNumber";
 
 // Tipo para el elemento extraído del PDF
@@ -16,7 +16,6 @@ export default function GetCostForm() {
   const [totalMonto, setTotalMonto] = useState<number>(0);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const formatNumber = useFormatNumber();
-  const styleInput = `border border-slate-600 rounded-md my-2`;
 
   const handleChange = async (
     e: ChangeEvent<HTMLInputElement>
@@ -105,7 +104,7 @@ export default function GetCostForm() {
             </Table>
           </section>
           <div className="flex justify-center">
-            <CreatePDF costo={extractedData} totalMonto={totalMonto} />
+            <CreatePDF costo={extractedData} />
           </div>
         </>
       )}

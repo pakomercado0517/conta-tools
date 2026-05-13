@@ -15,7 +15,7 @@ import {
   FaCheckCircle,
 } from "react-icons/fa";
 import { getContextualError } from "@/lib/supabase/errorTranslations";
-import type { RegisterPageProps, RegisterFormData } from "@/types/pages";
+import type { RegisterFormData } from "@/types/pages";
 
 // Estado extendido para registro que incluye campos adicionales
 interface RegisterFormState {
@@ -30,7 +30,7 @@ interface RegisterFormState {
  * Página de registro de nuevos usuarios
  * Permite crear cuentas con validaciones completas
  */
-export default function RegisterPage(_props: RegisterPageProps) {
+export default function RegisterPage() {
   // Estado del formulario
   const [formData, setFormData] = useState<RegisterFormData>({
     name: "",

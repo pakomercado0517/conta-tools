@@ -1,0 +1,9 @@
+node_modules
+.next
+out
+dist
+build
+coverage
+app-backup
+*.min.js
+public/pdf.worker*.mjs

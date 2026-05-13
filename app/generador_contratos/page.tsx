@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import ContractGeneratorForm from "@/components/ContractGeneratorFormWithAI";
-import type { GeneradorContratosPageProps } from "@/types/pages";
 
 // Metadatos específicos para el generador de contratos
 export const metadata: Metadata = {
@@ -34,9 +33,7 @@ export const metadata: Metadata = {
  * @param params - Parámetros de la URL
  * @param searchParams - Parámetros de búsqueda de la URL
  */
-export default async function GeneradorContratosPage(
-  _props: GeneradorContratosPageProps
-) {
+export default async function GeneradorContratosPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mx-auto max-w-6xl">

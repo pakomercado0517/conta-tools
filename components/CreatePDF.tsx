@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { FaRegFilePdf } from "react-icons/fa6";
@@ -14,39 +13,11 @@ interface CostoItem {
 // Props del componente CreatePDF
 interface CreatePDFProps {
   costo: CostoItem[];
-  totalMonto?: number;
 }
 
-export default function CreatePDF({ costo, totalMonto }: CreatePDFProps) {
-  const [totalResult, setTotalResult] = useState<string[] | undefined>(
-    undefined
-  );
+export default function CreatePDF({ costo }: CreatePDFProps) {
   const doc = new jsPDF();
   const formatNumber = useFormatNumber();
-
-  useEffect(() => {
-    const getResults = async (): Promise<void> => {
-      const arr: number[] = [];
-      costo.forEach((el) => arr.push(el.monto));
-      let result = arr.reduce((a, b) => a + b, 0);
-      const resultString = result.toString().split(".");
-      resultString[0] = resultString[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-      setTotalResult(resultString);
-    };
-    getResults();
-  }, [costo]);
-
-  const formatTotal = (num: number): string => {
-    const result = num.toString().split(".");
-    result[0] = result[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    return result.join(".");
-  };
-
-  const formatSubtotal = (num: number): string => {
-    const result = num.toFixed(2).toString().split(".");
-    result[0] = result[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    return result.join(".");
-  };
 
   const createDoc = (e: React.MouseEvent<HTMLButtonElement>): void => {
     e.preventDefault();

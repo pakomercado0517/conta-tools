@@ -1,12 +1,18 @@
 "use client";
-import { TextInput, Button } from "flowbite-react";
+import { TextInput, Button, Label } from "flowbite-react";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { ChangeEvent, MouseEvent } from "react";
 import AIGeneratorButton from "@/components/AIGeneratorButton";
 import type {
   QuotationFormData,
   QuotationProductChangeHandler,
+  QuotationTaxLine,
+  QuotationTaxModo,
+  QuotationTaxTipo,
 } from "@/types/quotation";
+
+const selectClass =
+  "block w-full rounded-lg border border-gray-600 bg-gray-800 p-2.5 text-sm text-white focus:border-cyan-500 focus:ring-cyan-500";
 
 // Tipos para las props del componente
 interface QuotationProductsWithAIProps {
@@ -14,6 +20,14 @@ interface QuotationProductsWithAIProps {
   handleProductoChange: QuotationProductChangeHandler;
   agregarProducto: (e: MouseEvent<HTMLButtonElement>) => void;
   eliminarProducto: (index: number) => void;
+  agregarImpuestoProducto: (productIndex: number) => void;
+  eliminarImpuestoProducto: (productIndex: number, taxIndex: number) => void;
+  handleImpuestoProductoChange: (
+    productIndex: number,
+    taxIndex: number,
+    field: keyof QuotationTaxLine,
+    value: string
+  ) => void;
 }
 
 /**
@@ -25,6 +39,9 @@ export default function QuotationProductsWithAI({
   handleProductoChange,
   agregarProducto,
   eliminarProducto,
+  agregarImpuestoProducto,
+  eliminarImpuestoProducto,
+  handleImpuestoProductoChange,
 }: QuotationProductsWithAIProps) {
   /**
    * Maneja el contenido generado por la IA
@@ -86,12 +103,11 @@ export default function QuotationProductsWithAI({
               />
             </div>
 
-            <div className="flex justify-stretch">
+            <div className="flex justify-stretch md:col-span-2">
               <TextInput
-                placeholder="Precio Unitario"
-                className="cols-span-1 w-3/4 text-white focus:ring-cyan-500 lg:w-full"
+                placeholder="Precio unitario (vacío = sin importe en PDF)"
+                className="w-full flex-1 text-white focus:ring-cyan-500"
                 name="precioUnitario"
-                type="number"
                 value={producto.precioUnitario}
                 onChange={(e) => handleProductoChange(e, index)}
               />
@@ -104,6 +120,126 @@ export default function QuotationProductsWithAI({
                   <RiDeleteBin6Line className="text-lg" />
                 </Button>
               </div>
+            </div>
+
+            <div className="col-span-1 rounded-lg border border-gray-700 bg-gray-800/40 p-4 md:col-span-2">
+              <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                <span className="text-sm font-medium text-gray-300">
+                  Impuestos / retenciones de esta línea (opcional)
+                </span>
+                <Button
+                  size="xs"
+                  color="gray"
+                  type="button"
+                  onClick={() => agregarImpuestoProducto(index)}
+                >
+                  Agregar concepto
+                </Button>
+              </div>
+              <p className="mb-3 text-xs text-gray-500">
+                Base: importe de la línea (cantidad × precio) cuando el precio es
+                mayor a cero. Las retenciones se muestran en positivo en el PDF y
+                restan del total.
+              </p>
+              {(producto.impuestosLinea ?? []).map((tax, ti) => (
+                <div
+                  key={ti}
+                  className="mb-3 grid grid-cols-1 gap-2 rounded-md border border-gray-700/80 p-3 sm:grid-cols-2 lg:grid-cols-12 lg:items-end"
+                >
+                  <div className="lg:col-span-4">
+                    <Label className="mb-1 block text-xs text-gray-400">
+                      Etiqueta (PDF)
+                    </Label>
+                    <TextInput
+                      placeholder="Ej: IVA, ISR…"
+                      value={tax.etiqueta}
+                      onChange={(e) =>
+                        handleImpuestoProductoChange(
+                          index,
+                          ti,
+                          "etiqueta",
+                          e.target.value
+                        )
+                      }
+                      className="text-white focus:ring-cyan-500"
+                    />
+                  </div>
+                  <div className="lg:col-span-3">
+                    <Label className="mb-1 block text-xs text-gray-400">
+                      Tipo
+                    </Label>
+                    <select
+                      className={selectClass}
+                      value={tax.tipo}
+                      onChange={(e) =>
+                        handleImpuestoProductoChange(
+                          index,
+                          ti,
+                          "tipo",
+                          e.target.value as QuotationTaxTipo
+                        )
+                      }
+                    >
+                      <option value="impuesto">Impuesto (suma al total)</option>
+                      <option value="retencion">
+                        Retención (resta del total)
+                      </option>
+                    </select>
+                  </div>
+                  <div className="lg:col-span-3">
+                    <Label className="mb-1 block text-xs text-gray-400">
+                      Base de cálculo
+                    </Label>
+                    <select
+                      className={selectClass}
+                      value={tax.modo}
+                      onChange={(e) =>
+                        handleImpuestoProductoChange(
+                          index,
+                          ti,
+                          "modo",
+                          e.target.value as QuotationTaxModo
+                        )
+                      }
+                    >
+                      <option value="porcentaje">Porcentaje (%)</option>
+                      <option value="cuota_fija">Cuota fija ($)</option>
+                    </select>
+                  </div>
+                  <div className="lg:col-span-2">
+                    <Label className="mb-1 block text-xs text-gray-400">
+                      Valor
+                    </Label>
+                    <TextInput
+                      placeholder={
+                        tax.modo === "porcentaje"
+                          ? "Ej: 16"
+                          : "Ej: 500"
+                      }
+                      value={tax.valor}
+                      onChange={(e) =>
+                        handleImpuestoProductoChange(
+                          index,
+                          ti,
+                          "valor",
+                          e.target.value
+                        )
+                      }
+                      className="text-white focus:ring-cyan-500"
+                    />
+                  </div>
+                  <div className="flex justify-end lg:col-span-12">
+                    <Button
+                      size="xs"
+                      color="failure"
+                      type="button"
+                      onClick={() => eliminarImpuestoProducto(index, ti)}
+                    >
+                      Quitar concepto
+                    </Button>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         ))}

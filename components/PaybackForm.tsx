@@ -1,8 +1,7 @@
 "use client";
-import { useState, useEffect, FormEvent, ChangeEvent } from "react";
+import { useState, FormEvent, ChangeEvent } from "react";
 import { Button, Label, TextInput, Select, Checkbox } from "flowbite-react";
 import CurrencyInput from "react-currency-input-field";
-import useCreatePDF from "@/hooks/useCreatePDF";
 import PaybackTable from "./PaybackTable";
 import PaybackDiscounts from "./PaybackDiscounts";
 import PdfTableButton from "./PdfTableButton";
@@ -41,11 +40,10 @@ interface PaybackDiscount {
  * Permite calcular montos de devolución con descuentos opcionales
  */
 export default function PaybackForm() {
-  const [getTotal, setGetTotal] = useState<PaybackResult | null>(null);
   const [data, setData] = useState<Partial<PaybackFormData>>({});
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const [cell, setCell] = useState<PaybackResult[]>([]);
-  const [editingRow, setEditingRow] = useState<PaybackResult | null>(null);
+  const [, setEditingRow] = useState<PaybackResult | null>(null);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [discount, setDiscount] = useState<PaybackDiscount[]>([
     {
@@ -54,45 +52,6 @@ export default function PaybackForm() {
       concept: "",
     },
   ]);
-  const createDocument = useCreatePDF();
-
-  useEffect(() => {
-    if (
-      Object.keys(data).length !== 0 &&
-      data.name &&
-      data.percentage &&
-      data.total
-    ) {
-      // Convert percentage and total to numbers for calculations
-      const percentage = parseFloat(data.percentage) || 0;
-      const total = parseFloat(data.total) || 0;
-      if (!data.beforeTax) {
-        const totalMount = total * (1 - percentage / 100);
-        const comision = total * (percentage / 100);
-        setGetTotal({
-          percentage: data.percentage || "",
-          beforeTax: data.beforeTax || false,
-          empresa: data.name || "",
-          monto: total,
-          comision: comision,
-          total: totalMount,
-        });
-      } else {
-        const montoAntesIVA = total / 1.16;
-        const getComision = (montoAntesIVA * percentage) / 100;
-        const costTotal = total - getComision;
-        setGetTotal({
-          beforeTax: data.beforeTax || false,
-          percentage: data.percentage || "",
-          empresa: data.name || "",
-          monto: total,
-          comision: getComision,
-          total: costTotal,
-        });
-      }
-    }
-  }, [data]);
-
   /**
    * Maneja los cambios en los inputs del formulario
    */
@@ -106,46 +65,8 @@ export default function PaybackForm() {
     });
   };
 
-  /**
-   * Edita los datos del formulario con valores externos
-   */
-  const editData = (arr: Partial<PaybackFormData>): void => {
-    setData(arr);
-  };
-
-  /**
-   * Maneja el cambio del checkbox de descuentos
-   */
   const handleCheck = (event: ChangeEvent<HTMLInputElement>): void => {
     setIsChecked(event.target.checked);
-  };
-
-  /**
-   * Convierte PaybackResult a PDFData
-   */
-  const paybackResultToPDFData = (
-    result: PaybackResult
-  ): import("@/hooks/useCreatePDF").PDFData => {
-    return {
-      empresa: result.empresa,
-      percentage: result.percentage,
-      beforeTax: result.beforeTax ? "Sí" : "No",
-      monto: result.monto,
-      comision: result.comision,
-      total: result.total,
-    };
-  };
-
-  /**
-   * Maneja el envío del formulario
-   */
-  const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
-    e.preventDefault();
-
-    if (getTotal) {
-      const pdfData = paybackResultToPDFData(getTotal);
-      createDocument.createDocument(pdfData);
-    }
   };
 
   /**

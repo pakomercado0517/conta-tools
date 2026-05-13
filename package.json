@@ -10,12 +10,12 @@
     "build": "next build --webpack",
     "build:turbo": "next build --turbopack",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx --cache --cache-location node_modules/.cache/eslint",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "type-check": "tsc --noEmit",
     "type-check:watch": "tsc --noEmit --watch",
-    "build:check": "npm run type-check && npm run build"
+    "build:check": "pnpm lint && pnpm type-check && pnpm run build"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

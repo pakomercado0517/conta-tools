@@ -1,5 +1,4 @@
 import fs from "fs/promises";
-import path from "path";
 import { userDb } from "../lib/userDbPostgres.js";
 import dotenv from "dotenv";
 
@@ -14,7 +13,7 @@ async function migrateUsers() {
   try {
     // Verificar si existe el archivo JSON
     await fs.access(jsonPath);
-  } catch (error) {
+  } catch {
     console.log(
       "📝 No se encontró archivo users.json - No hay usuarios para migrar"
     );

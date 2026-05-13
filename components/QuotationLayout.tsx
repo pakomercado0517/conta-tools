@@ -3,6 +3,8 @@
 import { useState, ChangeEvent } from "react";
 import QuotationForm from "@/components/QuotationForm";
 import QuotationRecipients from "@/components/QuotationRecipients";
+import QuotationServiceDescription from "@/components/QuotationServiceDescription";
+import QuotationSummaryLabels from "@/components/QuotationSummaryLabels";
 // import QuotationProducts from "@/components/QuotationProducts";
 import QuotationProducts from "@/components/QuotationProductsWithAI";
 import QuotationClauses from "@/components/QuotationClauses";
@@ -12,6 +14,7 @@ import PDFPreviewer from "@/components/PDFPreviewer";
 import type {
   QuotationFormData,
   BankData,
+  QuotationTaxLine,
   QuotationProduct,
 } from "@/types/quotation";
 
@@ -37,6 +40,11 @@ export default function QuotationLayout() {
       "Sin más, quedo a sus órdenes ante cualquier duda, situación o comentario de su parte agradeciendo de antemano las atenciones prestadas.",
     saludo:
       "Buen día, se presenta a continuación, la cotización de los siguientes servicios y/o materiales:",
+    descripcionServicio: "",
+    incluirDescripcionServicio: false,
+    etiquetaSubtotal: "Subtotal:",
+    etiquetaTotal: "Total:",
+    textoCantidadLetra: "Importe con letra:",
     productos: [],
     clausulas: [],
     firma: "",
@@ -67,6 +75,7 @@ export default function QuotationLayout() {
           descripcion: "",
           precioUnitario: "",
           total: "",
+          impuestosLinea: [],
         },
       ],
     }));
@@ -131,13 +140,62 @@ export default function QuotationLayout() {
     const { name, value } = e.target;
     const nuevosProductos = [...datos.productos];
 
-    // Type assertion segura ya que sabemos que name es una key válida
-    (nuevosProductos[index] as any)[name] = value;
+    const field = name as keyof QuotationProduct;
+    if (field === "impuestosLinea") return;
+    nuevosProductos[index] = {
+      ...nuevosProductos[index],
+      [field]: value,
+    };
 
     setDatos((prevDatos) => ({
       ...prevDatos,
       productos: nuevosProductos,
     }));
+  };
+
+  const agregarImpuestoProducto = (productIndex: number): void => {
+    setDatos((prev) => {
+      const productos = [...prev.productos];
+      const p = { ...productos[productIndex] };
+      const impuestosLinea = [...(p.impuestosLinea ?? [])];
+      impuestosLinea.push({
+        etiqueta: "",
+        tipo: "impuesto",
+        modo: "porcentaje",
+        valor: "",
+      });
+      productos[productIndex] = { ...p, impuestosLinea };
+      return { ...prev, productos };
+    });
+  };
+
+  const eliminarImpuestoProducto = (
+    productIndex: number,
+    taxIndex: number
+  ): void => {
+    setDatos((prev) => {
+      const productos = [...prev.productos];
+      const p = { ...productos[productIndex] };
+      p.impuestosLinea = (p.impuestosLinea ?? []).filter((_, i) => i !== taxIndex);
+      productos[productIndex] = p;
+      return { ...prev, productos };
+    });
+  };
+
+  const handleImpuestoProductoChange = (
+    productIndex: number,
+    taxIndex: number,
+    field: keyof QuotationTaxLine,
+    value: string
+  ): void => {
+    setDatos((prev) => {
+      const productos = [...prev.productos];
+      const p = { ...productos[productIndex] };
+      const impuestosLinea = [...(p.impuestosLinea ?? [])];
+      impuestosLinea[taxIndex] = { ...impuestosLinea[taxIndex], [field]: value };
+      productos[productIndex] = { ...p, impuestosLinea };
+      return { ...prev, productos };
+    });
   };
 
   /**
@@ -178,6 +236,15 @@ export default function QuotationLayout() {
     }));
   };
 
+  const toggleIncluirDescripcionServicio = (
+    e: ChangeEvent<HTMLInputElement>
+  ): void => {
+    setDatos((prevDatos) => ({
+      ...prevDatos,
+      incluirDescripcionServicio: e.target.checked,
+    }));
+  };
+
   /**
    * Manejar cambios generales en el formulario
    */
@@ -203,12 +270,28 @@ export default function QuotationLayout() {
       {/* Destinatario Info */}
       <QuotationRecipients handleChange={handleChange} />
 
+      <QuotationServiceDescription
+        datos={datos}
+        handleChange={handleChange}
+        toggleIncluirDescripcion={toggleIncluirDescripcionServicio}
+      />
+
+      <QuotationSummaryLabels
+        datos={datos}
+        onChangeField={(field, value) =>
+          setDatos((prev) => ({ ...prev, [field]: value }))
+        }
+      />
+
       {/* Productos Info */}
       <QuotationProducts
         datos={datos}
         handleProductoChange={handleProductoChange}
         agregarProducto={agregarProducto}
         eliminarProducto={eliminarProducto}
+        agregarImpuestoProducto={agregarImpuestoProducto}
+        eliminarImpuestoProducto={eliminarImpuestoProducto}
+        handleImpuestoProductoChange={handleImpuestoProductoChange}
       />
 
       {/* Cláusulas Info */}

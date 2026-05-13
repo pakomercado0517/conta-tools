@@ -3,8 +3,6 @@ import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
 import logo from "@/public/logo_transparent.svg";
-import type { HomePageProps } from "@/types/pages";
-
 // Metadatos específicos para la página principal
 export const metadata: Metadata = {
   title: "ContaTools - Herramientas Contables",
@@ -33,7 +31,7 @@ export const metadata: Metadata = {
  * @param params - Parámetros de la URL (no utilizados en esta página)
  * @param searchParams - Parámetros de búsqueda de la URL (no utilizados en esta página)
  */
-export default async function HomePage(_props: HomePageProps) {
+export default async function HomePage() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-800 via-slate-900 to-teal-900">
       <section className="flex min-h-screen flex-col items-center justify-center px-6 md:flex-row md:px-10 lg:px-16">

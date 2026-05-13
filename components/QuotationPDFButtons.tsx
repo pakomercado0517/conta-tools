@@ -5,7 +5,125 @@ import { Button, FileInput, Label } from "flowbite-react";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import useFormatNumber from "@/hooks/useFormatNumber";
-import type { QuotationPDFButtonsProps, BankData } from "@/types/quotation";
+import { numeroALetras } from "@/lib/numero-letras-mx";
+import type {
+  QuotationPDFButtonsProps,
+  BankData,
+  QuotationProduct,
+  QuotationTaxLine,
+} from "@/types/quotation";
+
+function parsePrecioUnitario(v: string | number): number | null {
+  if (v === "" || v === null || v === undefined) return null;
+  const s = String(v).trim();
+  if (s === "") return null;
+  const n = Number(s);
+  if (!Number.isFinite(n)) return null;
+  return n;
+}
+
+function parseCantidad(v: string | number): number {
+  const n = Number(v);
+  return Number.isFinite(n) ? n : 0;
+}
+
+function formatPrecioCell(
+  v: string | number,
+  formatNumber: Intl.NumberFormat
+): string {
+  const p = parsePrecioUnitario(v);
+  if (p === null) return "";
+  return formatNumber.format(p);
+}
+
+function formatTotalCell(
+  producto: QuotationProduct,
+  formatNumber: Intl.NumberFormat
+): string {
+  const p = parsePrecioUnitario(producto.precioUnitario);
+  if (p === null) return "";
+  const q = parseCantidad(producto.cantidad);
+  return formatNumber.format(q * p);
+}
+
+/** Importe de línea para subtotal e impuestos: solo si precio numérico > 0. */
+function lineTaxBase(producto: QuotationProduct): number {
+  const p = parsePrecioUnitario(producto.precioUnitario);
+  if (p === null || p <= 0) return 0;
+  return parseCantidad(producto.cantidad) * p;
+}
+
+function computeTaxMonto(base: number, tax: QuotationTaxLine): number | null {
+  if (base <= 0) return null;
+  const raw = String(tax.valor ?? "").trim();
+  if (raw === "") return null;
+  const valor = Number(raw);
+  if (!Number.isFinite(valor) || valor < 0) return null;
+  if (tax.modo === "porcentaje") {
+    return base * (valor / 100);
+  }
+  return valor;
+}
+
+interface AggTaxRow {
+  etiqueta: string;
+  tipo: "impuesto" | "retencion";
+  monto: number;
+  /** Cuántas aplicaciones del concepto se sumaron (una o más líneas de producto). */
+  fuentes: number;
+}
+
+function aggregateTaxes(productos: QuotationProduct[]): {
+  orderedKeys: string[];
+  map: Map<string, AggTaxRow>;
+} {
+  const map = new Map<string, AggTaxRow>();
+  const orderedKeys: string[] = [];
+
+  for (const producto of productos) {
+    const base = lineTaxBase(producto);
+    if (base <= 0) continue;
+    const taxes = producto.impuestosLinea ?? [];
+    for (const tax of taxes) {
+      const monto = computeTaxMonto(base, tax);
+      if (monto === null || monto < 1e-9) continue;
+      const valorNorm = String(tax.valor ?? "").trim();
+      const key = `${tax.etiqueta}|${tax.tipo}|${tax.modo}|${valorNorm}`;
+      const prev = map.get(key);
+      if (prev) {
+        prev.monto += monto;
+        prev.fuentes += 1;
+      } else {
+        map.set(key, {
+          etiqueta: (tax.etiqueta ?? "").trim() || "(Sin etiqueta)",
+          tipo: tax.tipo,
+          monto,
+          fuentes: 1,
+        });
+        orderedKeys.push(key);
+      }
+    }
+  }
+
+  return { orderedKeys, map };
+}
+
+/** Etiqueta en PDF: categoría + texto del usuario (ej. «Impuesto IVA», «Impuestos IVA» si agrupa varias líneas). */
+function etiquetaFiscalPdf(
+  tipo: "impuesto" | "retencion",
+  etiquetaUsuario: string,
+  fuentes: number
+): string {
+  const texto = etiquetaUsuario.trim();
+  const parteUsuario = texto.length > 0 ? texto : "(Sin etiqueta)";
+  const plural = fuentes > 1;
+  if (tipo === "impuesto") {
+    const cat = plural ? "Impuestos" : "Impuesto";
+    return `${cat} ${parteUsuario}`;
+  }
+  const cat = plural ? "Retenciones" : "Retención";
+  return `${cat} ${parteUsuario}`;
+}
 
 /**
  * Componente para generar y previsualizar PDFs de cotización
@@ -124,36 +242,117 @@ export default function QuotationPDFButtons({
     doc.text(datos.domicilio, pageWidth / 2, 20, { align: "center" });
     doc.text(contacto, pageWidth / 2, 25, { align: "center" });
 
-    // Fecha alineada a la derecha
+    // Lugar y fecha: 12 mm bajo la última línea del encabezado (contacto, y=25)
+    const encabezadoUltimaY = 25;
+    const espacioEncabezadoFechaMm = 12;
+    const fechaY = encabezadoUltimaY + espacioEncabezadoFechaMm;
     const fechaFormateada = formatearFecha(datos.fecha);
     doc.setFontSize(10);
     doc.setTextColor(0, 0, 0); // Negro
-    doc.text(fechaFormateada, pageWidth - 20, 50, { align: "right" });
+    doc.text(fechaFormateada, pageWidth - 20, fechaY, { align: "right" });
 
-    // A quién va dirigido
-    doc.setFontSize(12);
-    doc.text(`${datos.destinatarioEmpresa}.`, 12, 65); // Empresa del destinatario
-    doc.text(`${datos.destinatario}.`, 12, 70); // Nombre del destinatario
+    /** Hueco entre la fecha y «a quién va dirigido» (mm desde baseline de la fecha). */
+    const espacioFechaDestinatarioMm = 14;
 
-    // Saludo antes de presentar los productos a cotizar
-    doc.setFontSize(12);
-    doc.text(`${datos.saludo}`, 20, 80);
+    // A quién va dirigido (cuerpo: 11 pt)
+    doc.setFontSize(11);
+    const destinatarioEmpresaY = fechaY + espacioFechaDestinatarioMm;
+    doc.text(`${datos.destinatarioEmpresa}.`, 12, destinatarioEmpresaY);
+    doc.text(`${datos.destinatario}.`, 12, destinatarioEmpresaY + 6);
 
-    // Tabla de productos
+    // Saludo y descripción opcional del servicio (antes de la tabla; cuerpo: 11 pt)
+    doc.setFontSize(11);
+    doc.setTextColor(0, 0, 0);
+    doc.setFont("helvetica", "normal");
+    const textMarginX = 20;
+    const textMaxWidth = pageWidth - textMarginX - 12;
+    const bodyLineHeight = 6;
+    const pageMaxY = 270;
+
+    let bodyY = destinatarioEmpresaY + 6 + 9;
+    const saludoLines = doc.splitTextToSize(datos.saludo ?? "", textMaxWidth);
+
+    const advancePastLines = (lines: string[], extraGap: number): void => {
+      const blockHeight = lines.length * bodyLineHeight;
+      if (bodyY + blockHeight > pageMaxY) {
+        doc.addPage();
+        bodyY = 20;
+      }
+      doc.text(lines, textMarginX, bodyY);
+      bodyY += blockHeight + extraGap;
+    };
+
+    advancePastLines(saludoLines, 6);
+
+    if (
+      datos.incluirDescripcionServicio &&
+      datos.descripcionServicio.trim() !== ""
+    ) {
+      doc.setFont("helvetica", "bold");
+      const physicalLines = datos.descripcionServicio.split(/\r?\n/);
+      for (const rawLine of physicalLines) {
+        if (rawLine.trim() === "") {
+          bodyY += 4;
+          continue;
+        }
+        const wrapped = doc.splitTextToSize(rawLine.trim(), textMaxWidth);
+        advancePastLines(wrapped, 3);
+      }
+      bodyY += 2;
+      doc.setFont("helvetica", "normal");
+    }
+
+    const tableStartY = bodyY + 2;
+
+    const { orderedKeys, map: aggTaxMap } = aggregateTaxes(datos.productos);
+    const subtotal = datos.productos.reduce((s, p) => s + lineTaxBase(p), 0);
+
+    let sumImpuestos = 0;
+    let sumRetenciones = 0;
+    for (const key of orderedKeys) {
+      const row = aggTaxMap.get(key)!;
+      if (row.tipo === "impuesto") sumImpuestos += row.monto;
+      else sumRetenciones += row.monto;
+    }
+
+    const totalFinal =
+      Math.round((subtotal + sumImpuestos - sumRetenciones) * 100) / 100;
+
+    const etiquetaSubtotal =
+      (datos.etiquetaSubtotal ?? "Subtotal:").trim() || "Subtotal:";
+    const etiquetaTotal = (datos.etiquetaTotal ?? "Total:").trim() || "Total:";
+    const prefijoCantidadLetra =
+      (datos.textoCantidadLetra ?? "").trim() || "Importe con letra:";
+    const letrasTotal = numeroALetras(totalFinal);
+    const textoCantidadCompleto =
+      letrasTotal != null
+        ? `${prefijoCantidadLetra} ${letrasTotal.charAt(0).toUpperCase() + letrasTotal.slice(1)}`
+        : `${prefijoCantidadLetra} (Monto no disponible en letras)`;
+
+    const taxFooterRows = orderedKeys.map((key) => {
+      const row = aggTaxMap.get(key)!;
+      return [
+        {
+          content: etiquetaFiscalPdf(row.tipo, row.etiqueta, row.fuentes),
+          colSpan: 4,
+          styles: { fontStyle: "bold", halign: "right" as const },
+        },
+        formatNumber.format(row.monto),
+      ];
+    });
+
+    // Tabla de productos + resumen
     doc.autoTable({
-      startY: 90,
+      startY: tableStartY,
       head: [["Cantidad", "Unidad", "Descripción", "Precio Unitario", "Total"]],
       body: [
         ...datos.productos.map((producto) => [
           String(producto.cantidad),
           producto.unidad,
           producto.descripcion,
-          formatNumber.format(Number(producto.precioUnitario)),
-          formatNumber.format(
-            Number(producto.precioUnitario) * Number(producto.cantidad)
-          ),
+          formatPrecioCell(producto.precioUnitario, formatNumber),
+          formatTotalCell(producto, formatNumber),
         ]),
-        // Espacio de dos filas vacías
         [
           {
             content: "",
@@ -163,96 +362,139 @@ export default function QuotationPDFButtons({
         ],
         [
           {
-            content: "",
-            colSpan: 5,
-            styles: { minCellHeight: 10, halign: "center" },
-          },
-        ],
-        // Fila del Total
-        [
-          {
-            content: "Total:",
+            content: etiquetaSubtotal,
             colSpan: 4,
             styles: { fontStyle: "bold", halign: "right" },
           },
-          formatNumber.format(
-            datos.productos.reduce(
-              (total, producto) =>
-                total +
-                Number(producto.precioUnitario) * Number(producto.cantidad),
-              0
-            )
-          ),
+          formatNumber.format(subtotal),
+        ],
+        ...taxFooterRows,
+        [
+          {
+            content: etiquetaTotal,
+            colSpan: 4,
+            styles: { fontStyle: "bold", halign: "right" },
+          },
+          formatNumber.format(totalFinal),
+        ],
+        [
+          {
+            content: textoCantidadCompleto,
+            colSpan: 5,
+            styles: {
+              fontStyle: "normal",
+              fontSize: 10,
+              cellPadding: 3,
+              valign: "middle",
+            },
+          },
         ],
       ],
-      headStyles: { fillColor: [54, 69, 79] },
-      styles: { fontSize: 10 },
+      headStyles: { fillColor: [54, 69, 79], fontSize: 11 },
+      styles: { fontSize: 11 },
     });
 
-    let finalY = (doc as any).previousAutoTable.finalY + 10; // Obtener la posición final de la tabla
+    let finalY = (doc as any).previousAutoTable.finalY + 10;
 
-    // Cláusulas
-    if (finalY > 270) {
-      doc.addPage();
-      finalY = 20;
-    }
-    doc.text("Cláusulas:", 12, finalY + 15);
-    finalY += 10;
-
-    datos.clausulas.forEach((clausula) => {
+    const clauseLineHeight = 6;
+    /** Espacio compacto entre bloques (cláusulas → bancarios → despedida). */
+    const sectionGap = 5;
+    const breakPageIfNeeded = (): void => {
       if (finalY > 270) {
         doc.addPage();
         finalY = 20;
       }
-      doc.text(`* ${clausula}`, 15, finalY + 10);
-      finalY += 5;
+    };
+
+    // Cláusulas (título y asteriscos en negrita; cuerpo 11 pt)
+    breakPageIfNeeded();
+    finalY += 6;
+    doc.setFontSize(11);
+    doc.setTextColor(0, 0, 0);
+    doc.setFont("helvetica", "bold");
+    doc.text("Cláusulas:", 12, finalY);
+    doc.setFont("helvetica", "normal");
+    finalY += clauseLineHeight + 2;
+
+    datos.clausulas.forEach((rawClausula) => {
+      const trimmed = rawClausula.trim();
+      if (!trimmed) return;
+
+      doc.setFontSize(11);
+      doc.setFont("helvetica", "bold");
+      const starStr = "* ";
+      const clauseStarX = 12;
+      const textLeft = clauseStarX + doc.getTextWidth(starStr);
+      const clauseMarginRight = 14;
+      const maxClauseWidth = Math.max(
+        24,
+        pageWidth - textLeft - clauseMarginRight
+      );
+      doc.setFont("helvetica", "normal");
+      const lines = doc.splitTextToSize(trimmed, maxClauseWidth);
+
+      lines.forEach((line: string, idx: number) => {
+        breakPageIfNeeded();
+        if (idx === 0) {
+          doc.setFont("helvetica", "bold");
+          doc.text(starStr, clauseStarX, finalY);
+          doc.setFont("helvetica", "normal");
+          doc.text(line, textLeft, finalY);
+        } else {
+          doc.setFont("helvetica", "normal");
+          doc.text(line, textLeft, finalY);
+        }
+        finalY += clauseLineHeight;
+      });
+      finalY += 1;
     });
 
-    // Datos bancarios (si se requiere...)
+    // Datos bancarios (si se requiere…) — mismo criterio de interlineado compacto
     if (datos.bank) {
-      if (finalY > 270) {
-        doc.addPage();
-        finalY = 20;
-      }
-      doc.text("Datos Bancarios:", 12, finalY + 15);
-      finalY += 10;
+      breakPageIfNeeded();
+      finalY += sectionGap;
+      doc.setFontSize(11);
+      doc.setTextColor(0, 0, 0);
+      doc.setFont("helvetica", "bold");
+      doc.text("Datos Bancarios:", 12, finalY);
+      doc.setFont("helvetica", "normal");
+      finalY += clauseLineHeight + 2;
 
       Object.entries(dataBank as BankData).forEach(([key, value]) => {
-        if (finalY > 270) {
-          doc.addPage();
-          finalY = 20;
-        }
-        if (key !== "0") {
-          doc.text(`-${key}:  ${value}`, 15, finalY + 10);
-          finalY += 5;
-        }
+        if (key === "0") return;
+        breakPageIfNeeded();
+        doc.text(`-${key}:  ${value}`, 15, finalY);
+        finalY += clauseLineHeight;
       });
     }
 
     // Despedida con salto de línea automático
-    doc.setFontSize(12);
+    breakPageIfNeeded();
+    finalY += sectionGap;
+    doc.setFontSize(11);
+    doc.setTextColor(0, 0, 0);
+    doc.setFont("helvetica", "normal");
     const despedidaLines = doc.splitTextToSize(datos.despedida, pageWidth - 30);
-    doc.text(despedidaLines, 15, finalY + 15);
+    doc.text(despedidaLines, 15, finalY);
+    finalY += despedidaLines.length * clauseLineHeight + 2;
 
-    finalY += despedidaLines.length * 10 + 15; // Ajusta la posición final después de la despedida
-
-    // Firma
-    if (finalY + 20 > 270) {
+    // Firma (poco espacio respecto a la despedida)
+    if (finalY + 28 > 270) {
       doc.addPage();
       finalY = 20;
     }
-    doc.setFontSize(12);
+    doc.setFontSize(11);
     doc.setTextColor(96, 96, 96); // Gris oscuro
-    doc.text("Atentamente", 12, finalY + 10);
+    doc.text("Atentamente", 12, finalY + 2);
 
     // Agregar imagen de la firma
     if (firmaImg) {
-      doc.addImage(firmaImg, "PNG", 10, finalY + 10, 15, 14);
+      doc.addImage(firmaImg, "PNG", 10, finalY + 2, 15, 14);
     }
 
-    doc.text(datos.firma, 12, finalY + 30);
-    doc.setFontSize(10);
-    doc.text(datos.cargo, 12, finalY + 35);
+    doc.text(datos.firma, 12, finalY + 22);
+    doc.setFontSize(11);
+    doc.text(datos.cargo, 12, finalY + 27);
 
     // Previsualizar el PDF
     if (btnFunc === "preview") {

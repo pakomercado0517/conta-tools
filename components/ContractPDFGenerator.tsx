@@ -7,8 +7,8 @@ import {
   fechaEnLetras,
   leyendaFechaLugar,
   formatearMonedaMexicana,
-  numeroALetras,
 } from "./ContractContent";
+import { numeroALetras } from "@/lib/numero-letras-mx";
 import type { ContractData } from "@/schemas";
 
 /* =========================

@@ -18,11 +18,7 @@ import {
   getContextualError,
   isEmailNotConfirmedError,
 } from "@/lib/supabase/errorTranslations";
-import type {
-  LoginPageProps,
-  LoginFormData,
-  AuthFormState,
-} from "@/types/pages";
+import type { LoginFormData, AuthFormState } from "@/types/pages";
 
 /**
  * Contenido principal de la página de login
@@ -262,7 +258,7 @@ function LoginContent() {
 /**
  * Página de login con Suspense para manejar useSearchParams
  */
-export default function LoginPage(_props: LoginPageProps) {
+export default function LoginPage() {
   return (
     <Suspense
       fallback={

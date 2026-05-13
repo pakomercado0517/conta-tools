@@ -42,7 +42,6 @@ function ResetPasswordContent() {
   useEffect(() => {
     // Verificar si tenemos los parámetros necesarios en la URL
     const access_token = searchParams.get("access_token");
-    const refresh_token = searchParams.get("refresh_token");
 
     if (!access_token && !user) {
       setError(

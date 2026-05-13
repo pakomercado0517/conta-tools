@@ -9,14 +9,6 @@ import AIGeneratorButton from "./AIGeneratorButton";
 import type { ContractData } from "@/schemas";
 
 // Tipos específicos para el formulario
-type TipoProducto = "venta" | "servicio";
-type RegimenFiscal =
-  | "Persona Física"
-  | "Persona Moral"
-  | "Persona Física con Actividad Empresarial"
-  | "Régimen de Incorporación Fiscal"
-  | "Régimen Simplificado de Confianza"
-  | "Otro";
 type TipoFechaTermino = "fecha" | "otro";
 type TipoImagenFirma = "imagenFirmaVendedor" | "imagenFirmaComprador";
 
@@ -365,7 +357,7 @@ export default function ContractGeneratorFormWithAI({}: ContractGeneratorFormWit
                 <option value="Otro">Otro (personalizado)</option>
               </select>
 
-              {(contractData.regimenVendedor as any) === "Otro" && (
+              {contractData.regimenVendedor === "Otro" && (
                 <TextInput
                   name="regimenVendedorCustom"
                   value={contractData.regimenVendedorCustom || ""}
@@ -398,7 +390,7 @@ export default function ContractGeneratorFormWithAI({}: ContractGeneratorFormWit
                 <option value="Otro">Otro (personalizado)</option>
               </select>
 
-              {(contractData.regimenComprador as any) === "Otro" && (
+              {contractData.regimenComprador === "Otro" && (
                 <TextInput
                   name="regimenCompradorCustom"
                   value={contractData.regimenCompradorCustom || ""}
@@ -837,7 +829,7 @@ export default function ContractGeneratorFormWithAI({}: ContractGeneratorFormWit
                 type="contract-object"
                 concept={contractData.servicios}
                 tipoProducto={contractData.tipoProducto}
-                onGenerated={handleAIGenerated as any}
+                onGenerated={handleAIGenerated}
                 placeholder={
                   contractData.tipoProducto === "venta"
                     ? "Ej: venta de equipos electrónicos, materiales de construcción..."
@@ -874,7 +866,7 @@ export default function ContractGeneratorFormWithAI({}: ContractGeneratorFormWit
           {showPreview ? "Ocultar Vista Previa" : "Ver Vista Previa"}
         </Button>
 
-        <ContractPDFGenerator contractData={contractData} invoicesData={[]} />
+        <ContractPDFGenerator contractData={contractData} />
       </div>
 
       {/* Vista previa del contrato */}
@@ -883,7 +875,7 @@ export default function ContractGeneratorFormWithAI({}: ContractGeneratorFormWit
           <h3 className="mb-6 text-center text-2xl font-semibold text-gray-800 dark:text-white">
             Vista Previa del Contrato
           </h3>
-          <ContractPreview contractData={contractData} invoicesData={[]} />
+          <ContractPreview contractData={contractData} />
         </div>
       )}
     </div>

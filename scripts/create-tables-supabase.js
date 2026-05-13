@@ -140,7 +140,7 @@ async function createTablesWithSupabase() {
 
     // Ejecutar SQL usando RPC
     console.log("📦 Ejecutando SQL...");
-    const { data, error } = await supabase.rpc("exec_sql", {
+    const { error } = await supabase.rpc("exec_sql", {
       sql: createTableSQL,
     });
 
@@ -234,7 +234,7 @@ async function verifyTables() {
   console.log("✅ Verificando tablas...");
 
   // Verificar que exista la tabla users
-  const { data: users, error: usersError } = await supabase
+  const { error: usersError } = await supabase
     .from("users")
     .select("*")
     .limit(1);
@@ -246,7 +246,7 @@ async function verifyTables() {
   }
 
   // Verificar sessions
-  const { data: sessions, error: sessionsError } = await supabase
+  const { error: sessionsError } = await supabase
     .from("sessions")
     .select("*")
     .limit(1);

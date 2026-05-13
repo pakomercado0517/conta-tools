@@ -27,7 +27,7 @@ async function verifyTables() {
 
   for (const tableName of tablesToCheck) {
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from(tableName)
         .select("*")
         .limit(0);

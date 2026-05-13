@@ -6,9 +6,7 @@ import {
   createLocalDate,
   fechaEnLetras,
   leyendaFechaLugar,
-  formatearMonedaMexicana,
 } from "./ContractContent";
-import { numeroALetras } from "@/lib/numero-letras-mx";
 import type { ContractData } from "@/schemas";
 
 /* =========================
@@ -30,7 +28,6 @@ interface TextToken {
 // Props del componente principal
 interface ContractPDFGeneratorProps {
   contractData: ContractData;
-  invoicesData?: any[]; // Tipo genérico para invoices (no utilizado actualmente)
   fileName?: string;
 }
 
@@ -41,13 +38,9 @@ interface ContractPDFGeneratorProps {
 /**
  * Genera un PDF del contrato de prestación de servicios
  * @param contractData - Datos del contrato
- * @param invoicesData - Datos de las facturas (no utilizado actualmente)
  * @returns Documento PDF generado
  */
-export function generateContractPDF(
-  contractData: ContractData,
-  invoicesData?: any[]
-): jsPDF {
+export function generateContractPDF(contractData: ContractData): jsPDF {
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.width;
   const pageHeight = doc.internal.pageSize.height;
@@ -678,7 +671,6 @@ export function generateContractPDF(
  */
 export default function ContractPDFGenerator({
   contractData,
-  invoicesData,
   fileName = "contrato_compraventa_materiales_servicios.pdf",
 }: ContractPDFGeneratorProps) {
   /**
@@ -686,7 +678,7 @@ export default function ContractPDFGenerator({
    */
   const handleDownload = (): void => {
     try {
-      const doc = generateContractPDF(contractData, invoicesData);
+      const doc = generateContractPDF(contractData);
       doc.save(fileName);
     } catch (error) {
       console.error("Error generating PDF:", error);

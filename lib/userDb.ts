@@ -80,6 +80,7 @@ function writeUsers(users: User[]): boolean {
  * @returns Usuario sin contraseña
  */
 function removePassword(user: User): SafeUser {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- se omite la contraseña del objeto público
   const { password, ...userWithoutPassword } = user;
   return userWithoutPassword;
 }

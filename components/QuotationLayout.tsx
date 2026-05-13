@@ -15,6 +15,7 @@ import type {
   QuotationFormData,
   BankData,
   QuotationTaxLine,
+  QuotationProduct,
 } from "@/types/quotation";
 
 /**
@@ -139,8 +140,12 @@ export default function QuotationLayout() {
     const { name, value } = e.target;
     const nuevosProductos = [...datos.productos];
 
-    // Type assertion segura ya que sabemos que name es una key válida
-    (nuevosProductos[index] as any)[name] = value;
+    const field = name as keyof QuotationProduct;
+    if (field === "impuestosLinea") return;
+    nuevosProductos[index] = {
+      ...nuevosProductos[index],
+      [field]: value,
+    };
 
     setDatos((prevDatos) => ({
       ...prevDatos,

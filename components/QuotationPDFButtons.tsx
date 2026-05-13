@@ -13,6 +13,10 @@ import type {
   QuotationTaxLine,
 } from "@/types/quotation";
 
+type JsPDFWithPrevTable = jsPDF & {
+  previousAutoTable?: { finalY: number };
+};
+
 function parsePrecioUnitario(v: string | number): number | null {
   if (v === "" || v === null || v === undefined) return null;
   const s = String(v).trim();
@@ -310,7 +314,8 @@ export default function QuotationPDFButtons({
     let sumImpuestos = 0;
     let sumRetenciones = 0;
     for (const key of orderedKeys) {
-      const row = aggTaxMap.get(key)!;
+      const row = aggTaxMap.get(key);
+      if (!row) continue;
       if (row.tipo === "impuesto") sumImpuestos += row.monto;
       else sumRetenciones += row.monto;
     }
@@ -329,15 +334,18 @@ export default function QuotationPDFButtons({
         ? `${prefijoCantidadLetra} ${letrasTotal.charAt(0).toUpperCase() + letrasTotal.slice(1)}`
         : `${prefijoCantidadLetra} (Monto no disponible en letras)`;
 
-    const taxFooterRows = orderedKeys.map((key) => {
-      const row = aggTaxMap.get(key)!;
+    const taxFooterRows = orderedKeys.flatMap((key) => {
+      const row = aggTaxMap.get(key);
+      if (!row) return [];
       return [
-        {
-          content: etiquetaFiscalPdf(row.tipo, row.etiqueta, row.fuentes),
-          colSpan: 4,
-          styles: { fontStyle: "bold", halign: "right" as const },
-        },
-        formatNumber.format(row.monto),
+        [
+          {
+            content: etiquetaFiscalPdf(row.tipo, row.etiqueta, row.fuentes),
+            colSpan: 4,
+            styles: { fontStyle: "bold", halign: "right" as const },
+          },
+          formatNumber.format(row.monto),
+        ],
       ];
     });
 
@@ -394,7 +402,12 @@ export default function QuotationPDFButtons({
       styles: { fontSize: 11 },
     });
 
-    let finalY = (doc as any).previousAutoTable.finalY + 10;
+    const prevTable = (doc as JsPDFWithPrevTable).previousAutoTable;
+    const finalYBase = prevTable?.finalY;
+    if (finalYBase === undefined) {
+      throw new Error("No se pudo obtener la posición tras autoTable");
+    }
+    let finalY = finalYBase + 10;
 
     const clauseLineHeight = 6;
     /** Espacio compacto entre bloques (cláusulas → bancarios → despedida). */

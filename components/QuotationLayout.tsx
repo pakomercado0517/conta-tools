@@ -37,9 +37,9 @@ export default function QuotationLayout() {
     logoEmpresa: "",
     lugar: "",
     despedida:
-      "Sin más, quedo a sus órdenes ante cualquier duda, situación o comentario de su parte agradeciendo de antemano las atenciones prestadas.",
+      "Esperando que la presente sea de su conformidad, quedamos a sus órdenes para cualquier información adicional.",
     saludo:
-      "Buen día, se presenta a continuación, la cotización de los siguientes servicios y/o materiales:",
+      "En atención a su solicitud, se presenta la siguiente cotización correspondiente a los servicios y/o materiales descritos a continuación:",
     descripcionServicio: "",
     incluirDescripcionServicio: false,
     etiquetaSubtotal: "Subtotal:",
@@ -176,7 +176,9 @@ export default function QuotationLayout() {
     setDatos((prev) => {
       const productos = [...prev.productos];
       const p = { ...productos[productIndex] };
-      p.impuestosLinea = (p.impuestosLinea ?? []).filter((_, i) => i !== taxIndex);
+      p.impuestosLinea = (p.impuestosLinea ?? []).filter(
+        (_, i) => i !== taxIndex
+      );
       productos[productIndex] = p;
       return { ...prev, productos };
     });
@@ -192,7 +194,10 @@ export default function QuotationLayout() {
       const productos = [...prev.productos];
       const p = { ...productos[productIndex] };
       const impuestosLinea = [...(p.impuestosLinea ?? [])];
-      impuestosLinea[taxIndex] = { ...impuestosLinea[taxIndex], [field]: value };
+      impuestosLinea[taxIndex] = {
+        ...impuestosLinea[taxIndex],
+        [field]: value,
+      };
       productos[productIndex] = { ...p, impuestosLinea };
       return { ...prev, productos };
     });

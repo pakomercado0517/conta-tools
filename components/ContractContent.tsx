@@ -405,14 +405,15 @@ export default function ContractContent({
               <p className="font-semibold">PRIMERA. OBJETO:</p>
               <p className="ml-4 text-justify">
                 <strong>{content.terminoVendedor}</strong> se obliga a{" "}
-                {content.esServicio
-                  ? "prestar los servicios"
-                  : "transmitir la propiedad"}
-                {!content.esServicio &&
-                  " sin reserva de dominio, libre de gravamen y limitación alguna"}{" "}
-                de los{" "}
-                {content.esServicio ? "servicios" : "materiales/servicios"}{" "}
-                consistentes en:{" "}
+                {content.esServicio ? (
+                  <>prestar los servicios consistentes en: </>
+                ) : (
+                  <>
+                    transmitir la propiedad sin reserva de dominio, libre de
+                    gravamen y limitación alguna de los materiales/servicios
+                    consistentes en:{" "}
+                  </>
+                )}
                 <strong>
                   {content.servicios ||
                     "[DESCRIPCIÓN DETALLADA DE MATERIALES/SERVICIOS]"}

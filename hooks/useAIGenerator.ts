@@ -1,6 +1,12 @@
 import { useState, useCallback } from "react";
 import axios, { AxiosError } from "axios";
 import { AIGeneratorResponse } from "@/schemas/api";
+import {
+  buildContractObjectUserPrompt,
+  buildQuotationUserPrompt,
+  CONTRACT_OBJECT_SYSTEM_INSTRUCTION,
+  QUOTATION_SYSTEM_INSTRUCTION,
+} from "@/lib/ai-prompts";
 
 // Tipos para el hook
 interface AIGeneratorResult {
@@ -22,6 +28,11 @@ interface AIGeneratorSuccess {
 // Tipos para el producto del contrato
 type TipoProducto = "venta" | "servicio";
 
+interface GenerateContentOptions {
+  userInput?: string;
+  systemInstruction?: string;
+}
+
 // Interface para el valor de retorno del hook
 interface UseAIGeneratorReturn {
   // Estados
@@ -32,7 +43,7 @@ interface UseAIGeneratorReturn {
   // Funciones generales
   generateContent: (
     basePrompt: string,
-    userInput?: string
+    options?: GenerateContentOptions
   ) => Promise<AIGeneratorResult>;
   clearState: () => void;
   regenerateLastContent: () => Promise<AIGeneratorResult>;
@@ -50,7 +61,7 @@ interface UseAIGeneratorReturn {
 }
 
 /**
- * Hook personalizado para manejar la generación de contenido con IA
+ * Hook personalizado para manejar la generación de contenido con IA (Groq vía /api/ai/generate)
  * @returns Objeto con estados y funciones para generar contenido
  */
 export default function useAIGenerator(): UseAIGeneratorReturn {
@@ -67,21 +78,22 @@ export default function useAIGenerator(): UseAIGeneratorReturn {
   const generateContent = useCallback(
     async (
       basePrompt: string,
-      userInput: string = ""
+      options: GenerateContentOptions = {}
     ): Promise<AIGeneratorResult> => {
       setIsLoading(true);
       setError(null);
 
       try {
-        // Construir el prompt completo
-        const fullPrompt = userInput.trim()
-          ? `${basePrompt} ${userInput}`
-          : basePrompt;
+        const userInput = options.userInput?.trim() ?? "";
+        const fullPrompt = userInput ? `${basePrompt} ${userInput}` : basePrompt;
 
         const response = await axios.post<AIGeneratorResponse>(
           "/api/ai/generate",
           {
             prompt: fullPrompt,
+            ...(options.systemInstruction?.trim()
+              ? { systemInstruction: options.systemInstruction.trim() }
+              : {}),
           }
         );
 
@@ -135,10 +147,11 @@ export default function useAIGenerator(): UseAIGeneratorReturn {
         };
       }
 
-      const prompt = `Crea un concepto profesional para cotización de: ${concept}. 
-      Máximo 100 palabras, lenguaje formal y profesional y que sea lo más breve posible.`;
+      const prompt = buildQuotationUserPrompt(concept.trim());
 
-      return await generateContent(prompt);
+      return await generateContent(prompt, {
+        systemInstruction: QUOTATION_SYSTEM_INSTRUCTION,
+      });
     },
     [generateContent]
   );
@@ -184,17 +197,14 @@ export default function useAIGenerator(): UseAIGeneratorReturn {
         };
       }
 
-      const tipoTexto =
-        tipoProducto === "venta"
-          ? "venta de productos"
-          : "prestación de servicios";
+      const prompt = buildContractObjectUserPrompt(
+        concept.trim(),
+        tipoProducto
+      );
 
-      const prompt = `Redacta un objeto de contrato legal para ${tipoTexto} de: ${concept}. 
-      Debe ser una descripción clara y precisa que se usará en la cláusula PRIMERA del contrato. 
-      Incluye especificaciones técnicas y características relevantes. 
-      Máximo 150 palabras, lenguaje formal y jurídico apropiado para contratos.`;
-
-      return await generateContent(prompt);
+      return await generateContent(prompt, {
+        systemInstruction: CONTRACT_OBJECT_SYSTEM_INSTRUCTION,
+      });
     },
     [generateContent]
   );

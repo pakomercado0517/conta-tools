@@ -1,17 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
 import axios, { AxiosError } from "axios";
+import { DEFAULT_SYSTEM_INSTRUCTION } from "@/lib/ai-prompts";
 
-// Interfaces para tipos
 interface AIGenerateRequest {
   prompt: string;
+  systemInstruction?: string;
 }
 
-interface OpenAIResponse {
-  choices: {
-    message: {
-      content: string;
+interface GroqChatCompletionResponse {
+  choices?: {
+    message?: {
+      content?: string | null;
     };
+    finish_reason?: string;
   }[];
+  error?: {
+    message?: string;
+    type?: string;
+    code?: string;
+  };
 }
 
 interface AIGenerateResponse {
@@ -23,9 +30,13 @@ interface ErrorResponse {
   error: string;
 }
 
+const GROQ_CHAT_URL = "https://api.groq.com/openai/v1/chat/completions";
+const DEFAULT_GROQ_MODEL = "llama-3.3-70b-versatile";
+const DEFAULT_MAX_COMPLETION_TOKENS = 384;
+
 /**
  * POST /api/ai/generate
- * Genera contenido usando OpenAI GPT-3.5
+ * Genera contenido usando Groq (API compatible con OpenAI Chat Completions)
  */
 export async function POST(
   request: NextRequest
@@ -33,7 +44,6 @@ export async function POST(
   try {
     const body: unknown = await request.json();
 
-    // Validar estructura del request
     if (!body || typeof body !== "object" || !("prompt" in body)) {
       return NextResponse.json(
         { error: "El cuerpo de la petición debe incluir un prompt" },
@@ -41,9 +51,8 @@ export async function POST(
       );
     }
 
-    const { prompt } = body as AIGenerateRequest;
+    const { prompt, systemInstruction } = body as AIGenerateRequest;
 
-    // Validar que el prompt existe
     if (!prompt || typeof prompt !== "string" || prompt.trim() === "") {
       return NextResponse.json(
         { error: "El prompt es requerido y debe ser un string válido" },
@@ -51,44 +60,58 @@ export async function POST(
       );
     }
 
-    // Validar que la API key existe
-    if (!process.env.OPENAI_API_KEY) {
+    const apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey) {
       return NextResponse.json(
-        { error: "API key de OpenAI no configurada" },
+        { error: "API key de Groq no configurada (GROQ_API_KEY)" },
         { status: 500 }
       );
     }
 
-    // Hacer la petición a OpenAI
-    const response = await axios.post<OpenAIResponse>(
-      "https://api.openai.com/v1/chat/completions",
+    const systemMessage =
+      typeof systemInstruction === "string" && systemInstruction.trim()
+        ? systemInstruction.trim()
+        : DEFAULT_SYSTEM_INSTRUCTION;
+
+    const model = process.env.GROQ_MODEL?.trim() || DEFAULT_GROQ_MODEL;
+    const parsedMaxTokens = Number(process.env.GROQ_MAX_COMPLETION_TOKENS);
+    const maxCompletionTokens = Number.isFinite(parsedMaxTokens)
+      ? parsedMaxTokens
+      : DEFAULT_MAX_COMPLETION_TOKENS;
+
+    const response = await axios.post<GroqChatCompletionResponse>(
+      GROQ_CHAT_URL,
       {
-        model: "gpt-3.5-turbo",
+        model,
         messages: [
-          {
-            role: "system",
-            content:
-              "Eres un asistente especializado en crear conceptos profesionales y descripciones para cotizaciones y contratos. Responde de manera concisa, profesional y en español.",
-          },
-          {
-            role: "user",
-            content: prompt,
-          },
+          { role: "system", content: systemMessage },
+          { role: "user", content: prompt.trim() },
         ],
-        max_tokens: 150,
+        max_completion_tokens: maxCompletionTokens,
         temperature: 0.7,
       },
       {
         headers: {
-          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+          Authorization: `Bearer ${apiKey}`,
           "Content-Type": "application/json",
         },
       }
     );
 
-    const generatedText = response.data.choices[0]?.message?.content?.trim();
+    const generatedText = response.data.choices?.[0]?.message?.content?.trim();
 
     if (!generatedText) {
+      const finishReason = response.data.choices?.[0]?.finish_reason;
+      if (finishReason === "content_filter") {
+        return NextResponse.json(
+          {
+            error:
+              "No se pudo generar contenido por filtros de seguridad del modelo",
+          },
+          { status: 422 }
+        );
+      }
+
       return NextResponse.json(
         { error: "No se pudo generar contenido" },
         { status: 500 }
@@ -100,28 +123,45 @@ export async function POST(
       data: generatedText,
     });
   } catch (error) {
-    console.error("Error al generar contenido con IA:", error);
+    console.error("Error al generar contenido con IA (Groq):", error);
 
-    // Manejar errores específicos de OpenAI con tipo AxiosError
     if (error instanceof AxiosError) {
-      if (error.response?.status === 401) {
+      const status = error.response?.status;
+      const groqError = (error.response?.data as GroqChatCompletionResponse)
+        ?.error;
+      const message = groqError?.message ?? error.message;
+
+      if (status === 400) {
         return NextResponse.json(
-          { error: "API key de OpenAI inválida" },
+          { error: message || "Petición inválida a Groq" },
+          { status: 400 }
+        );
+      }
+
+      if (status === 401 || status === 403) {
+        return NextResponse.json(
+          { error: "API key de Groq inválida o sin permisos" },
           { status: 401 }
         );
       }
 
-      if (error.response?.status === 429) {
+      if (status === 429 || status === 503) {
         return NextResponse.json(
-          { error: "Límite de rate excedido. Inténtalo más tarde." },
+          {
+            error:
+              message ||
+              "Límite de cuota o rate limit de Groq alcanzado. Inténtalo más tarde.",
+          },
           { status: 429 }
         );
       }
 
-      if (error.response?.status === 400) {
+      if (status === 404) {
         return NextResponse.json(
-          { error: "Petición inválida a OpenAI" },
-          { status: 400 }
+          {
+            error: `Modelo de Groq no encontrado. Revisa GROQ_MODEL (actual: ${process.env.GROQ_MODEL || DEFAULT_GROQ_MODEL})`,
+          },
+          { status: 404 }
         );
       }
     }

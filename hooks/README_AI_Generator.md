@@ -1,6 +1,6 @@
 # 🤖 Hook useAIGenerator
 
-Hook personalizado para generar contenido usando OpenAI GPT-3.5 Turbo, específicamente diseñado para crear conceptos profesionales de cotizaciones y contratos.
+Hook personalizado para generar contenido usando **Groq**, específicamente diseñado para crear conceptos profesionales de cotizaciones y contratos.
 
 ## 🚀 Instalación y Configuración
 
@@ -9,8 +9,13 @@ Hook personalizado para generar contenido usando OpenAI GPT-3.5 Turbo, específi
 Asegúrate de tener configurado tu `.env.local`:
 
 ```bash
-OPENAI_API_KEY=sk-tu-api-key-aqui
+GROQ_API_KEY=gsk_...tu-api-key-aqui
+# Opcional
+# GROQ_MODEL=llama-3.3-70b-versatile
+# GROQ_MAX_COMPLETION_TOKENS=384
 ```
+
+Obtén la clave en [Groq Console](https://console.groq.com/keys).
 
 ### Dependencias
 
@@ -49,11 +54,11 @@ const MyComponent = () => {
 
 #### `generateQuotationConcept(concept)`
 
-Genera un concepto profesional para cotizaciones.
+Genera un concepto ejecutivo para cotizaciones (postura de prestador, sin preámbulos, infinitivos/sustantivos de acción). Los prompts viven en `lib/ai-prompts.ts`.
 
 ```javascript
 const handleGenerate = async () => {
-  const result = await generateQuotationConcept("instalación eléctrica");
+  const result = await generateQuotationConcept("instalación eléctrica en oficina");
   if (result.success) {
     console.log(result.data);
   }
@@ -73,12 +78,14 @@ const handleGenerate = async () => {
 };
 ```
 
-#### `generateContent(prompt, userInput?)`
+#### `generateContent(prompt, options?)`
 
-Función genérica para prompts personalizados.
+Función genérica. `options` puede incluir `userInput` y `systemInstruction`.
 
 ```javascript
-const result = await generateContent("Crea una descripción de:", "mi producto");
+const result = await generateContent("Crea una descripción de:", {
+  userInput: "mi producto",
+});
 ```
 
 ## 🎨 Componente AIGeneratorButton
@@ -144,7 +151,7 @@ const handleAIGenerated = (generatedContent, index) => {
 El hook utiliza la ruta `/api/ai/generate` que:
 
 - Valida el prompt
-- Se comunica con OpenAI
+- Se comunica con la API de Groq (`max_completion_tokens` por defecto 384)
 - Maneja errores específicos
 - Retorna respuestas estructuradas
 

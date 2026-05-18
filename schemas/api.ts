@@ -9,8 +9,14 @@ export const GeneratorConceptRequestSchema = z.object({
   prompt: z
     .string()
     .min(5, "El prompt debe tener al menos 5 caracteres")
-    .max(500, "El prompt no puede exceder 500 caracteres")
+    .max(2000, "El prompt no puede exceder 2000 caracteres")
     .trim(),
+  systemInstruction: z
+    .string()
+    .min(10, "La instrucción de sistema es demasiado corta")
+    .max(4000, "La instrucción de sistema no puede exceder 4000 caracteres")
+    .trim()
+    .optional(),
 });
 
 export type GeneratorConceptRequest = z.infer<

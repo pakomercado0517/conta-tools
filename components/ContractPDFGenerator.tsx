@@ -369,7 +369,7 @@ export function generateContractPDF(contractData: ContractData): jsPDF {
   // PRIMERA - Objeto
   addText("**PRIMERA. OBJETO:**", 11, true);
   addText(
-    `**${content.terminoVendedor}** se obliga a ${content.esServicio ? "prestar los servicios" : "transmitir la propiedad sin reserva de dominio, libre de gravamen y limitación alguna"} de los ${content.esServicio ? "servicios" : "materiales/servicios"} consistentes en: **${content.servicios || "[DESCRIPCIÓN DETALLADA DE MATERIALES/SERVICIOS]"}** al **CLIENTE**, quien sabe y conoce plenamente las condiciones en que se encuentran los ${content.esServicio ? "servicios" : "materiales/servicios"}, y quien deberá pagar la contraprestación prevista en la cláusula Segunda.`,
+    `**${content.terminoVendedor}** se obliga a ${content.esServicio ? "prestar los servicios consistentes en:" : "transmitir la propiedad sin reserva de dominio, libre de gravamen y limitación alguna de los materiales/servicios consistentes en:"} **${content.servicios || "[DESCRIPCIÓN DETALLADA DE MATERIALES/SERVICIOS]"}** al **CLIENTE**, quien sabe y conoce plenamente las condiciones en que se encuentran los ${content.esServicio ? "servicios" : "materiales/servicios"}, y quien deberá pagar la contraprestación prevista en la cláusula Segunda.`,
     10,
     false,
     "justify"

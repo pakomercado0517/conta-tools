@@ -1,6 +1,7 @@
 "use client";
 
 import { Label, Textarea, Checkbox } from "flowbite-react";
+import ConceptTextPreview from "@/components/ConceptTextPreview";
 import type { QuotationServiceDescriptionProps } from "@/types/quotation";
 
 /**
@@ -51,6 +52,10 @@ export default function QuotationServiceDescription({
           rows={6}
           className="text-white focus:ring-cyan-500"
           placeholder="Uno o varios párrafos; usa Enter para separar líneas."
+        />
+        <ConceptTextPreview
+          text={datos.descripcionServicio}
+          label="Vista en PDF (por línea):"
         />
       </div>
     </section>

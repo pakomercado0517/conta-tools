@@ -3,6 +3,7 @@
 import { useState, useEffect, ChangeEvent, MouseEvent } from "react";
 import { Button, Spinner, Alert } from "flowbite-react";
 import { BsStars, BsX } from "react-icons/bs";
+import FormattedConceptText from "@/components/FormattedConceptText";
 import useAIGenerator from "@/hooks/useAIGenerator";
 
 // Tipos para los diferentes modos de generación de IA
@@ -275,7 +276,7 @@ export default function AIGeneratorButton({
                     </label>
                     <div className="max-h-40 overflow-y-auto rounded-md border border-gray-300 bg-gray-50 p-4 dark:border-gray-600 dark:bg-gray-900">
                       <p className="text-sm leading-relaxed text-gray-800 dark:text-gray-200">
-                        {generatedResult}
+                        <FormattedConceptText text={generatedResult} />
                       </p>
                     </div>
                   </div>

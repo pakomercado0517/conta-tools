@@ -6,6 +6,12 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import useFormatNumber from "@/hooks/useFormatNumber";
 import { numeroALetras } from "@/lib/numero-letras-mx";
+import { formatConceptText } from "@/lib/formatConceptText";
+import {
+  ensureJsPdfUnicodeFont,
+  JSPDF_UNICODE_FONT,
+  setJsPdfUnicodeFont,
+} from "@/lib/jspdfUnicodeFont";
 import type {
   QuotationPDFButtonsProps,
   BankData,
@@ -222,8 +228,11 @@ export default function QuotationPDFButtons({
    * Generar PDF con jsPDF
    * @param btnFunc - 'preview' para previsualizar, undefined para descargar
    */
-  const generarPDF = (btnFunc?: string): void => {
+  const generarPDF = async (btnFunc?: string): Promise<void> => {
     const doc = new jsPDF();
+    await ensureJsPdfUnicodeFont(doc);
+    setJsPdfUnicodeFont(doc, "normal");
+
     const pageWidth = doc.internal.pageSize.getWidth();
 
     const contacto = `Tel: ${datos.telefono} | Email: ${datos.email}`;
@@ -267,7 +276,7 @@ export default function QuotationPDFButtons({
     // Saludo y descripción opcional del servicio (antes de la tabla; cuerpo: 11 pt)
     doc.setFontSize(11);
     doc.setTextColor(0, 0, 0);
-    doc.setFont("helvetica", "normal");
+    setJsPdfUnicodeFont(doc, "normal");
     const textMarginX = 20;
     const textMaxWidth = pageWidth - textMarginX - 12;
     const bodyLineHeight = 6;
@@ -292,18 +301,21 @@ export default function QuotationPDFButtons({
       datos.incluirDescripcionServicio &&
       datos.descripcionServicio.trim() !== ""
     ) {
-      doc.setFont("helvetica", "bold");
+      setJsPdfUnicodeFont(doc, "bold");
       const physicalLines = datos.descripcionServicio.split(/\r?\n/);
       for (const rawLine of physicalLines) {
         if (rawLine.trim() === "") {
           bodyY += 4;
           continue;
         }
-        const wrapped = doc.splitTextToSize(rawLine.trim(), textMaxWidth);
+        const wrapped = doc.splitTextToSize(
+          formatConceptText(rawLine.trim()),
+          textMaxWidth
+        );
         advancePastLines(wrapped, 3);
       }
       bodyY += 2;
-      doc.setFont("helvetica", "normal");
+      setJsPdfUnicodeFont(doc, "normal");
     }
 
     const tableStartY = bodyY + 2;
@@ -356,8 +368,8 @@ export default function QuotationPDFButtons({
       body: [
         ...datos.productos.map((producto) => [
           String(producto.cantidad),
-          producto.unidad,
-          producto.descripcion,
+          formatConceptText(producto.unidad),
+          formatConceptText(producto.descripcion),
           formatPrecioCell(producto.precioUnitario, formatNumber),
           formatTotalCell(producto, formatNumber),
         ]),
@@ -398,8 +410,12 @@ export default function QuotationPDFButtons({
           },
         ],
       ],
-      headStyles: { fillColor: [54, 69, 79], fontSize: 11 },
-      styles: { fontSize: 11 },
+      headStyles: {
+        fillColor: [54, 69, 79],
+        fontSize: 11,
+        font: JSPDF_UNICODE_FONT,
+      },
+      styles: { fontSize: 11, font: JSPDF_UNICODE_FONT },
     });
 
     const prevTable = (doc as JsPDFWithPrevTable).previousAutoTable;
@@ -424,9 +440,9 @@ export default function QuotationPDFButtons({
     finalY += 6;
     doc.setFontSize(11);
     doc.setTextColor(0, 0, 0);
-    doc.setFont("helvetica", "bold");
+    setJsPdfUnicodeFont(doc, "bold");
     doc.text("Cláusulas:", 12, finalY);
-    doc.setFont("helvetica", "normal");
+    setJsPdfUnicodeFont(doc, "normal");
     finalY += clauseLineHeight + 2;
 
     datos.clausulas.forEach((rawClausula) => {
@@ -434,7 +450,7 @@ export default function QuotationPDFButtons({
       if (!trimmed) return;
 
       doc.setFontSize(11);
-      doc.setFont("helvetica", "bold");
+      setJsPdfUnicodeFont(doc, "bold");
       const starStr = "* ";
       const clauseStarX = 12;
       const textLeft = clauseStarX + doc.getTextWidth(starStr);
@@ -443,18 +459,18 @@ export default function QuotationPDFButtons({
         24,
         pageWidth - textLeft - clauseMarginRight
       );
-      doc.setFont("helvetica", "normal");
+      setJsPdfUnicodeFont(doc, "normal");
       const lines = doc.splitTextToSize(trimmed, maxClauseWidth);
 
       lines.forEach((line: string, idx: number) => {
         breakPageIfNeeded();
         if (idx === 0) {
-          doc.setFont("helvetica", "bold");
+          setJsPdfUnicodeFont(doc, "bold");
           doc.text(starStr, clauseStarX, finalY);
-          doc.setFont("helvetica", "normal");
+          setJsPdfUnicodeFont(doc, "normal");
           doc.text(line, textLeft, finalY);
         } else {
-          doc.setFont("helvetica", "normal");
+          setJsPdfUnicodeFont(doc, "normal");
           doc.text(line, textLeft, finalY);
         }
         finalY += clauseLineHeight;
@@ -468,9 +484,9 @@ export default function QuotationPDFButtons({
       finalY += sectionGap;
       doc.setFontSize(11);
       doc.setTextColor(0, 0, 0);
-      doc.setFont("helvetica", "bold");
+      setJsPdfUnicodeFont(doc, "bold");
       doc.text("Datos Bancarios:", 12, finalY);
-      doc.setFont("helvetica", "normal");
+      setJsPdfUnicodeFont(doc, "normal");
       finalY += clauseLineHeight + 2;
 
       Object.entries(dataBank as BankData).forEach(([key, value]) => {
@@ -486,7 +502,7 @@ export default function QuotationPDFButtons({
     finalY += sectionGap;
     doc.setFontSize(11);
     doc.setTextColor(0, 0, 0);
-    doc.setFont("helvetica", "normal");
+    setJsPdfUnicodeFont(doc, "normal");
     const despedidaLines = doc.splitTextToSize(datos.despedida, pageWidth - 30);
     doc.text(despedidaLines, 15, finalY);
     finalY += despedidaLines.length * clauseLineHeight + 2;
@@ -551,7 +567,7 @@ export default function QuotationPDFButtons({
         <Button
           color="cyan"
           size="xl"
-          onClick={() => generarPDF()}
+          onClick={() => void generarPDF()}
           type="button"
         >
           Generar PDF
@@ -561,7 +577,7 @@ export default function QuotationPDFButtons({
           color="gray"
           size="xl"
           outline
-          onClick={() => generarPDF("preview")}
+          onClick={() => void generarPDF("preview")}
           type="button"
         >
           Previsualizar PDF

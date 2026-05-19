@@ -1,5 +1,6 @@
 "use client";
 
+import FormattedConceptText from "@/components/FormattedConceptText";
 import type { ContractData } from "@/schemas";
 import { numeroALetras } from "@/lib/numero-letras-mx";
 
@@ -415,8 +416,11 @@ export default function ContractContent({
                   </>
                 )}
                 <strong>
-                  {content.servicios ||
-                    "[DESCRIPCIÓN DETALLADA DE MATERIALES/SERVICIOS]"}
+                  {content.servicios ? (
+                    <FormattedConceptText text={content.servicios} />
+                  ) : (
+                    "[DESCRIPCIÓN DETALLADA DE MATERIALES/SERVICIOS]"
+                  )}
                 </strong>{" "}
                 al <strong>CLIENTE</strong>, quien sabe y conoce plenamente las
                 condiciones en que se encuentran los{" "}

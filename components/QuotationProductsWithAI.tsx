@@ -3,6 +3,7 @@ import { TextInput, Button, Label } from "flowbite-react";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { ChangeEvent, MouseEvent } from "react";
 import AIGeneratorButton from "@/components/AIGeneratorButton";
+import ConceptTextPreview from "@/components/ConceptTextPreview";
 import type {
   QuotationFormData,
   QuotationProductChangeHandler,
@@ -86,7 +87,8 @@ export default function QuotationProductsWithAI({
             />
 
             {/* Campo de descripción con botón de IA */}
-            <div className="flex gap-2">
+            <div className="md:col-span-2">
+              <div className="flex gap-2">
               <TextInput
                 placeholder="Descripción"
                 name="descripcion"
@@ -100,7 +102,9 @@ export default function QuotationProductsWithAI({
                 onGenerated={(content) => handleAIGenerated(content, index)}
                 placeholder="Ej: servicio de plomería, material eléctrico..."
                 className="min-w-fit"
-              />
+                />
+              </div>
+              <ConceptTextPreview text={producto.descripcion} />
             </div>
 
             <div className="flex justify-stretch md:col-span-2">

@@ -8,6 +8,11 @@ import {
   leyendaFechaLugar,
 } from "./ContractContent";
 import type { ContractData } from "@/schemas";
+import { formatConceptText } from "@/lib/formatConceptText";
+import {
+  ensureJsPdfUnicodeFont,
+  setJsPdfUnicodeFont,
+} from "@/lib/jspdfUnicodeFont";
 
 /* =========================
    Tipos para PDF Generator
@@ -40,8 +45,13 @@ interface ContractPDFGeneratorProps {
  * @param contractData - Datos del contrato
  * @returns Documento PDF generado
  */
-export function generateContractPDF(contractData: ContractData): jsPDF {
+export async function generateContractPDF(
+  contractData: ContractData
+): Promise<jsPDF> {
   const doc = new jsPDF();
+  await ensureJsPdfUnicodeFont(doc);
+  setJsPdfUnicodeFont(doc, "normal");
+
   const pageWidth = doc.internal.pageSize.width;
   const pageHeight = doc.internal.pageSize.height;
   const margin = 15;
@@ -75,7 +85,7 @@ export function generateContractPDF(contractData: ContractData): jsPDF {
      * Medir el ancho de un texto con un estilo específico
      */
     const measure = (txt: string, style: FontStyle): number => {
-      doc.setFont("helvetica", style);
+      setJsPdfUnicodeFont(doc, style === "bold" ? "bold" : "normal");
       return doc.getTextWidth(txt);
     };
 
@@ -168,7 +178,7 @@ export function generateContractPDF(contractData: ContractData): jsPDF {
 
         if (!isSpace) {
           // Renderizar palabra
-          doc.setFont("helvetica", t.style);
+          setJsPdfUnicodeFont(doc, t.style === "bold" ? "bold" : "normal");
           doc.text(t.text, x, y);
           x += tokenWidth;
           wordCount++;
@@ -183,7 +193,7 @@ export function generateContractPDF(contractData: ContractData): jsPDF {
           }
         } else if (alignMode !== "justify" || isLastLine) {
           // Renderizar espacio normalmente si no estamos justificando o es la última línea
-          doc.setFont("helvetica", t.style);
+          setJsPdfUnicodeFont(doc, t.style === "bold" ? "bold" : "normal");
           doc.text(t.text, x, y);
           x += tokenWidth;
         }
@@ -369,7 +379,7 @@ export function generateContractPDF(contractData: ContractData): jsPDF {
   // PRIMERA - Objeto
   addText("**PRIMERA. OBJETO:**", 11, true);
   addText(
-    `**${content.terminoVendedor}** se obliga a ${content.esServicio ? "prestar los servicios consistentes en:" : "transmitir la propiedad sin reserva de dominio, libre de gravamen y limitación alguna de los materiales/servicios consistentes en:"} **${content.servicios || "[DESCRIPCIÓN DETALLADA DE MATERIALES/SERVICIOS]"}** al **CLIENTE**, quien sabe y conoce plenamente las condiciones en que se encuentran los ${content.esServicio ? "servicios" : "materiales/servicios"}, y quien deberá pagar la contraprestación prevista en la cláusula Segunda.`,
+    `**${content.terminoVendedor}** se obliga a ${content.esServicio ? "prestar los servicios consistentes en:" : "transmitir la propiedad sin reserva de dominio, libre de gravamen y limitación alguna de los materiales/servicios consistentes en:"} **${content.servicios ? formatConceptText(content.servicios) : "[DESCRIPCIÓN DETALLADA DE MATERIALES/SERVICIOS]"}** al **CLIENTE**, quien sabe y conoce plenamente las condiciones en que se encuentran los ${content.esServicio ? "servicios" : "materiales/servicios"}, y quien deberá pagar la contraprestación prevista en la cláusula Segunda.`,
     10,
     false,
     "justify"
@@ -544,7 +554,7 @@ export function generateContractPDF(contractData: ContractData): jsPDF {
   const centerX = pageWidth / 2;
 
   // EL CLIENTE (arriba, centrado)
-  doc.setFont("helvetica", "bold");
+  setJsPdfUnicodeFont(doc, "bold");
   doc.setFontSize(11);
   doc.text("EL CLIENTE", centerX, yPosition, { align: "center" });
 
@@ -579,14 +589,14 @@ export function generateContractPDF(contractData: ContractData): jsPDF {
   yPosition += 6;
 
   // Nombre del cliente
-  doc.setFont("helvetica", "bold");
+  setJsPdfUnicodeFont(doc, "bold");
   doc.setFontSize(9);
   doc.text(nombreCliente, centerX, yPosition, { align: "center" });
 
   // Representante del cliente si existe
   if (contractData.representanteCliente) {
     yPosition += 5;
-    doc.setFont("helvetica", "normal");
+    setJsPdfUnicodeFont(doc, "normal");
     doc.setFontSize(7);
     doc.text(
       contractData.representanteCliente.toUpperCase(),
@@ -595,7 +605,7 @@ export function generateContractPDF(contractData: ContractData): jsPDF {
       { align: "center" }
     );
     yPosition += 4;
-    doc.setFont("helvetica", "italic");
+    setJsPdfUnicodeFont(doc, "normal");
     doc.setFontSize(6);
     doc.text(`Representante Legal`, centerX, yPosition, { align: "center" });
   }
@@ -609,7 +619,7 @@ export function generateContractPDF(contractData: ContractData): jsPDF {
   }
 
   // VENDEDOR/PRESTADOR (abajo, centrado)
-  doc.setFont("helvetica", "bold");
+  setJsPdfUnicodeFont(doc, "bold");
   doc.setFontSize(11);
   doc.text(content.terminoVendedor, centerX, yPosition, { align: "center" });
 
@@ -641,14 +651,14 @@ export function generateContractPDF(contractData: ContractData): jsPDF {
   yPosition += 6;
 
   // Nombre del vendedor
-  doc.setFont("helvetica", "bold");
+  setJsPdfUnicodeFont(doc, "bold");
   doc.setFontSize(9);
   doc.text(nombreVendedor, centerX, yPosition, { align: "center" });
 
   // Representante del vendedor si existe
   if (contractData.representantePrestador) {
     yPosition += 5;
-    doc.setFont("helvetica", "normal");
+    setJsPdfUnicodeFont(doc, "normal");
     doc.setFontSize(7);
     doc.text(
       contractData.representantePrestador.toUpperCase(),
@@ -657,7 +667,7 @@ export function generateContractPDF(contractData: ContractData): jsPDF {
       { align: "center" }
     );
     yPosition += 4;
-    doc.setFont("helvetica", "italic");
+    setJsPdfUnicodeFont(doc, "normal");
     doc.setFontSize(6);
     doc.text(`Representante Legal`, centerX, yPosition, { align: "center" });
   }
@@ -676,9 +686,9 @@ export default function ContractPDFGenerator({
   /**
    * Maneja la descarga del PDF del contrato
    */
-  const handleDownload = (): void => {
+  const handleDownload = async (): Promise<void> => {
     try {
-      const doc = generateContractPDF(contractData);
+      const doc = await generateContractPDF(contractData);
       doc.save(fileName);
     } catch (error) {
       console.error("Error generating PDF:", error);
@@ -688,7 +698,7 @@ export default function ContractPDFGenerator({
 
   return (
     <button
-      onClick={handleDownload}
+      onClick={() => void handleDownload()}
       className="focus:shadow-outline rounded bg-green-600 px-4 py-2 font-bold text-white transition-colors hover:bg-green-700 focus:outline-none"
       type="button"
     >

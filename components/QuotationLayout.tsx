@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, useEffect } from "react";
+import { preloadJsPdfUnicodeFonts } from "@/lib/jspdfUnicodeFont";
 import QuotationForm from "@/components/QuotationForm";
 import QuotationRecipients from "@/components/QuotationRecipients";
 import QuotationServiceDescription from "@/components/QuotationServiceDescription";
@@ -23,6 +24,10 @@ import type {
  * Maneja todo el estado y la lógica de negocio para la creación de cotizaciones
  */
 export default function QuotationLayout() {
+  useEffect(() => {
+    preloadJsPdfUnicodeFonts();
+  }, []);
+
   // Estado principal de los datos de cotización
   const [datos, setDatos] = useState<QuotationFormData>({
     empresa: "",

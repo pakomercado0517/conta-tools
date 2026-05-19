@@ -7,7 +7,6 @@ import { FaEye } from "react-icons/fa";
 import ContractPreview from "./ContractPreview";
 import ContractPDFGenerator from "./ContractPDFGenerator";
 import AIGeneratorButton from "./AIGeneratorButton";
-import ConceptTextPreview from "@/components/ConceptTextPreview";
 import type { ContractData } from "@/schemas";
 
 // Tipos específicos para el formulario
@@ -856,10 +855,6 @@ export default function ContractGeneratorFormWithAI({}: ContractGeneratorFormWit
                   : "Describe de manera clara y detallada los servicios que se prestarán..."
               }
               required
-            />
-            <ConceptTextPreview
-              text={contractData.servicios}
-              label="Vista en contrato / PDF:"
             />
             <p className="text-sm text-gray-500 dark:text-gray-400">
               💡 Tip: Usa el botón de IA para generar una descripción legal

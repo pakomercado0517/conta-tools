@@ -1,23 +1,29 @@
 import type { Metadata } from "next";
-import ContractGeneratorForm from "@/components/ContractGeneratorFormWithAI";
+import ContractWizard from "@/components/contract/ContractWizard";
+
+// Force dynamic rendering to avoid SSR issues with localStorage
+export const dynamic = "force-dynamic";
 
 // Metadatos específicos para el generador de contratos
 export const metadata: Metadata = {
-  title: "Generador de Contratos - ContaTools",
+  title: "Generador de Contratos con IA - ContaTools",
   description:
-    "Genera contratos de compraventa de materiales y/o servicios con formato profesional. Herramienta inteligente con IA para crear contratos legales.",
+    "Genera contratos completos y válidos legalmente en México (compraventa, arrendamiento, servicios, obra, mandato) usando IA. Solo ingresas los datos esenciales y la IA redacta todo el contrato.",
   keywords: [
     "generador de contratos",
-    "contratos de compraventa",
-    "contratos comerciales",
-    "documentos legales",
     "contratos con IA",
-    "formato profesional",
+    "contrato compraventa",
+    "contrato arrendamiento",
+    "contrato servicios",
+    "contrato obra",
+    "contrato mandato",
+    "documentos legales México",
+    "abogado IA",
   ],
   openGraph: {
-    title: "Generador de Contratos - ContaTools",
+    title: "Generador de Contratos con IA - ContaTools",
     description:
-      "Genera contratos de compraventa de materiales y/o servicios con formato profesional.",
+      "Genera contratos completos y válidos legalmente en México usando IA. Solo ingresas los datos esenciales.",
     type: "website",
   },
   robots: {
@@ -27,30 +33,13 @@ export const metadata: Metadata = {
 };
 
 /**
- * Página del Generador de Contratos de ContaTools
- * Permite generar contratos de compraventa con formato profesional usando IA
- *
- * @param params - Parámetros de la URL
- * @param searchParams - Parámetros de búsqueda de la URL
+ * Página del Generador de Contratos de ContaTools v2
+ * Wizard de 5 pasos + IA generando contrato completo
  */
 export default async function GeneradorContratosPage() {
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mx-auto max-w-6xl">
-        <header className="mb-8 text-center">
-          <h1 className="mb-4 text-3xl font-bold text-gray-800 dark:text-gray-200">
-            Generador de Contratos de Compraventa de Materiales y/o Servicios
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Genera contratos de compraventa de materiales y/o servicios con
-            formato profesional usando inteligencia artificial.
-          </p>
-        </header>
-
-        <main>
-          <ContractGeneratorForm />
-        </main>
-      </div>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <ContractWizard />
     </div>
   );
 }

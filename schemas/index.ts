@@ -351,3 +351,6 @@ const MainSchemas = {
 };
 
 export default MainSchemas;
+
+// Re-export v2 types for convenience
+export * from "@/types/contract-v2";

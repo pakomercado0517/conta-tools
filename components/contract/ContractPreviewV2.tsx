@@ -14,6 +14,10 @@ import {
   FaEdit,
 } from "react-icons/fa";
 import { ContractGenerated, ContractInput, TipoContrato } from "@/types/contract-v2";
+import {
+  cleanClauseTitle,
+  prepareDeclarationItems,
+} from "@/lib/contract/numbering";
 import ContractPDFGeneratorV2 from "./ContractPDFGeneratorV2";
 import ContractChat from "./ContractChat";
 
@@ -106,7 +110,7 @@ export default function ContractPreviewV2({
               {input.parteA.esEmpresa ? " POR CONDUCTO DE SU REPRESENTANTE LEGAL" : ""}:
             </p>
             <ol className="list-[upper-alpha.] space-y-2 ml-4">
-              {currentContract.declaraciones.parteA.map((item, i) => (
+              {prepareDeclarationItems(currentContract.declaraciones.parteA).map((item, i) => (
                 <li key={i} className="text-justify leading-relaxed">
                   {item}
                 </li>
@@ -120,7 +124,7 @@ export default function ContractPreviewV2({
               {input.parteB.esEmpresa ? " POR CONDUCTO DE SU REPRESENTANTE LEGAL" : ""}:
             </p>
             <ol className="list-[upper-alpha.] space-y-2 ml-4">
-              {currentContract.declaraciones.parteB.map((item, i) => (
+              {prepareDeclarationItems(currentContract.declaraciones.parteB).map((item, i) => (
                 <li key={i} className="text-justify leading-relaxed">
                   {item}
                 </li>
@@ -148,7 +152,9 @@ export default function ContractPreviewV2({
             >
               <h3 className="text-lg font-bold mb-3 flex items-center gap-2 flex-wrap">
                 <span className="text-blue-600 dark:text-blue-400">{clausula.numeroRomano}.</span>
-                <span className="uppercase">{clausula.titulo}</span>
+                <span className="uppercase">
+                  {cleanClauseTitle(clausula.numeroRomano, clausula.titulo)}
+                </span>
                 {(clausula.fuente === "ia-usuario" || clausula.fuente === "usuario") && (
                   <span className="ml-1 px-1.5 py-0.5 text-xs rounded bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200">
                     {clausula.fuente === "ia-usuario" ? "Usuario (pulida)" : "Usuario"}

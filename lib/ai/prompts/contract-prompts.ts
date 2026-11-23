@@ -36,6 +36,8 @@ REGLAS ESTRICTAS - INCUMPLIR CUALQUIERA INVALIDA LA RESPUESTA:
 11. El campo "contenido" de cada cláusula debe ser UN SOLO STRING con párrafos separados por \\n\\n (doble salto de línea).
 12. Número romano en "numeroRomano": "PRIMERA", "SEGUNDA", "TERCERA", etc. (sin punto final).
 13. "fuente": "ia-estandar" para cláusulas base, "ia-usuario" para cláusulas que el usuario pidió pulir, "usuario" para cláusulas que el usuario escribió y no quiso pulir.
+14. En "declaraciones.parteA/parteB": cada item es SOLO el texto de la declaración, SIN prefijos "A.", "B.", "I.", "II." ni encabezados "DECLARA...". El sistema agrega la numeración al renderizar.
+15. En "clausulas.titulo": SOLO el nombre de la cláusula (ej: "OBJETO"), SIN repetir "PRIMERA" ni el número romano.
 
 ESTRUCTURA OBLIGATORIA DEL JSON DE RESPUESTA:
 {
@@ -43,8 +45,8 @@ ESTRUCTURA OBLIGATORIA DEL JSON DE RESPUESTA:
   "titulo": "CONTRATO DE COMPRAVENTA DE [BIEN/SERVICIO]",
   "terminologia": { "parteA": "EL VENDEDOR", "parteB": "EL COMPRADOR", "objeto": "bien" },
   "declaraciones": {
-    "parteA": [ "I. DECLARA EL VENDEDOR...", "A. Es una persona moral...", "B. Tiene su domicilio...", "C. Cuenta con facultades...", "D. Es su deseo transmitir..." ],
-    "parteB": [ "II. DECLARA EL COMPRADOR...", "A. Es una persona física...", "B. Tiene su domicilio...", "C. Cuenta con facultades...", "D. Es su deseo adquirir...", "E. Cumple obligaciones laborales..." ]
+    "parteA": [ "Es una persona moral debidamente constituida conforme a las leyes mexicanas", "Tiene su domicilio en la dirección indicada en el preámbulo", "Cuenta con facultades suficientes para celebrar este contrato", "Es su deseo transmitir la propiedad del bien objeto del contrato" ],
+    "parteB": [ "Es una persona física con capacidad legal para obligarse", "Tiene su domicilio en la dirección indicada en el preámbulo", "Cuenta con facultades suficientes para celebrar este contrato", "Es su deseo adquirir la propiedad del bien objeto del contrato", "Cumple con sus obligaciones laborales y fiscales aplicables" ]
   },
   "clausulas": [
     { "numero": 1, "numeroRomano": "PRIMERA", "titulo": "OBJETO", "contenido": "**EL VENDEDOR** se obliga a transmitir la propiedad... **EL COMPRADOR** se obliga a pagar...", "esObligatoria": true, "fuente": "ia-estandar" },

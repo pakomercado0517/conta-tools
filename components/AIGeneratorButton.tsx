@@ -21,6 +21,8 @@ interface AIGeneratorButtonProps {
   placeholder?: string;
   disabled?: boolean;
   className?: string;
+  /** Texto del botón. Por defecto «IA». */
+  label?: string;
 }
 
 /**
@@ -43,6 +45,7 @@ export default function AIGeneratorButton({
   placeholder = "Ingrese un concepto...",
   disabled = false,
   className = "",
+  label = "IA",
 }: AIGeneratorButtonProps) {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [tempConcept, setTempConcept] = useState<string>(concept);
@@ -171,7 +174,7 @@ export default function AIGeneratorButton({
         className={`flex items-center gap-2 ${className}`}
       >
         <BsStars className="text-lg" />
-        IA
+        {label}
       </Button>
 
       {/* Modal personalizado para iOS */}

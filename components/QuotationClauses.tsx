@@ -1,17 +1,11 @@
 "use client";
 
-import { TextInput, Button } from "flowbite-react";
+import { Textarea, Button } from "flowbite-react";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import type { QuotationClausesProps } from "@/types/quotation";
 
 /**
- * Componente para gestionar las cláusulas de la cotización
- * Permite agregar, editar y eliminar cláusulas dinámicamente
- *
- * @param datos - Datos del formulario de cotización
- * @param handleClausulaChange - Función para manejar cambios en cláusulas
- * @param agregarClausula - Función para agregar nueva cláusula
- * @param eliminarClausula - Función para eliminar cláusula por índice
+ * Cláusulas del cierre de la cotización.
  */
 export default function QuotationClauses({
   datos,
@@ -21,40 +15,55 @@ export default function QuotationClauses({
 }: QuotationClausesProps) {
   return (
     <section className="my-8 rounded-xl bg-gray-900/60 p-6 shadow-md">
-      <h2 className="mb-4 mt-5 text-lg font-semibold text-gray-300">
-        Cláusulas
-      </h2>
+      <h2 className="text-xl font-semibold text-gray-200">4. Cierre</h2>
+      <p className="mb-5 mt-1 text-sm text-gray-400">
+        Cláusulas, datos de pago, despedida y firma, después del total.
+      </p>
 
-      {datos.clausulas.map((clausula, index) => (
-        <div key={index} className="mb-3 grid grid-cols-6 gap-2">
-          <div className="col-span-5">
-            <TextInput
-              id={`clausula-${index}`}
-              placeholder={`Cláusula ${index + 1}`}
-              value={clausula}
-              onChange={(e) => handleClausulaChange(e, index)}
-              className="text-white focus:ring-cyan-500"
-            />
-          </div>
+      <h3 className="mb-3 text-base font-semibold text-gray-200">Cláusulas</h3>
 
-          <div className="col-span-1 flex justify-center">
-            <Button
-              color="failure"
-              size="sm"
-              className="flex h-10 w-10 items-center justify-center rounded-lg"
-              onClick={() => eliminarClausula(index)}
-              type="button"
-              aria-label={`Eliminar cláusula ${index + 1}`}
-            >
-              <RiDeleteBin6Line className="text-lg" />
-            </Button>
-          </div>
+      {datos.clausulas.length === 0 ? (
+        <div className="rounded-lg border border-dashed border-gray-600 px-4 py-6">
+          <p className="mb-4 text-sm text-gray-400">
+            Cada cláusula sale con un asterisco, debajo de la tabla. Agrega las
+            que quieras incluir.
+          </p>
+          <Button onClick={agregarClausula} type="button">
+            Agregar cláusula
+          </Button>
         </div>
-      ))}
+      ) : (
+        <>
+          {datos.clausulas.map((clausula, index) => (
+            <div key={index} className="mb-3 flex items-start gap-2">
+              <div className="min-w-0 flex-1">
+                <Textarea
+                  id={`clausula-${index}`}
+                  placeholder={`Cláusula ${index + 1}`}
+                  value={clausula}
+                  rows={3}
+                  onChange={(e) => handleClausulaChange(e, index)}
+                  className="text-white focus:ring-cyan-500"
+                />
+              </div>
+              <Button
+                color="failure"
+                size="sm"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg"
+                onClick={() => eliminarClausula(index)}
+                type="button"
+                aria-label={`Eliminar cláusula ${index + 1}`}
+              >
+                <RiDeleteBin6Line className="text-lg" />
+              </Button>
+            </div>
+          ))}
 
-      <Button onClick={agregarClausula} className="mt-4" type="button">
-        Agregar Cláusula
-      </Button>
+          <Button onClick={agregarClausula} className="mt-2" type="button">
+            Agregar cláusula
+          </Button>
+        </>
+      )}
     </section>
   );
 }

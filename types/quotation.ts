@@ -92,6 +92,7 @@ export interface QuotationFormProps {
 }
 
 export interface QuotationRecipientsProps {
+  datos: QuotationFormData;
   handleChange: (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
@@ -99,10 +100,7 @@ export interface QuotationRecipientsProps {
 
 export interface QuotationProductsProps {
   datos: QuotationFormData;
-  handleProductoChange: (
-    e: ChangeEvent<HTMLInputElement>,
-    index: number
-  ) => void;
+  handleProductoChange: QuotationProductChangeHandler;
   agregarProducto: () => void;
   eliminarProducto: (index: number) => void;
   agregarImpuestoProducto: (productIndex: number) => void;
@@ -129,6 +127,7 @@ export interface QuotationDataBankProps {
   handleDataBankChange: (e: ChangeEvent<HTMLInputElement>) => void;
   showDataBank: (e: ChangeEvent<HTMLInputElement>) => void;
   datos: QuotationFormData;
+  dataBank: BankData;
 }
 
 export interface QuotationServiceDescriptionProps {
@@ -149,8 +148,13 @@ export interface QuotationSummaryLabelsProps {
 
 export interface QuotationPDFButtonsProps {
   datos: QuotationFormData;
-  setPdfDataUrl: (url: string | null) => void;
-  dataBank: BankData | BankData[];
+  firmaImg: string | null;
+  onFirmaChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  onPreview: () => void;
+  onDownload: () => void;
+  handleChange: (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
 }
 
 // Estado del layout principal
@@ -165,7 +169,7 @@ export type QuotationChangeHandler = (
   e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
 ) => void;
 export type QuotationProductChangeHandler = (
-  e: ChangeEvent<HTMLInputElement>,
+  e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   index: number
 ) => void;
 export type QuotationClauseChangeHandler = (

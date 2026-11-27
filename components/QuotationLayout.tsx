@@ -1,16 +1,21 @@
 "use client";
 
-import { useState, ChangeEvent, useEffect } from "react";
+import { useState, ChangeEvent, useEffect, useRef } from "react";
+import { Label, Textarea } from "flowbite-react";
 import { preloadJsPdfUnicodeFonts } from "@/lib/jspdfUnicodeFont";
+import {
+  generateQuotationPdf,
+  quotationPdfFileName,
+} from "@/lib/generateQuotationPdf";
 import QuotationForm from "@/components/QuotationForm";
 import QuotationRecipients from "@/components/QuotationRecipients";
 import QuotationServiceDescription from "@/components/QuotationServiceDescription";
 import QuotationSummaryLabels from "@/components/QuotationSummaryLabels";
-// import QuotationProducts from "@/components/QuotationProducts";
 import QuotationProducts from "@/components/QuotationProductsWithAI";
 import QuotationClauses from "@/components/QuotationClauses";
 import QuotationDataBank from "@/components/QuotationDataBank";
 import QuotationPDFButtons from "@/components/QuotationPDFButtons";
+import QuotationDisclosure from "@/components/QuotationDisclosure";
 import PDFPreviewer from "@/components/PDFPreviewer";
 import type {
   QuotationFormData,
@@ -19,16 +24,44 @@ import type {
   QuotationProduct,
 } from "@/types/quotation";
 
+function hasPreviewSource(datos: QuotationFormData): boolean {
+  return (
+    datos.empresa.trim() !== "" ||
+    datos.destinatario.trim() !== "" ||
+    datos.productos.length > 0
+  );
+}
+
+function PreviewPanel({ pdfDataUrl }: { pdfDataUrl: string | null }) {
+  if (!pdfDataUrl) {
+    return (
+      <section className="flex min-h-96 flex-col rounded-xl border border-dashed border-gray-600 bg-gray-900/30 p-6 lg:min-h-[calc(100vh-7rem)]">
+        <h2 className="text-lg font-semibold text-gray-200">
+          Vista previa del PDF
+        </h2>
+        <p className="mt-3 text-sm text-gray-400">
+          La vista previa aparece aquí
+        </p>
+      </section>
+    );
+  }
+
+  return (
+    <div className="rounded-xl bg-gray-900/60 p-4 shadow-md">
+      <PDFPreviewer pdfDataUrl={pdfDataUrl} />
+    </div>
+  );
+}
+
 /**
- * Layout principal para el generador de cotizaciones
- * Maneja todo el estado y la lógica de negocio para la creación de cotizaciones
+ * Layout principal para el generador de cotizaciones.
+ * El orden de las secciones sigue el del documento.
  */
 export default function QuotationLayout() {
   useEffect(() => {
     preloadJsPdfUnicodeFonts();
   }, []);
 
-  // Estado principal de los datos de cotización
   const [datos, setDatos] = useState<QuotationFormData>({
     empresa: "",
     rfc: "",
@@ -46,7 +79,7 @@ export default function QuotationLayout() {
     saludo:
       "En atención a su solicitud, se presenta la siguiente cotización correspondiente a los servicios y/o materiales descritos a continuación:",
     descripcionServicio: "",
-    incluirDescripcionServicio: false,
+    incluirDescripcionServicio: true,
     etiquetaSubtotal: "Subtotal:",
     etiquetaTotal: "Total:",
     textoCantidadLetra: "Importe con letra:",
@@ -56,19 +89,59 @@ export default function QuotationLayout() {
     cargo: "",
   });
 
-  // Estado para datos bancarios
   const [dataBank, setDataBank] = useState<BankData>({
     "Nombre del Banco": "",
     "Número de cuenta": 0,
     "Clabe Interbancaria": 0,
   });
 
-  // Estado para PDF preview
+  const [firmaImg, setFirmaImg] = useState<string | null>(null);
   const [pdfDataUrl, setPdfDataUrl] = useState<string | null>(null);
+  const previewRequest = useRef(0);
 
-  /**
-   * Agregar un nuevo producto a la lista
-   */
+  useEffect(() => {
+    if (!hasPreviewSource(datos)) {
+      previewRequest.current += 1;
+      setPdfDataUrl(null);
+      return;
+    }
+
+    const id = ++previewRequest.current;
+    const timer = setTimeout(() => {
+      void (async () => {
+        try {
+          const doc = await generateQuotationPdf({ datos, dataBank, firmaImg });
+          if (id !== previewRequest.current) return;
+          setPdfDataUrl(doc.output("datauristring"));
+        } catch (error) {
+          console.error(error);
+        }
+      })();
+    }, 800);
+
+    return () => clearTimeout(timer);
+  }, [datos, dataBank, firmaImg]);
+
+  const refreshPreview = (): void => {
+    const id = ++previewRequest.current;
+    void (async () => {
+      try {
+        const doc = await generateQuotationPdf({ datos, dataBank, firmaImg });
+        if (id !== previewRequest.current) return;
+        setPdfDataUrl(doc.output("datauristring"));
+      } catch (error) {
+        console.error(error);
+      }
+    })();
+  };
+
+  const downloadPdf = (): void => {
+    void (async () => {
+      const doc = await generateQuotationPdf({ datos, dataBank, firmaImg });
+      doc.save(quotationPdfFileName(datos));
+    })();
+  };
+
   const agregarProducto = (): void => {
     setDatos((prevDatos) => ({
       ...prevDatos,
@@ -86,9 +159,6 @@ export default function QuotationLayout() {
     }));
   };
 
-  /**
-   * Eliminar un producto por índice
-   */
   const eliminarProducto = (index: number): void => {
     setDatos((prevDatos) => ({
       ...prevDatos,
@@ -96,9 +166,6 @@ export default function QuotationLayout() {
     }));
   };
 
-  /**
-   * Manejar carga de logo de empresa
-   */
   const agregarLogoEmpresa = (e: ChangeEvent<HTMLInputElement>): void => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -115,9 +182,6 @@ export default function QuotationLayout() {
     reader.readAsDataURL(file);
   };
 
-  /**
-   * Agregar nueva cláusula
-   */
   const agregarClausula = (): void => {
     setDatos((prevDatos) => ({
       ...prevDatos,
@@ -125,9 +189,6 @@ export default function QuotationLayout() {
     }));
   };
 
-  /**
-   * Eliminar cláusula por índice
-   */
   const eliminarClausula = (index: number): void => {
     setDatos((prevDatos) => ({
       ...prevDatos,
@@ -135,11 +196,8 @@ export default function QuotationLayout() {
     }));
   };
 
-  /**
-   * Manejar cambios en productos específicos
-   */
   const handleProductoChange = (
-    e: ChangeEvent<HTMLInputElement>,
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     index: number
   ): void => {
     const { name, value } = e.target;
@@ -208,9 +266,6 @@ export default function QuotationLayout() {
     });
   };
 
-  /**
-   * Manejar cambios en cláusulas específicas
-   */
   const handleClausulaChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     index: number
@@ -225,9 +280,6 @@ export default function QuotationLayout() {
     }));
   };
 
-  /**
-   * Manejar cambios en datos bancarios
-   */
   const handleDataBankChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
     setDataBank((prevDataBank) => ({
@@ -236,9 +288,6 @@ export default function QuotationLayout() {
     }));
   };
 
-  /**
-   * Alternar mostrar/ocultar formulario de datos bancarios
-   */
   const showDataBank = (e: ChangeEvent<HTMLInputElement>): void => {
     setDatos((prevDatos) => ({
       ...prevDatos,
@@ -255,9 +304,6 @@ export default function QuotationLayout() {
     }));
   };
 
-  /**
-   * Manejar cambios generales en el formulario
-   */
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ): void => {
@@ -268,66 +314,125 @@ export default function QuotationLayout() {
     }));
   };
 
+  const handleFirmaChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setFirmaImg(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
   return (
-    <section className="mx-auto my-5 max-w-6xl">
-      {/* Quotation form */}
-      <QuotationForm
-        handleChange={handleChange}
-        datos={datos}
-        agregarLogoEmpresa={agregarLogoEmpresa}
-      />
+    <section className="mx-auto my-5 w-full max-w-[110rem] px-3 lg:px-5">
+      <h1 className="mb-6 text-center text-4xl font-extrabold tracking-tight text-gray-700 dark:text-white">
+        Generador de Cotizaciones
+      </h1>
 
-      {/* Destinatario Info */}
-      <QuotationRecipients handleChange={handleChange} />
+      <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(34rem,42rem)] lg:items-start lg:gap-8">
+        <div className="min-w-0 lg:order-2">
+          <QuotationForm
+            handleChange={handleChange}
+            datos={datos}
+            agregarLogoEmpresa={agregarLogoEmpresa}
+          />
 
-      <QuotationServiceDescription
-        datos={datos}
-        handleChange={handleChange}
-        toggleIncluirDescripcion={toggleIncluirDescripcionServicio}
-      />
+          <QuotationRecipients datos={datos} handleChange={handleChange} />
 
-      <QuotationSummaryLabels
-        datos={datos}
-        onChangeField={(field, value) =>
-          setDatos((prev) => ({ ...prev, [field]: value }))
-        }
-      />
+          <section className="mt-8 rounded-xl bg-gray-900/60 p-6 shadow-md">
+            <h2 className="text-xl font-semibold text-gray-200">2. Mensaje</h2>
+            <p className="mb-5 mt-1 text-sm text-gray-400">
+              Saludo y descripción, antes de la tabla.
+            </p>
+            <QuotationDisclosure title="Editar saludo">
+              <Label
+                htmlFor="saludo"
+                className="mb-1 text-sm font-medium text-gray-300"
+              >
+                Saludo
+              </Label>
+              <Textarea
+                id="saludo"
+                name="saludo"
+                rows={4}
+                value={datos.saludo}
+                onChange={handleChange}
+                className="text-white focus:ring-cyan-500"
+              />
+            </QuotationDisclosure>
+            <QuotationServiceDescription
+              datos={datos}
+              handleChange={handleChange}
+              toggleIncluirDescripcion={toggleIncluirDescripcionServicio}
+            />
+          </section>
 
-      {/* Productos Info */}
-      <QuotationProducts
-        datos={datos}
-        handleProductoChange={handleProductoChange}
-        agregarProducto={agregarProducto}
-        eliminarProducto={eliminarProducto}
-        agregarImpuestoProducto={agregarImpuestoProducto}
-        eliminarImpuestoProducto={eliminarImpuestoProducto}
-        handleImpuestoProductoChange={handleImpuestoProductoChange}
-      />
+          <QuotationProducts
+            datos={datos}
+            handleProductoChange={handleProductoChange}
+            agregarProducto={agregarProducto}
+            eliminarProducto={eliminarProducto}
+            agregarImpuestoProducto={agregarImpuestoProducto}
+            eliminarImpuestoProducto={eliminarImpuestoProducto}
+            handleImpuestoProductoChange={handleImpuestoProductoChange}
+          />
 
-      {/* Cláusulas Info */}
-      <QuotationClauses
-        datos={datos}
-        handleClausulaChange={handleClausulaChange}
-        agregarClausula={agregarClausula}
-        eliminarClausula={eliminarClausula}
-      />
+          <QuotationSummaryLabels
+            datos={datos}
+            onChangeField={(field, value) =>
+              setDatos((prev) => ({ ...prev, [field]: value }))
+            }
+          />
 
-      {/* Datos Bancarios */}
-      <QuotationDataBank
-        handleDataBankChange={handleDataBankChange}
-        showDataBank={showDataBank}
-        datos={datos}
-      />
+          <QuotationClauses
+            datos={datos}
+            handleClausulaChange={handleClausulaChange}
+            agregarClausula={agregarClausula}
+            eliminarClausula={eliminarClausula}
+          />
 
-      {/* Botones para cargar firma, previsualizar y crear PDF */}
-      <QuotationPDFButtons
-        datos={datos}
-        setPdfDataUrl={setPdfDataUrl}
-        dataBank={dataBank}
-      />
+          <QuotationDataBank
+            handleDataBankChange={handleDataBankChange}
+            showDataBank={showDataBank}
+            datos={datos}
+            dataBank={dataBank}
+          />
 
-      {/* Previsualizar PDF */}
-      {pdfDataUrl && <PDFPreviewer pdfDataUrl={pdfDataUrl} />}
+          <div className="my-8">
+            <QuotationDisclosure title="Editar despedida">
+              <Label
+                htmlFor="despedida"
+                className="mb-1 text-sm font-medium text-gray-300"
+              >
+                Despedida
+              </Label>
+              <Textarea
+                id="despedida"
+                name="despedida"
+                rows={4}
+                value={datos.despedida}
+                onChange={handleChange}
+                className="text-white focus:ring-cyan-500"
+              />
+            </QuotationDisclosure>
+          </div>
+
+          <QuotationPDFButtons
+            datos={datos}
+            firmaImg={firmaImg}
+            onFirmaChange={handleFirmaChange}
+            onPreview={refreshPreview}
+            onDownload={downloadPdf}
+            handleChange={handleChange}
+          />
+        </div>
+
+        <aside className="mt-8 lg:sticky lg:top-4 lg:order-1 lg:mt-0 lg:max-h-[calc(100vh-2rem)] lg:self-start lg:overflow-hidden">
+          <PreviewPanel pdfDataUrl={pdfDataUrl} />
+        </aside>
+      </div>
     </section>
   );
 }

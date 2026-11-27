@@ -4,8 +4,8 @@ import { Label, Textarea, Checkbox } from "flowbite-react";
 import type { QuotationServiceDescriptionProps } from "@/types/quotation";
 
 /**
- * Descripción opcional del servicio (tras el saludo en el PDF).
- * El texto puede guardarse como borrador; el checkbox controla si entra en el PDF.
+ * Descripción opcional del servicio, después del saludo en el PDF.
+ * Entra al documento si el interruptor está activo y hay texto.
  */
 export default function QuotationServiceDescription({
   datos,
@@ -13,16 +13,16 @@ export default function QuotationServiceDescription({
   toggleIncluirDescripcion,
 }: QuotationServiceDescriptionProps) {
   return (
-    <section className="mt-2 mb-8 rounded-xl bg-gray-900/60 p-6 shadow-md">
-      <h2 className="mb-2 mt-2 text-lg font-semibold text-gray-300">
-        Descripción del servicio (opcional)
-      </h2>
-      <p className="mb-3 text-sm text-gray-400">
-        Aparece en el PDF justo después del saludo solo si marcas la opción y hay
-        texto.
+    <div className="mt-5">
+      <h3 className="text-base font-semibold text-gray-200">
+        Descripción del servicio
+      </h3>
+      <p className="mb-3 mt-1 text-sm text-gray-400">
+        Si escribes aquí y dejas la opción activa, el texto sale en negrita
+        después del saludo.
       </p>
 
-      <div className="mb-2 flex items-start">
+      <div className="mb-3 flex items-start">
         <Checkbox
           id="incluirDescripcionServicio"
           onChange={toggleIncluirDescripcion}
@@ -32,7 +32,7 @@ export default function QuotationServiceDescription({
           htmlFor="incluirDescripcionServicio"
           className="ml-3 cursor-pointer text-sm font-medium text-gray-300"
         >
-          Incluir descripción en la cotización (PDF)
+          Incluir en el PDF
         </Label>
       </div>
 
@@ -50,9 +50,9 @@ export default function QuotationServiceDescription({
           value={datos.descripcionServicio}
           rows={6}
           className="text-white focus:ring-cyan-500"
-          placeholder="Uno o varios párrafos; usa Enter para separar líneas."
+          placeholder="Uno o varios párrafos. Usa Enter para separar líneas. Si apagas «Incluir en el PDF», el texto se queda como borrador."
         />
       </div>
-    </section>
+    </div>
   );
 }
